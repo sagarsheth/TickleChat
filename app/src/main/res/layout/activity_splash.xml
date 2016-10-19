@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/tickle_bg"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".activity.SplashActivity">
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:src="@drawable/logo_circle"
+        android:alpha=".7" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="TICKEL CHAT"
+        android:id="@+id/textView"
+        android:textSize="27dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/abc_primary_text_disable_only_material_dark" />
+</LinearLayout>

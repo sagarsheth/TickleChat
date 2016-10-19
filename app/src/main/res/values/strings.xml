@@ -1,0 +1,58 @@
+<resources>
+    <string name="app_name">TickleChat</string>
+    <string name="facebook_app_id">1592527504392182</string>
+    <string name="review_me_on_ticklechat">Review us on TickleChat</string>
+    <string name="no_mail_client">No Email Client</string>
+    <string name="send_mail">Send Email</string>
+
+
+
+    <string name="font_icon">icon-fonts.ttf</string>
+    <string name="font_type_opensans_bold">OpenSans-Bold.ttf</string>
+    <string name="font_type_opensans_regular">OpenSans-Regular.ttf</string>
+    <string name="font_type_opensans_light">OpenSans-Light.ttf</string>
+    <string name="font_type_opensans_semibold">OpenSans-Semibold.ttf</string>
+
+    <!--Navigation drawer naming -->
+    <string name="edit_profile">Edit Profile</string>
+    <string name="drawer_open">Open Drawer</string>
+    <string name="drawer_close">Close Drawer</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="could_not_create_directory">Image Directory could not be created. Please try after some time</string>
+    <string name="file_size_error">Very large image. Please upload image of max size %1d MB. </string>
+    <string name="user_not_verified">You are not verified. </string>
+
+    <string name="invalid_location">Invalid location found.</string>
+    <string name="default_exeption_text">Oops! some error occurred. Please try again after some time.</string>
+
+
+
+    <!--MENU ITMES-->
+    <string name ="menu_tickle_a_friend">Tickle A Friend</string>
+    <string name ="menu_new_group">New Group</string>
+    <string name ="menu_search_tickler">Search Tickler</string>
+    <string name ="menu_profile">Profile</string>
+    <string name ="menu_status_update">Status Update</string>
+    <string name ="menu_add_sentence">Add Sentence</string>
+    <string name ="menu_setting">Setting</string>
+
+
+    <string name ="menu_subtitle_1">Chat with your friend on tickler</string>
+    <string name ="menu_subtitle_2">Tickle and whole group ticklers you</string>
+    <string name ="menu_subtitle_3">Search for random tickler</string>
+    <string name ="menu_subtitle_4">Let the world see the star</string>
+    <string name ="menu_subtitle_5">Emotions here please</string>
+    <string name ="menu_subtitle_6">Contribute-Popular-Boast-Repeat</string>
+    <string name ="menu_subtitle_7">Tweek Setting</string>
+
+    <string name="internet_connection_error">Internet is either disconnected or very slow.</string>
+    <string name="unexpected_error">Some unexpected error occurred. Please try after some time.</string>
+
+    <string name ="loading">loading....</string>
+
+    <string name ="terms_policies">Terms and Policies</string>
+
+
+    <!--HEADERS ITMES-->
+    <string name ="header_ticklers">Ticklers</string>
+</resources>

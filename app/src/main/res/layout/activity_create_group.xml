@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_margin="10dp"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_weight="4"
+        android:gravity="center"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/groupIcon"
+            android:src="@drawable/camera_icon" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_weight="6"
+        android:gravity="center_horizontal"
+        android:layout_height="match_parent">
+
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:ems="10"
+            android:layout_height="wrap_content"
+            android:id="@+id/groupname"
+            android:hint="Enter group Name" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Only 15 member can be added in a group." />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Group"
+            android:id="@+id/creategroup" />
+    </LinearLayout>
+</LinearLayout>
