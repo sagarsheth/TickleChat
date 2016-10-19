@@ -9,9 +9,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
@@ -32,7 +29,7 @@ import com.techpro.chat.ticklechat.Constants;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.registration.Login;
 import com.techpro.chat.ticklechat.activity.registration.PersonalProfileActivity;
-import com.techpro.chat.ticklechat.adapters.TickleFriendAdapter;
+import com.techpro.chat.ticklechat.controller.MessageController;
 import com.techpro.chat.ticklechat.fragments.HomeScreenFragment;
 import com.techpro.chat.ticklechat.fragments.NewGroupFragment;
 import com.techpro.chat.ticklechat.fragments.ProfileFragment;
@@ -43,14 +40,12 @@ import com.techpro.chat.ticklechat.fragments.StatusUpdateFragment;
 import com.techpro.chat.ticklechat.fragments.TickleFriendFragment;
 import com.techpro.chat.ticklechat.listeners.FragmentChangeCallback;
 import com.techpro.chat.ticklechat.models.MenuItems;
-import com.techpro.chat.ticklechat.models.TickleFriend;
 import com.techpro.chat.ticklechat.retrofit.PlayServicesHelper;
 import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.FragmentUtils;
 import com.techpro.chat.ticklechat.utils.TickleSharedPrefrence;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by vishalrandive on 06/04/16.
@@ -97,6 +92,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         initOneSignal();
         Fragment fragment = new HomeScreenFragment();
         replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
+
+//        TODO Vishal to call below method to get 5 messages form preloaded DB
+        Log.e("ssssssssssssss","==> "+new MessageController(getApplicationContext()).getMessages());
 
     }
 
