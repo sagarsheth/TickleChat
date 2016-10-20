@@ -37,6 +37,8 @@ import com.techpro.chat.ticklechat.listeners.GenericListener;
 import com.techpro.chat.ticklechat.models.LoginModel;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
 import com.techpro.chat.ticklechat.models.user.GetUserDetailsBody;
+import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
+import com.techpro.chat.ticklechat.models.user.UserModel;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
@@ -54,7 +56,7 @@ import retrofit2.Response;
 /**
  * Created by vishalrandive on 06/04/16.
  */
-public class Login extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener{
+public class Login extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
     LoginButton fb_button_new;
     CallbackManager callbackManager;
@@ -75,7 +77,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager_signup);
         dialog = ProgressDialog.show(Login.this, "Loading", "Please wait...", true);
 
-        callGetUserDetailsService(520);
+        callLoginService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
         // Add code to print out the key hash
         CirclePageIndicator titlePageIndicator = (CirclePageIndicator) findViewById(R.id.pageIndicator);
         viewPager.setAdapter(new SignupPagerAdapter(getSupportFragmentManager()));
@@ -223,10 +225,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
+
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btnGoogle:
                 signIn();
                 break;
@@ -245,6 +248,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
         }
     }
+
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
@@ -261,8 +265,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
         // Returns the fragment to display for that page
         @Override
-        public Fragment getItem(int position)
-        {
+        public Fragment getItem(int position) {
 
 //            switch (position) {
 //                case 0:
@@ -272,7 +275,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 //                case 2:
 //                    return getFragment(R.layout.fragment_layout_signup, "Page3", 2, 3);
 //                default:
-                    return getFragment(R.layout.fragment_layout_signup, "Page1", position, ITEMS);
+            return getFragment(R.layout.fragment_layout_signup, "Page1", position, ITEMS);
 //            }
 
         }
@@ -314,7 +317,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
         return fragment;
     }
-    private int RC_SIGN_IN =100;
+
+    private int RC_SIGN_IN = 100;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -323,28 +327,28 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
-        }
-        else
+        } else
             callbackManager.onActivityResult(requestCode, resultCode, data);
     }
+
     private void handleSignInResult(GoogleSignInResult result) {
         AppUtils.showLog("handleSignInResult:" + result.isSuccess());
 //        if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
-            GoogleSignInAccount acct = result.getSignInAccount();
-            LoginModel.Data objData = new LoginModel.Data();
+        // Signed in successfully, show authenticated UI.
+        GoogleSignInAccount acct = result.getSignInAccount();
+        LoginModel.Data objData = new LoginModel.Data();
 //            objData.setEmail(acct.getEmail());
 //            objData.setName(acct.getDisplayName());
 //            objData.setId(acct.getId());
 //
 //            objData.setPhoto_uri(acct.getPhotoUrl());
 
-            objData.setEmail("a@a.com");
-            objData.setName("sfagga");
-            objData.setId("12434");
+        objData.setEmail("a@a.com");
+        objData.setName("sfagga");
+        objData.setId("12434");
 
-            objData.setPhoto_uri(null);
-            getInstance().setData(objData);
+        objData.setPhoto_uri(null);
+        getInstance().setData(objData);
 
 //            String personName = acct.getDisplayName();
 //            String personEmail = acct.getEmail();
@@ -353,7 +357,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
 //            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
 
-            startActivity(new Intent(Login.this, HomeActivity.class));
+        startActivity(new Intent(Login.this, HomeActivity.class));
 //        } else {
 //            // Signed out, show unauthenticated UI.
 //            AppUtils.showLog("google logout : true");
@@ -362,16 +366,42 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     }
 
 
-    private  static LoginModel objLoginModel;
-    public static LoginModel getInstance()
-    {
-        if(objLoginModel==null)
+    private static LoginModel objLoginModel;
+
+    public static LoginModel getInstance() {
+        if (objLoginModel == null)
             objLoginModel = new LoginModel();
 
 
         return objLoginModel;
     }
 
+    private void callLoginService(String username, String pass) {
+        //Getting webservice instance which we need to call
+        Call<UserModel> callForUserDetailsFromID = apiService.loginUser(username,pass);
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<UserModel>() {
+
+            @Override
+            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                if (response != null) {
+                    UserDetailsModel getUserDetails = response.body().getBody();
+                    Log.e(TAG, "Success  callLoginService : " + getUserDetails);
+                    Log.e(TAG, "Success  getUserDetails.getId() : " + getUserDetails.getId());
+                    callGetUserDetailsService(Integer.parseInt(getUserDetails.getId()));
+                } else {
+                    Log.e(TAG, "Success but null response");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserModel> call, Throwable t) {
+                // Log error here since request failed
+                Log.e(TAG, t.toString());
+                dialog.dismiss();
+            }
+        });
+    }
 
     /*
     * Get - User details by user id
