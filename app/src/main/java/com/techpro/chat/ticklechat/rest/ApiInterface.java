@@ -1,6 +1,5 @@
 package com.techpro.chat.ticklechat.rest;
 
-
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
 import com.techpro.chat.ticklechat.models.user.UserModel;
 
