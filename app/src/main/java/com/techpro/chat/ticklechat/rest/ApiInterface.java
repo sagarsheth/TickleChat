@@ -1,7 +1,8 @@
 package com.techpro.chat.ticklechat.rest;
 
-import info.androidhive.retrofit.model.GetUserDetails;
-import info.androidhive.retrofit.model.UserModel;
+import com.techpro.chat.ticklechat.models.user.GetUserDetails;
+import com.techpro.chat.ticklechat.models.user.UserModel;
+
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
