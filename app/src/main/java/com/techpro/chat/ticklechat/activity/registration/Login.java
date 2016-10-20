@@ -1,5 +1,6 @@
 package com.techpro.chat.ticklechat.activity.registration;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 
 import com.facebook.CallbackManager;
@@ -33,6 +35,10 @@ import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.home.HomeActivity;
 import com.techpro.chat.ticklechat.listeners.GenericListener;
 import com.techpro.chat.ticklechat.models.LoginModel;
+import com.techpro.chat.ticklechat.models.user.GetUserDetails;
+import com.techpro.chat.ticklechat.models.user.GetUserDetailsBody;
+import com.techpro.chat.ticklechat.rest.ApiClient;
+import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.viewpagerindicator.CirclePageIndicator;
 
@@ -40,6 +46,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by vishalrandive on 06/04/16.
@@ -49,6 +59,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     LoginButton fb_button_new;
     CallbackManager callbackManager;
     GoogleApiClient mGoogleApiClient;
+    private ProgressDialog dialog;
+    private static final String TAG = Login.class.getSimpleName();
+    private ApiInterface apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +71,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
         setContentView(R.layout.activity_login);
 
+        apiService = ApiClient.getClient().create(ApiInterface.class);
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager_signup);
+        dialog = ProgressDialog.show(Login.this, "Loading", "Please wait...", true);
 
+        callGetUserDetailsService(520);
         // Add code to print out the key hash
         CirclePageIndicator titlePageIndicator = (CirclePageIndicator) findViewById(R.id.pageIndicator);
         viewPager.setAdapter(new SignupPagerAdapter(getSupportFragmentManager()));
@@ -354,6 +370,37 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
 
         return objLoginModel;
+    }
+
+
+    /*
+    * Get - User details by user id
+    * @param userId - user id
+    * */
+    private void callGetUserDetailsService(int userId) {
+        //Getting webservice instance which we need to call
+        Call<GetUserDetails> callForUserDetailsFromID = apiService.getUserDetailsFromID(userId);
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<GetUserDetails>() {
+            @Override
+            public void onResponse(Call<GetUserDetails> call, Response<GetUserDetails> response) {
+                if (response != null) {
+                    GetUserDetailsBody getUserDetails = response.body().getBody();
+                    Log.e(TAG, "Success  callGetUserDetailsService : " + getUserDetails);
+                } else {
+                    Log.e(TAG, "Success but null response");
+                }
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<GetUserDetails> call, Throwable t) {
+                // Log error here since request failed
+                Log.e(TAG, t.toString());
+                dialog.dismiss();
+            }
+        });
+
     }
 
 }
