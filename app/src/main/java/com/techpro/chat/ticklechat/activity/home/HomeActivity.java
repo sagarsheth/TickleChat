@@ -1,6 +1,6 @@
 package com.techpro.chat.ticklechat.activity.home;
 
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -23,7 +23,6 @@ import android.widget.Toast;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.onesignal.OneSignal;
-import com.squareup.picasso.Picasso;
 import com.techpro.chat.ticklechat.AppConfigs;
 import com.techpro.chat.ticklechat.Constants;
 import com.techpro.chat.ticklechat.R;
@@ -39,13 +38,25 @@ import com.techpro.chat.ticklechat.fragments.SettingsFragment;
 import com.techpro.chat.ticklechat.fragments.StatusUpdateFragment;
 import com.techpro.chat.ticklechat.fragments.TickleFriendFragment;
 import com.techpro.chat.ticklechat.listeners.FragmentChangeCallback;
+import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.MenuItems;
-import com.techpro.chat.ticklechat.retrofit.PlayServicesHelper;
+import com.techpro.chat.ticklechat.models.message.AllMessages;
+import com.techpro.chat.ticklechat.models.message.Tickles;
+import com.techpro.chat.ticklechat.models.user.GetUserDetails;
+import com.techpro.chat.ticklechat.models.user.GetUserDetailsBody;
+import com.techpro.chat.ticklechat.models.user.User;
+import com.techpro.chat.ticklechat.rest.ApiClient;
+import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.FragmentUtils;
-import com.techpro.chat.ticklechat.utils.TickleSharedPrefrence;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by vishalrandive on 06/04/16.
@@ -56,17 +67,17 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     protected Toolbar mToolbar;
     protected DrawerLayout mDrawerLayout;
     private FrameLayout mContainer;
+    private static final String TAG = Login.class.getSimpleName();
+    private ProgressDialog dialog;
 
-    private PlayServicesHelper objPlayServicesHelper;
-    TickleSharedPrefrence sp;
     public static final String KEY_TITLE = "title";
-
+    private ApiInterface apiService;
+    private ApiInterface apiAUTService;
+    List<String> id = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_home);
-        sp = TickleSharedPrefrence.getInstance(getApplicationContext());
-        sp.addToSharedPreference(Constants.SHAREDPREF_LOGIN_SUCCESS, "true");
         Display display = this.getWindowManager().getDefaultDisplay();
 
         AppConfigs.SCREEN_HEIGHT = display.getHeight();
@@ -90,8 +101,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         setUpHeaderLayout(mNavigation);
         initSlidingDrawer();
         initOneSignal();
-        Fragment fragment = new HomeScreenFragment();
-        replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
+
+        dialog = ProgressDialog.show(HomeActivity.this, "Loading", "Please wait...", true);
+        apiService = ApiClient.getClient().create(ApiInterface.class);
+        callGetUserDetailsService(Integer.parseInt(DataStorage.UserDetails.getId()),true);
+        apiAUTService = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class);
+        callMessage_ALL_Service();
+        callTickles_Service();
 
 //        TODO Vishal to call below method to get 5 messages form preloaded DB
         Log.e("ssssssssssssss","==> "+new MessageController(getApplicationContext()).getMessages());
@@ -215,32 +231,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        //updating the navigation header when the service name or address is changed
-        if (AppConfigs.isNavigationHeaderUpdated()) {
-//            updateHeaderView();
-            AppConfigs.setNavigationHeaderUpdated(false);
-        }
-
-    }
-
-    @Override
     public void setContentView(int layoutResID) {
         getLayoutInflater().inflate(layoutResID, mContainer);
     }
 
-    //
-//    private void initDefaultFragmentView() {
-//        Fragment fragment = new DashboardFragment();
-//        replaceFragment(fragment, getResources().etString(R.string.dashboard), true);
-//    }
-//
     private void setUpHeaderLayout(NavigationView navigationView) {
 //        View headerView = navigationView.inflateHeaderView(R.layout.layout_nav_header_main);
         TextView tvUserName = (TextView) findViewById(R.id.tvUserName);
-        tvUserName.setText(Login.getInstance().getData().getName());
+        tvUserName.setText(DataStorage.UserDetails.getName());
         tvUserName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -272,21 +270,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         CircularImageView objCircularImageView = (CircularImageView) findViewById(R.id.ivProfileImg);
 
-        AppUtils.showLog("url " + Login.getInstance().getData().getPhoto_uri() + ", " + Login.getInstance().getData().getName());
-
-//        Picasso.with(HomeActivity.this)
-//                .load(Login.getInstance().getData().getPhoto_uri())
-//                .placeholder(R.drawable.camera_icon)
-//                .error(R.drawable.camera_icon)
-//                .into(ivProfileImage);
-
-        Picasso.with(HomeActivity.this)
-                .load(Login.getInstance().getData().getPhoto_uri())
-                .placeholder(R.drawable.camera_icon)
-                .error(R.drawable.camera_icon)
-                .into(objCircularImageView);
-
-//        Picasso.with(this).load(Login.getInstance().getData().getPhoto_uri()).into(ivEditIcon);
 
     }
 
@@ -300,116 +283,135 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    //
-//    private void updateHeaderView() {
-//        ((TextView) findViewById(R.id.tv_service_name)).setText(LocalStorage.getInstance(this).getServiceName());
-//        ((TextView) findViewById(R.id.tv_location)).setText(LocalStorage.getInstance(this).getAddress());
-//    }
-//
-//    public static String [] KEY_LAST_RECORDS ={"CallsCount", /*"RecommendationCount",*/ "ReviewsCount", "ViewsCount"};
-//
-//    @Override
-//    public void onBackPressed() {
-//        Fragment currFragment = FragmentUtils.getCurrentVisibleFragment(this);
-//
-//        if (currFragment instanceof DashboardFragment) {
-//            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//            if (drawer.isDrawerOpen(GravityCompat.START)) {
-//                drawer.closeDrawer(GravityCompat.START);
-//            } else {
-//
-//                /** save last records of count to get an idea of new records count **/
-//
-//                String DB_NAME = LocalStorage.getInstance(this).getMeta().getManager_id()+"SAVE_LAST_RECORDS";
-//                SharedPreferences sharedpreferences = getSharedPreferences(DB_NAME, Context.MODE_PRIVATE);
-//
-//                //SharedPreferences sharedPref = getPreferences(getResources().getString(R.string.save_last_records),Context.MODE_PRIVATE);
-//                SharedPreferences.Editor editor = sharedpreferences.edit();
-//
-//
-//                for (int i = 0; i < DashboardFragment.lastRecords.size();i++)
-//                {
-//                    int count =0;
-//                    try{
-//                        if(!TextUtils.isEmpty(DashboardFragment.lastRecords.get(i))){
-//                            count = Integer.parseInt(DashboardFragment.lastRecords.get(i));
-//                        }
-//                    }catch (Exception e){e.printStackTrace();}
-//
-//                    editor.putInt(KEY_LAST_RECORDS[i], count);
-//                }
-//
-//                editor.commit();
-//
-//                this.finish();
-//            }
-//        }else{
-//            if (AppConfigs.isVerified()) {
-//                Fragment fragment = new DashboardFragment();
-//                replaceFragment(fragment, getResources().getString(R.string.dashboard),true);
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public boolean onNavigationItemSelected(MenuItem menuItem) {
-//
-//        if (!CheckNetworkConnection.isConnectionAvailable(getApplicationContext())) {
-//            Toast.makeText(getApplicationContext(),
-//                    getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
-//            return false;
-//        }
-//
-//        mDrawerLayout.closeDrawers();
-//        Fragment fragment = new NotVerifiedFragment();
-//        switch (menuItem.getItemId()) {
-//            case R.id.stats:
-//                if (AppConfigs.isVerified()) {
-//                    fragment = new DashboardFragment();
-//                }
-//                replaceFragment(fragment, getResources().getString(R.string.dashboard), true);
-//
-//                return true;
-//            case R.id.chat:
-//
-//                if (AppConfigs.isVerified()) {
-////                    fragment = new ChatFragment();
-//                    fragment = new ChatFragmentNew();
-//                }
-//                replaceFragment(fragment, menuItem.getTitle(), true);
-//
-//                return true;
-//            case R.id.invoices:
-//                if (AppConfigs.isVerified()) {
-//                    fragment = new InvoiceFragment();
-//                }
-//                replaceFragment(fragment, menuItem.getTitle(), true);
-//                return true;
-//            case R.id.reviews:
-//                if (AppConfigs.isVerified()) {
-//                    fragment = new ReviewsFragmentNew();
-//                }
-//                replaceFragment(fragment, menuItem.getTitle(), true);
-//                return true;
-//            case R.id.contact_us:
-//                fragment = new ContactUsFragment();
-//                replaceFragment(fragment, menuItem.getTitle(), true);
-//                return true;
-//            case R.id.logout:
-//                AlertDialogHelper.showActionConfirmationAlertDialog(this,
-//                        getString(R.string.logout),
-//                        getString(R.string.logout_warning),
-//                        logoutConfirmClickListener);
-//                return true;
-//            default:
-//                break;
-//        }
-//
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        drawer.closeDrawer(GravityCompat.START);
-//        return true;
-//    }
-//
+
+    /*
+        * Get - User details by user id
+        * @param userId - user id
+        * */
+    private void callGetUserDetailsService(int userId, final boolean iscurrentuser) {
+        //Getting webservice instance which we need to call
+        Call<GetUserDetails> callForUserDetailsFromID = apiService.getUserDetailsFromID(userId);
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<GetUserDetails>() {
+            @Override
+            public void onResponse(Call<GetUserDetails> call, Response<GetUserDetails> response) {
+                if (response != null) {
+                    GetUserDetailsBody getUserDetails = response.body().getBody();
+                    if (iscurrentuser) {
+                        DataStorage.userDetailsBody = getUserDetails;
+                    } else {
+                        User usr = getUserDetails.getUser();
+                        DataStorage.myuserlist.add(usr);
+
+                        List<Tickles.MessageList.ChatMessagesTicklesList> messages = new ArrayList<Tickles.MessageList.ChatMessagesTicklesList>();
+                        for (int i = 0; i < DataStorage.tickles.getTickles().size(); i++) {
+                            Tickles.MessageList.ChatMessagesTicklesList msg = DataStorage.tickles.getTickles().get(i);
+                            if(usr.getId().equals(msg.getUserid())) {
+                                messages.add(msg);
+                            }
+                        }
+                        DataStorage.mymessagelist.put(usr,messages);
+                        if (id.size() == DataStorage.myuserlist.size()) {
+                            dialog.dismiss();
+                            Fragment fragment = new HomeScreenFragment();
+                            replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
+
+                        }
+                    }
+                } else {
+                    Log.e(TAG, "Success but null response");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetUserDetails> call, Throwable t) {
+                // Log error here since request failed
+                Log.e(TAG, t.toString());
+//                dialog.dismiss();
+            }
+        });
+
+    }
+
+    /*
+* Get - User details by user id
+* @param userId - user id
+* */
+    private void callMessage_ALL_Service() {
+        //Getting webservice instance which we need to call
+        Call<AllMessages> callForUserDetailsFromID = apiAUTService.getAllMessageList();
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<AllMessages>() {
+            @Override
+            public void onResponse(Call<AllMessages> call, Response<AllMessages> response) {
+                if (response != null) {
+                    DataStorage.allMessages = response.body().getBody();
+                    Log.e(TAG, "Success  callMessage_ALL_Service response.getMessages: " + response.body().getBody().getMessages().get(0).getMessage());
+                    Log.e(TAG, "Success  callMessage_ALL_Service response.getTickles: " + response.body().getBody().getTickles().get(0).getMessage());
+//                    GetUserDetailsBody getUserDetails = response.body().getBody();
+//                    DataStorage.userDetailsBody = getUserDetails;
+//                    Log.e(TAG, "Success  callUserListService : " + getUserDetails);
+                } else {
+                    Log.e(TAG, "Success callMessage_ALL_Service but null response");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AllMessages> call, Throwable t) {
+                // Log error here since request failed
+                Log.e(TAG, t.toString());
+//                dialog.dismiss();
+            }
+        });
+
+    }
+
+    /*
+* Get - User details by user id
+* @param userId - user id
+* */
+    private void callTickles_Service() {
+        //Getting webservice instance which we need to call
+        Call<Tickles> callForUserDetailsFromID = apiAUTService.getTickles();
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<Tickles>() {
+            @Override
+            public void onResponse(Call<Tickles> call, Response<Tickles> response) {
+                if (response != null) {
+                    DataStorage.tickles = response.body().getBody();
+                    Log.e(TAG, "Success  callTickles_Service response.getTickles: " + response.body().getBody().getTickles().get(0).getMessage());
+//                    GetUserDetailsBody getUserDetails = response.body().getBody();
+//                    DataStorage.userDetailsBody = getUserDetails;
+//                    Log.e(TAG, "Success  callUserListService : " + getUserDetails);
+                    DataStorage.mymessagelist = new HashMap<User, List<Tickles.MessageList.ChatMessagesTicklesList>>();
+                    DataStorage.myuserlist = new ArrayList<User>();
+                    id = new ArrayList<String>();
+                    id.clear();
+                    for (int i = 0; i < DataStorage.tickles.getTickles().size(); i++) {
+                        Tickles.MessageList.ChatMessagesTicklesList msg = DataStorage.tickles.getTickles().get(i);
+                        if(!id.contains(msg.getUserid())) {
+                            if(msg.getUserid() != null ) {
+                                Log.e(TAG, "Success  msg.getUserid() not null: " + msg.getUserid());
+                                id.add(msg.getUserid());
+                                callGetUserDetailsService(Integer.parseInt(msg.getUserid()), false);
+                            }
+                        }
+
+                    }
+                } else {
+                    Log.e(TAG, "Success callTickles_Service but null response");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Tickles> call, Throwable t) {
+                // Log error here since request failed
+                Log.e(TAG, t.toString());
+//                dialog.dismiss();
+            }
+        });
+
+    }
     private void replaceFragment(Fragment fragment, CharSequence title, boolean addToBackstack) {
         Bundle bundle = new Bundle();
         bundle.putString(KEY_TITLE, title.toString());
@@ -418,26 +420,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         FragmentUtils.replaceFragment(this, fragment, R.id.container, addToBackstack);
 
         setTitle(title.toString());
-    }
-
-    //
-//    DialogInterface.OnClickListener logoutConfirmClickListener = new DialogInterface.OnClickListener() {
-//        @Override
-//        public void onClick(DialogInterface dialog, int which) {
-//            if (LocalStorage.getInstance(HomeSliderActivity.this).logout()) {
-//                Toast.makeText(getApplicationContext(), getString(R.string.logout_success), Toast.LENGTH_LONG).show();
-//                HomeSliderActivity.this.finish();
-//                Intent intent = new Intent(HomeSliderActivity.this, SplashScreenActivity.class);
-//                startActivity(intent);
-//            } else {
-//                Toast.makeText(getApplicationContext(), getString(R.string.logout_failed), Toast.LENGTH_LONG).show();
-//            }
-//        }
-//    };
-//
-    public void startNewActivity(Context context, Class classObj) {
-        Intent intent = new Intent(context, classObj);
-        startActivity(intent);
     }
 
     @Override
@@ -476,87 +458,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
                 OneSignal.setEmail("V@V.com");
 
-//                App Version - Number
-//                Lifestage - ID
-//                Locality - ID
-//                Gender - String
-//                BabyGender - String
-//                Area - String
-//                UId - ID
-//                Name - String
 
             }
         });
     }
-
-
 }
-
-//
-//        //starting the gcm service to fetch the token
-//        if (ValidationUtils.validateObject(LocalStorage.getInstance(this).getGcmToken())) {
-//            startService(new Intent(this, GCMIntentService.class));
-//        }
-//
-//        // Logging in Quick block account for initiating Chat
-//        String userName = LocalStorage.getInstance(this).getMeta().getManager_email();
-//        String password = LocalStorage.getInstance(this).getMeta().getManager_id() + "quick1234";
-//
-
-
-/**
- * GCM subscription for push notifications
- */
-//        objPlayServicesHelper = new PlayServicesHelper(HomeSliderActivity.this);
-//        objPlayServicesHelper.registerGcm(new GenericListener<String>() {
-//            @Override
-//            public void onResponse(int callerID, String messages) {
-//                if (!TextUtils.isEmpty(messages)) {
-//                    setGcmRegid(messages);
-//                } else {
-//                    if (objPlayServicesHelper != null && !TextUtils.isEmpty(objPlayServicesHelper.getRegistrationId())) {
-//                        setGcmRegid(null);
-//                    } else {
-//                        if (objPlayServicesHelper == null) {
-//                            objPlayServicesHelper = new PlayServicesHelper(HomeSliderActivity.this);
-//                        }
-//
-//                        objPlayServicesHelper.registerGcm(new GenericListener<String>() {
-//                            @Override
-//                            public void onResponse(int callerID, String messages) {
-//                                setGcmRegid(messages);
-//                            }
-//                        });
-//
-//
-//                    }
-//                }
-//            }
-//        });
-
-
-//
-//    private void setGcmRegid(String regid){
-//
-//        String gcmRegId =(regid==null)? objPlayServicesHelper.getRegistrationId(): regid;
-//
-//        Call<ResponseBody> apiCall = TechProServicesController.getInstance().getBabychakraServices()
-//                .registerGCM(LocalStorage.getInstance(HomeActivity.this).getToken(),
-//                        AppUtils.getDeviceID(getApplicationContext()),
-//                        gcmRegId);
-//
-//        apiCall.enqueue(new Callback<ResponseBody>() {
-//            @Override
-//            public void onResponse(Response<ResponseBody> response, Retrofit retrofit) {
-//                AppUtils.showLog("GCM REGISTRATION SUCCESS "+response.body().toString());
-//            }
-//
-//            @Override
-//            public void onFailure(Throwable t) {
-//                AppUtils.showLog("GCM REGISTRATION ERROR " +t.toString());
-//            }
-//        });
-//
-//
-//    }
-//

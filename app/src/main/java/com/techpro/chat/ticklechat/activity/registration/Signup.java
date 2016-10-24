@@ -13,5 +13,7 @@ public class Signup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_singup);
+
+//        callSignUpService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
     }
 }

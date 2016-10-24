@@ -1,5 +1,7 @@
 package com.techpro.chat.ticklechat.rest;
 
+import com.techpro.chat.ticklechat.models.message.AllMessages;
+import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
 import com.techpro.chat.ticklechat.models.user.UserModel;
 
@@ -18,6 +20,20 @@ public interface ApiInterface {
     //Get response in GSON object
     @GET("users/{userid}")
     Call<GetUserDetails> getUserDetailsFromID(@Path("userid") int userId);
+    //Get response in GSON object
+
+    @GET("messages/all")
+    Call<AllMessages> getAllMessageList();
+
+    @GET("tickles")
+    Call<Tickles> getTickles();
+
+    @GET("tickles/{userid}/tickles")
+    Call<GetUserDetails> getUserListFromID2(@Path("userid") int userid);
+
+    @FormUrlEncoded
+    @POST("users/invite")
+    Call<GetUserDetails> getUserListFromID5(@Field("userName") String userName, @Field("userMail") String userMail);
 
     @FormUrlEncoded
     @POST("users/login")

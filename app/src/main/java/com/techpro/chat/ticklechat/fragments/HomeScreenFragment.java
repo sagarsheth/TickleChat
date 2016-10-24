@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.ChatScreen;
 import com.techpro.chat.ticklechat.adapters.TickleFriendAdapter;
+import com.techpro.chat.ticklechat.adapters.UserListAdapter;
+import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.TickleFriend;
 
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ import java.util.List;
 
 public class HomeScreenFragment extends Fragment {
     private RecyclerView mRecyclerView;
-    private TickleFriendAdapter mAdapter;
+    private UserListAdapter mAdapter;
     private List<TickleFriend> movieList = new ArrayList<>();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -29,7 +31,7 @@ public class HomeScreenFragment extends Fragment {
                 container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
 
-        mAdapter = new TickleFriendAdapter(movieList,getContext(),false,true);
+        mAdapter = new UserListAdapter(DataStorage.myuserlist,getContext(),false,true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
