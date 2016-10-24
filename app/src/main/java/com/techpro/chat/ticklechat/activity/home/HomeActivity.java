@@ -3,6 +3,7 @@ package com.techpro.chat.ticklechat.activity.home;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -50,7 +51,12 @@ import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.FragmentUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -307,9 +313,24 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         for (int i = 0; i < DataStorage.tickles.getTickles().size(); i++) {
                             Tickles.MessageList.ChatMessagesTicklesList msg = DataStorage.tickles.getTickles().get(i);
                             if(usr.getId().equals(msg.getUserid())) {
+                                Calendar cl = Calendar.getInstance();
+                                cl.setTimeInMillis(Long.parseLong(msg.getRequested_at()));  //here your time in miliseconds
+//                                String date = "" + cl.get(Calendar.DAY_OF_MONTH) + ":" + cl.get(Calendar.MONTH) + ":" + cl.get(Calendar.YEAR);
+//                                String time = "" + cl.get(Calendar.HOUR_OF_DAY) + ":" + cl.get(Calendar.MINUTE) + ":" + cl.get(Calendar.SECOND);
+                                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
+                                String datenew = format.format(cl.getTime());
+                                Log.e(TAG,"datenew ======> "+datenew);
+                                msg.setRequested_at(datenew);
                                 messages.add(msg);
                             }
                         }
+                        Collections.sort(messages, new Comparator<Tickles.MessageList.ChatMessagesTicklesList>() {
+                            @Override
+                            public int compare(Tickles.MessageList.ChatMessagesTicklesList s1, Tickles.MessageList.ChatMessagesTicklesList s2) {
+                                return s1.getRequested_at().compareToIgnoreCase(s1.getRequested_at());
+                            }
+                        });
+                        Log.e(TAG,"messages ==> "+messages);
                         DataStorage.mymessagelist.put(usr,messages);
                         if (id.size() == DataStorage.myuserlist.size()) {
                             dialog.dismiss();
@@ -390,7 +411,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     for (int i = 0; i < DataStorage.tickles.getTickles().size(); i++) {
                         Tickles.MessageList.ChatMessagesTicklesList msg = DataStorage.tickles.getTickles().get(i);
                         if(!id.contains(msg.getUserid())) {
-                            if(msg.getUserid() != null ) {
+                            if(msg.getUserid() != null && msg.getRequested_at() != null) {
                                 Log.e(TAG, "Success  msg.getUserid() not null: " + msg.getUserid());
                                 id.add(msg.getUserid());
                                 callGetUserDetailsService(Integer.parseInt(msg.getUserid()), false);

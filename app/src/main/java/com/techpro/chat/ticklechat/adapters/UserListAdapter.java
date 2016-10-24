@@ -101,10 +101,11 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
                     Log.d("RecyclerView", "getPosition：" + getPosition());
                     Log.d("RecyclerView", "getAdapterPosition：" + getAdapterPosition());
                     Log.d("RecyclerView", "getLayoutPosition：" + getLayoutPosition());
-//                    if (mContext != null){
-//                        Intent intent = new Intent(mContext, ChatScreen.class);
-//                        mContext.startActivity(intent);
-//                    }
+                    if (mContext != null){
+                        Intent intent = new Intent(mContext, ChatScreen.class);
+                        intent.putExtra("userid",getPosition());
+                        mContext.startActivity(intent);
+                    }
                 }
             });
         }

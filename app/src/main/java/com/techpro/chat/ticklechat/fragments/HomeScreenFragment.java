@@ -1,6 +1,5 @@
 package com.techpro.chat.ticklechat.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -12,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.techpro.chat.ticklechat.R;
-import com.techpro.chat.ticklechat.activity.ChatScreen;
-import com.techpro.chat.ticklechat.adapters.TickleFriendAdapter;
 import com.techpro.chat.ticklechat.adapters.UserListAdapter;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.TickleFriend;

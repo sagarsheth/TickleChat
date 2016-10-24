@@ -16,23 +16,24 @@ import android.widget.TextView;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.ChatScreen;
 import com.techpro.chat.ticklechat.models.TickleFriend;
+import com.techpro.chat.ticklechat.models.message.Tickles;
 
 import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHolder>{
 
-    private List<TickleFriend> moviesList;
+    private List<Tickles.MessageList.ChatMessagesTicklesList> moviesList;
     private boolean showCheckbox = false;
     private boolean showBelowDesc = false;
     private Context mContext = null;
 
-    public MessageAdapter(List<TickleFriend> moviesList, boolean showCheckbox, boolean showBelowDesc) {
+    public MessageAdapter(List<Tickles.MessageList.ChatMessagesTicklesList> moviesList, boolean showCheckbox, boolean showBelowDesc) {
         this.moviesList = moviesList;
         this.showCheckbox = showCheckbox;
         this.showBelowDesc = showBelowDesc;
     }
 
-    public MessageAdapter(List<TickleFriend> moviesList, Context context, boolean showCheckbox, boolean showBelowDesc) {
+    public MessageAdapter(List<Tickles.MessageList.ChatMessagesTicklesList> moviesList, Context context, boolean showCheckbox, boolean showBelowDesc) {
         this.moviesList = moviesList;
         this.showCheckbox = showCheckbox;
         this.showBelowDesc = showBelowDesc;
@@ -41,24 +42,23 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.mesage_row, parent, false);
+                .inflate(R.layout.tickle_friend_row, parent, false);
 
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        TickleFriend movie = moviesList.get(position);
-        holder.friendName.setText(movie.getName());
-        if (movie.getImage() != null)
-            holder.friendImage.setImageBitmap(movie.getImage());
+        Tickles.MessageList.ChatMessagesTicklesList movie = moviesList.get(position);
+        holder.friendName.setText(movie.getMessage());
+        holder.friendImage.setVisibility(View.GONE);
         if (showCheckbox) {
             holder.addfriends.setVisibility(View.VISIBLE);
         } else {
             holder.addfriends.setVisibility(View.INVISIBLE);
         }
-        if (movie.getNumber() != null)
-            holder.friendNumber.setText(movie.getNumber());
+        if (movie.getName() != null)
+            holder.friendNumber.setText(movie.getName());
         if (showBelowDesc) {
             holder.friendNumber.setVisibility(View.VISIBLE);
         } else {
