@@ -2,6 +2,7 @@ package com.techpro.chat.ticklechat.activity.registration;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,6 +14,7 @@ import android.view.View;
 
 import com.facebook.CallbackManager;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.Gson;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.home.HomeActivity;
 import com.techpro.chat.ticklechat.listeners.GenericListener;
@@ -21,6 +23,7 @@ import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
 import com.techpro.chat.ticklechat.models.user.UserModel;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
+import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import java.io.UnsupportedEncodingException;
@@ -151,6 +154,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     DataStorage.UserDetails = getUserDetails;
                     Log.e(TAG, "Success  callLoginService : " + getUserDetails);
                     Log.e(TAG, "Success  getUserDetails.getId() : " + getUserDetails.getId());
+                    Gson gson = new Gson();
+                    String json = gson.toJson(getUserDetails);
+                    SharedPreferenceUtils.setValue(getApplicationContext(),SharedPreferenceUtils.LoginuserDetailsPreference,json);
+                    Log.e("onResponse","getUserDetails ==> "+json);
                     startActivity(new Intent(Login.this, HomeActivity.class));
                     finish();
                 } else {

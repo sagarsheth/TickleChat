@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.onesignal.OneSignal;
 import com.techpro.chat.ticklechat.AppConfigs;
@@ -46,11 +47,18 @@ import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
 import com.techpro.chat.ticklechat.models.user.GetUserDetailsBody;
 import com.techpro.chat.ticklechat.models.user.User;
+import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.FragmentUtils;
+import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -108,12 +116,23 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         initSlidingDrawer();
         initOneSignal();
 
-        dialog = ProgressDialog.show(HomeActivity.this, "Loading", "Please wait...", true);
-        apiService = ApiClient.getClient().create(ApiInterface.class);
-        callGetUserDetailsService(Integer.parseInt(DataStorage.UserDetails.getId()),true);
-        apiAUTService = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class);
-        callMessage_ALL_Service();
-        callTickles_Service();
+        DataStorage.myuserlist = (List<User>) SharedPreferenceUtils.getColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist);
+        DataStorage.mymessagelist = (HashMap<User, List<Tickles.MessageList.ChatMessagesTicklesList>>)
+                SharedPreferenceUtils.getColleactionObject(getApplicationContext(),SharedPreferenceUtils.mymessagelist);
+
+        if (DataStorage.mymessagelist == null || DataStorage.myuserlist == null) {
+            Log.e("ssssssssssssss","mymessagelist & myuserlist ==> null");
+            dialog = ProgressDialog.show(HomeActivity.this, "Loading", "Please wait...", true);
+            apiService = ApiClient.getClient().create(ApiInterface.class);
+            callGetUserDetailsService(Integer.parseInt(DataStorage.UserDetails.getId()), true);
+            apiAUTService = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class);
+            callMessage_ALL_Service();
+            callTickles_Service();
+        } else {
+            Log.e("ssssssssssssss","mymessagelist & myuserlist ==> not null");
+            Fragment fragment = new HomeScreenFragment();
+            replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
+        }
 
 //        TODO Vishal to call below method to get 5 messages form preloaded DB
         Log.e("ssssssssssssss","==> "+new MessageController(getApplicationContext()).getMessages());
@@ -315,8 +334,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             if(usr.getId().equals(msg.getUserid())) {
                                 Calendar cl = Calendar.getInstance();
                                 cl.setTimeInMillis(Long.parseLong(msg.getRequested_at()));  //here your time in miliseconds
-//                                String date = "" + cl.get(Calendar.DAY_OF_MONTH) + ":" + cl.get(Calendar.MONTH) + ":" + cl.get(Calendar.YEAR);
-//                                String time = "" + cl.get(Calendar.HOUR_OF_DAY) + ":" + cl.get(Calendar.MINUTE) + ":" + cl.get(Calendar.SECOND);
                                 SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
                                 String datenew = format.format(cl.getTime());
                                 Log.e(TAG,"datenew ======> "+datenew);
@@ -334,8 +351,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         DataStorage.mymessagelist.put(usr,messages);
                         if (id.size() == DataStorage.myuserlist.size()) {
                             dialog.dismiss();
+
+                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,DataStorage.myuserlist);
+                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mymessagelist,DataStorage.mymessagelist);
+
                             Fragment fragment = new HomeScreenFragment();
                             replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
+
 
                         }
                     }

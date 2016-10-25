@@ -1,10 +1,12 @@
 package com.techpro.chat.ticklechat.models.user;
 
+import java.io.Serializable;
+
 /**
  * Created by aryans05 on 04/08/16.
  */
 
-public class User {
+public class User implements Serializable {
     private String birthday;
 
     private String phone;

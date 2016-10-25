@@ -1,6 +1,7 @@
 package com.techpro.chat.ticklechat.models.message;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -44,7 +45,7 @@ public class Tickles {
             this.tickles = tickles;
         }
 
-        public class ChatMessagesTicklesList {
+        public class ChatMessagesTicklesList implements Serializable {
 
             private String id;
             private String message;
