@@ -19,7 +19,6 @@ public class DataStorage {
     public static GetUserDetailsBody userDetailsBody = null;
     public static Tickles.MessageList tickles = null;
     public static AllMessages.MessageList allMessages = null;
-    public static HashMap<User, List<Tickles.MessageList.ChatMessagesTicklesList>> mymessagelist = null;
     public static List<User> myuserlist = null;
 
 }

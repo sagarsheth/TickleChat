@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Created by Sagar on 10/23/2016.
  */
 
-public class Tickles {
+public class Tickles implements Serializable{
     private String message;
     private String status;
     private MessageList body;
@@ -33,7 +33,7 @@ public class Tickles {
     }
 
 
-    public class MessageList {
+    public class MessageList implements Serializable{
 
         private ArrayList<ChatMessagesTicklesList> tickles;
 

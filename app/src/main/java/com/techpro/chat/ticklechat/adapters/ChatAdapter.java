@@ -15,27 +15,24 @@ import android.widget.TextView;
 
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.ChatScreen;
-import com.techpro.chat.ticklechat.models.Messages;
-import com.techpro.chat.ticklechat.models.TickleFriend;
 import com.techpro.chat.ticklechat.models.message.Tickles;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHolder>{
+public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder>{
 
-    private ArrayList<Messages> moviesList;
+    private List<Tickles.MessageList.ChatMessagesTicklesList> moviesList;
     private boolean showCheckbox = false;
     private boolean showBelowDesc = false;
     private Context mContext = null;
 
-    public MessageAdapter( ArrayList<Messages> moviesList, boolean showCheckbox, boolean showBelowDesc) {
+    public ChatAdapter(List<Tickles.MessageList.ChatMessagesTicklesList> moviesList, boolean showCheckbox, boolean showBelowDesc) {
         this.moviesList = moviesList;
         this.showCheckbox = showCheckbox;
         this.showBelowDesc = showBelowDesc;
     }
 
-    public MessageAdapter( ArrayList<Messages> moviesList, Context context, boolean showCheckbox, boolean showBelowDesc) {
+    public ChatAdapter(List<Tickles.MessageList.ChatMessagesTicklesList> moviesList, Context context, boolean showCheckbox, boolean showBelowDesc) {
         this.moviesList = moviesList;
         this.showCheckbox = showCheckbox;
         this.showBelowDesc = showBelowDesc;
@@ -51,7 +48,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Messages movie = moviesList.get(position);
+        Tickles.MessageList.ChatMessagesTicklesList movie = moviesList.get(position);
         holder.friendName.setText(movie.getMessage());
         holder.friendImage.setVisibility(View.GONE);
         if (showCheckbox) {
@@ -59,8 +56,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
         } else {
             holder.addfriends.setVisibility(View.INVISIBLE);
         }
-        if (movie.getMessage() != null)
-            holder.friendNumber.setText(movie.getMessage());
+        if (movie.getName() != null)
+            holder.friendNumber.setText(movie.getName());
         if (showBelowDesc) {
             holder.friendNumber.setVisibility(View.VISIBLE);
         } else {

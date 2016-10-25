@@ -10,11 +10,16 @@ import android.util.Log;
 import android.view.View;
 
 import com.techpro.chat.ticklechat.R;
+import com.techpro.chat.ticklechat.adapters.ChatAdapter;
 import com.techpro.chat.ticklechat.adapters.MessageAdapter;
 import com.techpro.chat.ticklechat.adapters.TickleFriendAdapter;
+import com.techpro.chat.ticklechat.controller.MessageController;
 import com.techpro.chat.ticklechat.models.DataStorage;
+import com.techpro.chat.ticklechat.models.Messages;
 import com.techpro.chat.ticklechat.models.TickleFriend;
 import com.techpro.chat.ticklechat.models.message.Tickles;
+import com.techpro.chat.ticklechat.models.user.User;
+import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +27,8 @@ import java.util.List;
 public class ChatScreen extends Activity {
     protected Toolbar mToolbar;
     protected RecyclerView message_list,text_list;
-    private MessageAdapter mAdapter;
+    private ChatAdapter mAdapter;
+    private MessageAdapter mAdapter1;
     private List<Tickles.MessageList.ChatMessagesTicklesList> movieList = new ArrayList<>();
     private List<TickleFriend> movieList1 = new ArrayList<>();
 
@@ -35,21 +41,27 @@ public class ChatScreen extends Activity {
         message_list = (RecyclerView) findViewById(R.id.message_list);
         text_list = (RecyclerView) findViewById(R.id.text_list);
         int userid = getIntent().getIntExtra("userid",-1);
+        Log.e("RecyclerView", "userid：" +userid);
 //        prepareMovieData();
         if(userid != -1) {
-            movieList = DataStorage.mymessagelist.get(DataStorage.myuserlist.get(userid));
+            Log.e("RecyclerView", "DataStorage.myuserlist.get(userid)：" +DataStorage.myuserlist.get(userid).toString());
+            movieList = (List<Tickles.MessageList.ChatMessagesTicklesList>) SharedPreferenceUtils.getColleactionObject(getApplicationContext(),DataStorage.myuserlist.get(userid).getId());
+            Log.e("RecyclerView", "DataStorage.myuserlist.get(userid)：" +DataStorage.myuserlist.get(userid).toString());
         }
 
-        mAdapter = new MessageAdapter(movieList,getApplicationContext(),false,true);
+        mAdapter = new ChatAdapter(movieList,getApplicationContext(),false,true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         message_list.setLayoutManager(mLayoutManager);
         message_list.setItemAnimator(new DefaultItemAnimator());
         message_list.setAdapter(mAdapter);
 
-//        RecyclerView.LayoutManager mLayoutManager1 = new LinearLayoutManager(getApplicationContext());
-//        text_list.setLayoutManager(mLayoutManager1);
-//        text_list.setItemAnimator(new DefaultItemAnimator());
-//        text_list.setAdapter(mAdapter);
+        ArrayList<Messages> ctrl = new MessageController(getApplicationContext()).getMessages();
+        Log.e("ssssssssssssss","ctrl ==> "+ctrl);
+        mAdapter1 = new MessageAdapter(ctrl,getApplicationContext(),false,true);
+        RecyclerView.LayoutManager mLayoutManager1 = new LinearLayoutManager(getApplicationContext());
+        text_list.setLayoutManager(mLayoutManager1);
+        text_list.setItemAnimator(new DefaultItemAnimator());
+        text_list.setAdapter(mAdapter1);
 
 
     }

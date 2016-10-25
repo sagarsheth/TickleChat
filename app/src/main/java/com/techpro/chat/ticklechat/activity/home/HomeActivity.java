@@ -3,7 +3,6 @@ package com.techpro.chat.ticklechat.activity.home;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -22,7 +21,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.onesignal.OneSignal;
 import com.techpro.chat.ticklechat.AppConfigs;
@@ -47,24 +45,17 @@ import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
 import com.techpro.chat.ticklechat.models.user.GetUserDetailsBody;
 import com.techpro.chat.ticklechat.models.user.User;
-import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.FragmentUtils;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -117,10 +108,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         initOneSignal();
 
         DataStorage.myuserlist = (List<User>) SharedPreferenceUtils.getColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist);
-        DataStorage.mymessagelist = (HashMap<User, List<Tickles.MessageList.ChatMessagesTicklesList>>)
-                SharedPreferenceUtils.getColleactionObject(getApplicationContext(),SharedPreferenceUtils.mymessagelist);
 
-        if (DataStorage.mymessagelist == null || DataStorage.myuserlist == null) {
+        if (DataStorage.myuserlist == null) {
             Log.e("ssssssssssssss","mymessagelist & myuserlist ==> null");
             dialog = ProgressDialog.show(HomeActivity.this, "Loading", "Please wait...", true);
             apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -348,12 +337,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             }
                         });
                         Log.e(TAG,"messages ==> "+messages);
-                        DataStorage.mymessagelist.put(usr,messages);
+
+                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(),usr.getId(),messages);
                         if (id.size() == DataStorage.myuserlist.size()) {
                             dialog.dismiss();
 
                             SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,DataStorage.myuserlist);
-                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mymessagelist,DataStorage.mymessagelist);
 
                             Fragment fragment = new HomeScreenFragment();
                             replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
@@ -426,7 +415,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 //                    GetUserDetailsBody getUserDetails = response.body().getBody();
 //                    DataStorage.userDetailsBody = getUserDetails;
 //                    Log.e(TAG, "Success  callUserListService : " + getUserDetails);
-                    DataStorage.mymessagelist = new HashMap<User, List<Tickles.MessageList.ChatMessagesTicklesList>>();
+//                    DataStorage.mymessagelist = new HashMap<User, List<Tickles.MessageList.ChatMessagesTicklesList>>();
                     DataStorage.myuserlist = new ArrayList<User>();
                     id = new ArrayList<String>();
                     id.clear();
