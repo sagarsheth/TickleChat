@@ -18,24 +18,26 @@ import android.widget.TextView;
 
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.ChatScreen;
+import com.techpro.chat.ticklechat.models.Group;
 import com.techpro.chat.ticklechat.models.user.User;
+import com.techpro.chat.ticklechat.models.user.UserGroupBotModel;
 
 import java.util.List;
 
 public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyViewHolder>{
 
-    private List<User> UserList;
+    private List<UserGroupBotModel> UserList;
     private boolean showCheckbox = false;
     private boolean showBelowDesc = false;
     private Context mContext = null;
 
-    public UserListAdapter(List<User> UserList, boolean showCheckbox, boolean showBelowDesc) {
+    public UserListAdapter(List<UserGroupBotModel> UserList, boolean showCheckbox, boolean showBelowDesc) {
         this.UserList = UserList;
         this.showCheckbox = showCheckbox;
         this.showBelowDesc = showBelowDesc;
     }
 
-    public UserListAdapter(List<User> UserList, Context context, boolean showCheckbox, boolean showBelowDesc) {
+    public UserListAdapter(List<UserGroupBotModel> UserList, Context context, boolean showCheckbox, boolean showBelowDesc) {
         this.UserList = UserList;
         this.showCheckbox = showCheckbox;
         this.showBelowDesc = showBelowDesc;
@@ -51,29 +53,59 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        User user = UserList.get(position);
-        holder.friendName.setText(user.getName());
-        if (user.getProfile_image() != null) {
-            byte[] decodedString = Base64.decode(user.getProfile_image().getBytes(), Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            holder.friendImage.setImageBitmap(decodedByte);
-        }
-        if (showCheckbox) {
-            holder.addfriends.setVisibility(View.VISIBLE);
+
+        if (UserList.get(position) instanceof User){
+            User user = (User) UserList.get(position);
+            holder.friendName.setText(user.getName());
+            Log.e("(position % 2) => "+position,"(User.getName()=>"+user.getName());
+            if (user.getProfile_image() != null) {
+                byte[] decodedString = Base64.decode(user.getProfile_image().getBytes(), Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                holder.friendImage.setImageBitmap(decodedByte);
+            }
+            if (showCheckbox) {
+                holder.addfriends.setVisibility(View.VISIBLE);
+            } else {
+                holder.addfriends.setVisibility(View.INVISIBLE);
+            }
+            if (user.getStatus() != null)
+                holder.friendNumber.setText(user.getStatus());
+            if (showBelowDesc) {
+                holder.friendNumber.setVisibility(View.VISIBLE);
+            } else {
+                holder.friendNumber.setVisibility(View.INVISIBLE);
+            }
+            Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
+            if ((position % 2) == 0) {
+                holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
+            }
         } else {
-            holder.addfriends.setVisibility(View.INVISIBLE);
+            Group user = (Group) UserList.get(position);
+            holder.friendName.setText(user.getName());
+            Log.e("(position % 2) => "+position,"(Group.getName()=>"+user.getName());
+            if (user.getGroup_image() != null) {
+                byte[] decodedString = Base64.decode(user.getGroup_image().getBytes(), Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                holder.friendImage.setImageBitmap(decodedByte);
+            }
+            if (showCheckbox) {
+                holder.addfriends.setVisibility(View.VISIBLE);
+            } else {
+                holder.addfriends.setVisibility(View.INVISIBLE);
+            }
+            if (user.getName() != null)
+                holder.friendNumber.setText(user.getName());
+            if (showBelowDesc) {
+                holder.friendNumber.setVisibility(View.VISIBLE);
+            } else {
+                holder.friendNumber.setVisibility(View.INVISIBLE);
+            }
+            Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
+            if ((position % 2) == 0) {
+                holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
+            }
         }
-        if (user.getStatus() != null)
-            holder.friendNumber.setText(user.getStatus());
-        if (showBelowDesc) {
-            holder.friendNumber.setVisibility(View.VISIBLE);
-        } else {
-            holder.friendNumber.setVisibility(View.INVISIBLE);
-        }
-        Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
-        if ((position % 2) == 0) {
-            holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
-        }
+
     }
 
     @Override

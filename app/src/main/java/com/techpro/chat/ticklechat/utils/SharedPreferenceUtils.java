@@ -20,6 +20,7 @@ import java.util.List;
 public class SharedPreferenceUtils {
     public static String LoginuserDetailsPreference = "LoginuserDetailsPreference";
     public static String mymessagelist = "mymessagelist";
+    public static String mygrouplist = "mygrouplist";
     public static String myuserlist = "myuserlist";
     public static void setValue(Context context, String name, String value) {
         SharedPreferences mPrefs = context.getSharedPreferences("tickle_pref", 0);

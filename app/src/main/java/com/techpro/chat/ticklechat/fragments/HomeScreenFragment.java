@@ -14,6 +14,8 @@ import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.adapters.UserListAdapter;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.TickleFriend;
+import com.techpro.chat.ticklechat.models.user.User;
+import com.techpro.chat.ticklechat.models.user.UserGroupBotModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +29,10 @@ public class HomeScreenFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_tickle_friend,
                 container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
-
-        mAdapter = new UserListAdapter(DataStorage.myuserlist,getContext(),false,true);
+        List<UserGroupBotModel> list = new ArrayList<>();
+        list.addAll(DataStorage.myuserlist);
+        list.addAll(DataStorage.mygrouplist);
+        mAdapter = new UserListAdapter(list,getContext(),false,true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());

@@ -39,6 +39,8 @@ import com.techpro.chat.ticklechat.fragments.StatusUpdateFragment;
 import com.techpro.chat.ticklechat.fragments.TickleFriendFragment;
 import com.techpro.chat.ticklechat.listeners.FragmentChangeCallback;
 import com.techpro.chat.ticklechat.models.DataStorage;
+import com.techpro.chat.ticklechat.models.GetGroupDetails;
+import com.techpro.chat.ticklechat.models.Group;
 import com.techpro.chat.ticklechat.models.MenuItems;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
 import com.techpro.chat.ticklechat.models.message.Tickles;
@@ -107,16 +109,21 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         initSlidingDrawer();
         initOneSignal();
 
+        DataStorage.mygrouplist  = new ArrayList<Group>();
+        DataStorage.myuserlist = new ArrayList<User>();
+        DataStorage.mygrouplist = (List<Group>) SharedPreferenceUtils.getColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist);
         DataStorage.myuserlist = (List<User>) SharedPreferenceUtils.getColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist);
 
-        if (DataStorage.myuserlist == null) {
+        if (DataStorage.myuserlist == null || DataStorage.mygrouplist == null) {
+            DataStorage.mygrouplist  = new ArrayList<Group>();
+            DataStorage.myuserlist = new ArrayList<User>();
             Log.e("ssssssssssssss","mymessagelist & myuserlist ==> null");
             dialog = ProgressDialog.show(HomeActivity.this, "Loading", "Please wait...", true);
             apiService = ApiClient.getClient().create(ApiInterface.class);
             callGetUserDetailsService(Integer.parseInt(DataStorage.UserDetails.getId()), true);
             apiAUTService = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class);
             callMessage_ALL_Service();
-            callTickles_Service();
+//            callTickles_Service();
         } else {
             Log.e("ssssssssssssss","mymessagelist & myuserlist ==> not null");
             Fragment fragment = new HomeScreenFragment();
@@ -302,7 +309,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         * Get - User details by user id
         * @param userId - user id
         * */
-    private void callGetUserDetailsService(int userId, final boolean iscurrentuser) {
+    private synchronized void callGetUserDetailsService(int userId, final boolean iscurrentuser) {
         //Getting webservice instance which we need to call
         Call<GetUserDetails> callForUserDetailsFromID = apiService.getUserDetailsFromID(userId);
         //Calling Webservice by enqueue
@@ -315,34 +322,38 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         DataStorage.userDetailsBody = getUserDetails;
                     } else {
                         User usr = getUserDetails.getUser();
-                        DataStorage.myuserlist.add(usr);
+                        if (!DataStorage.myuserlist.contains(usr)) {
+                            Log.e(TAG, "Success  ADDED USER: " + usr.getName());
+                            DataStorage.myuserlist.add(usr);
+                        }
 
-                        List<Tickles.MessageList.ChatMessagesTicklesList> messages = new ArrayList<Tickles.MessageList.ChatMessagesTicklesList>();
-                        for (int i = 0; i < DataStorage.tickles.getTickles().size(); i++) {
-                            Tickles.MessageList.ChatMessagesTicklesList msg = DataStorage.tickles.getTickles().get(i);
-                            if(usr.getId().equals(msg.getUserid())) {
-                                Calendar cl = Calendar.getInstance();
-                                cl.setTimeInMillis(Long.parseLong(msg.getRequested_at()));  //here your time in miliseconds
-                                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
-                                String datenew = format.format(cl.getTime());
-                                Log.e(TAG,"datenew ======> "+datenew);
-                                msg.setRequested_at(datenew);
-                                messages.add(msg);
+                        List<AllMessages.MessageList.ChatMessagesList> usermessages = new ArrayList<>();
+                        for (int i = 0; i < DataStorage.allMessages.size(); i++) {
+                            AllMessages.MessageList.ChatMessagesList msg = DataStorage.allMessages.get(i);
+                            if(usr.getId().equals(msg.getFrom_id()) && msg.getIsgroup().equals(0)) {
+//                                Calendar cl = Calendar.getInstance();
+//                                cl.setTimeInMillis(Long.parseLong(msg.getRequested_at()));  //here your time in miliseconds
+//                                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
+//                                String datenew = format.format(cl.getTime());
+//                                Log.e(TAG,"datenew ======> "+datenew);
+//                                msg.setRequested_at(datenew);
+                                usermessages.add(msg);
                             }
                         }
-                        Collections.sort(messages, new Comparator<Tickles.MessageList.ChatMessagesTicklesList>() {
-                            @Override
-                            public int compare(Tickles.MessageList.ChatMessagesTicklesList s1, Tickles.MessageList.ChatMessagesTicklesList s2) {
-                                return s1.getRequested_at().compareToIgnoreCase(s1.getRequested_at());
-                            }
-                        });
-                        Log.e(TAG,"messages ==> "+messages);
+//                        Collections.sort(messages, new Comparator<Tickles.MessageList.ChatMessagesTicklesList>() {
+//                            @Override
+//                            public int compare(Tickles.MessageList.ChatMessagesTicklesList s1, Tickles.MessageList.ChatMessagesTicklesList s2) {
+//                                return s1.getRequested_at().compareToIgnoreCase(s1.getRequested_at());
+//                            }
+//                        });
+//                        Log.e(TAG,"messages ==> "+messages);
+                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(), usr.getId(), usermessages);
 
-                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(),usr.getId(),messages);
                         if (id.size() == DataStorage.myuserlist.size()) {
                             dialog.dismiss();
 
                             SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,DataStorage.myuserlist);
+                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist,DataStorage.mygrouplist);
 
                             Fragment fragment = new HomeScreenFragment();
                             replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
@@ -377,12 +388,25 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onResponse(Call<AllMessages> call, Response<AllMessages> response) {
                 if (response != null) {
-                    DataStorage.allMessages = response.body().getBody();
-                    Log.e(TAG, "Success  callMessage_ALL_Service response.getMessages: " + response.body().getBody().getMessages().get(0).getMessage());
-                    Log.e(TAG, "Success  callMessage_ALL_Service response.getTickles: " + response.body().getBody().getTickles().get(0).getMessage());
-//                    GetUserDetailsBody getUserDetails = response.body().getBody();
-//                    DataStorage.userDetailsBody = getUserDetails;
-//                    Log.e(TAG, "Success  callUserListService : " + getUserDetails);
+                    DataStorage.allMessages = response.body().getBody().getMessages();
+                    id = new ArrayList<String>();
+                    id.clear();
+                    for (int i = 0; i < DataStorage.allMessages.size(); i++) {
+                        AllMessages.MessageList.ChatMessagesList msg = DataStorage.allMessages.get(i);
+                        if (msg.getIsgroup().equals("1")) {
+                            String groupID = msg.getTo_id();
+                            callGetGroupDetailsService(Integer.parseInt(groupID));
+                        }
+
+                        if(!id.contains(msg.getFrom_id())) {
+                            if(msg.getFrom_id() != null) {
+//                                Log.e(TAG, "Success  msg.getUserid() not null: " + msg.getFrom_id());
+                                id.add(msg.getFrom_id());
+                                callGetUserDetailsService(Integer.parseInt(msg.getFrom_id()), false);
+                            }
+                        }
+
+                    }
                 } else {
                     Log.e(TAG, "Success callMessage_ALL_Service but null response");
                 }
@@ -398,37 +422,49 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+
     /*
 * Get - User details by user id
 * @param userId - user id
 * */
-    private void callTickles_Service() {
+    private void callGetGroupDetailsService(int groupid) {
         //Getting webservice instance which we need to call
-        Call<Tickles> callForUserDetailsFromID = apiAUTService.getTickles();
+        Call<GetGroupDetails> callForUserDetailsFromID = apiAUTService.getGroupDetials(groupid);
         //Calling Webservice by enqueue
-        callForUserDetailsFromID.enqueue(new Callback<Tickles>() {
+        callForUserDetailsFromID.enqueue(new Callback<GetGroupDetails>() {
             @Override
-            public void onResponse(Call<Tickles> call, Response<Tickles> response) {
+            public void onResponse(Call<GetGroupDetails> call, Response<GetGroupDetails> response) {
                 if (response != null) {
-                    DataStorage.tickles = response.body().getBody();
-                    Log.e(TAG, "Success  callTickles_Service response.getTickles: " + response.body().getBody().getTickles().get(0).getMessage());
-//                    GetUserDetailsBody getUserDetails = response.body().getBody();
-//                    DataStorage.userDetailsBody = getUserDetails;
-//                    Log.e(TAG, "Success  callUserListService : " + getUserDetails);
-//                    DataStorage.mymessagelist = new HashMap<User, List<Tickles.MessageList.ChatMessagesTicklesList>>();
-                    DataStorage.myuserlist = new ArrayList<User>();
-                    id = new ArrayList<String>();
-                    id.clear();
-                    for (int i = 0; i < DataStorage.tickles.getTickles().size(); i++) {
-                        Tickles.MessageList.ChatMessagesTicklesList msg = DataStorage.tickles.getTickles().get(i);
-                        if(!id.contains(msg.getUserid())) {
-                            if(msg.getUserid() != null && msg.getRequested_at() != null) {
-                                Log.e(TAG, "Success  msg.getUserid() not null: " + msg.getUserid());
-                                id.add(msg.getUserid());
-                                callGetUserDetailsService(Integer.parseInt(msg.getUserid()), false);
+                    Group grp = response.body().getBody();
+                    if (grp!=null && grp.getId()!= null  && grp.getName()!=null && !DataStorage.myuserlist.contains(grp)) {
+                        DataStorage.mygrouplist.add(grp);
+                        Log.e(TAG, "Success  ADDED GROUP: " + grp.getName());
+                        if (grp.getId()!= null  && grp.getId().contains(",")) {
+                            String[] ids = grp.getId().split(",");
+                            for (int i = 0; i < ids.length; i++) {
+                                if (!id.contains(ids[i])) {
+                                    id.add(ids[i]);
+                                    callGetUserDetailsService(Integer.parseInt(ids[i]), false);
+                                }
                             }
-                        }
 
+                            List<AllMessages.MessageList.ChatMessagesList> groupmessages = new ArrayList<>();
+                            for (int i = 0; i < DataStorage.allMessages.size(); i++) {
+                                AllMessages.MessageList.ChatMessagesList msg = DataStorage.allMessages.get(i);
+                                boolean status = false;
+                                for (int j = 0; j < ids.length; j++) {
+                                    if (msg.getFrom_id().equals(ids[i])) {
+                                        status = true;
+                                        break;
+                                    }
+                                }
+                                if(status) {
+                                    groupmessages.add(msg);
+                                }
+                            }
+
+                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),grp.getId(),groupmessages);
+                        }
                     }
                 } else {
                     Log.e(TAG, "Success callTickles_Service but null response");
@@ -436,7 +472,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
 
             @Override
-            public void onFailure(Call<Tickles> call, Throwable t) {
+            public void onFailure(Call<GetGroupDetails> call, Throwable t) {
                 // Log error here since request failed
                 Log.e(TAG, t.toString());
 //                dialog.dismiss();
@@ -444,6 +480,53 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         });
 
     }
+
+//    /*
+//* Get - User details by user id
+//* @param userId - user id
+//* */
+//    private void callTickles_Service() {
+//        //Getting webservice instance which we need to call
+//        Call<Tickles> callForUserDetailsFromID = apiAUTService.getTickles();
+//        //Calling Webservice by enqueue
+//        callForUserDetailsFromID.enqueue(new Callback<Tickles>() {
+//            @Override
+//            public void onResponse(Call<Tickles> call, Response<Tickles> response) {
+//                if (response != null) {
+//                    DataStorage.tickles = response.body().getBody();
+//                    Log.e(TAG, "Success  callTickles_Service response.getTickles: " + response.body().getBody().getTickles().get(0).getMessage());
+////                    GetUserDetailsBody getUserDetails = response.body().getBody();
+////                    DataStorage.userDetailsBody = getUserDetails;
+////                    Log.e(TAG, "Success  callUserListService : " + getUserDetails);
+////                    DataStorage.mymessagelist = new HashMap<User, List<Tickles.MessageList.ChatMessagesTicklesList>>();
+//                    DataStorage.myuserlist = new ArrayList<User>();
+//                    id = new ArrayList<String>();
+//                    id.clear();
+//                    for (int i = 0; i < DataStorage.tickles.getTickles().size(); i++) {
+//                        Tickles.MessageList.ChatMessagesTicklesList msg = DataStorage.tickles.getTickles().get(i);
+//                        if(!id.contains(msg.getUserid())) {
+//                            if(msg.getUserid() != null && msg.getRequested_at() != null) {
+//                                Log.e(TAG, "Success  msg.getUserid() not null: " + msg.getUserid());
+//                                id.add(msg.getUserid());
+//                                callGetUserDetailsService(Integer.parseInt(msg.getUserid()), false);
+//                            }
+//                        }
+//
+//                    }
+//                } else {
+//                    Log.e(TAG, "Success callTickles_Service but null response");
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Tickles> call, Throwable t) {
+//                // Log error here since request failed
+//                Log.e(TAG, t.toString());
+////                dialog.dismiss();
+//            }
+//        });
+//
+//    }
     private void replaceFragment(Fragment fragment, CharSequence title, boolean addToBackstack) {
         Bundle bundle = new Bundle();
         bundle.putString(KEY_TITLE, title.toString());

@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by aryans05 on 04/08/16.
  */
 
-public class User implements Serializable {
+public class User extends UserGroupBotModel implements Serializable {
     private String birthday;
 
     private String phone;

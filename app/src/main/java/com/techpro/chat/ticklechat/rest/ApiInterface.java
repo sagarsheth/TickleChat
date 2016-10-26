@@ -1,5 +1,6 @@
 package com.techpro.chat.ticklechat.rest;
 
+import com.techpro.chat.ticklechat.models.GetGroupDetails;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
 import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
@@ -28,8 +29,8 @@ public interface ApiInterface {
     @GET("tickles")
     Call<Tickles> getTickles();
 
-    @GET("tickles/{userid}/tickles")
-    Call<GetUserDetails> getUserListFromID2(@Path("userid") int userid);
+    @GET("groups/{groupId}")
+    Call<GetGroupDetails> getGroupDetials(@Path("groupId") int groupId);
 
     @FormUrlEncoded
     @POST("users/invite")

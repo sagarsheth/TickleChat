@@ -6,6 +6,7 @@ import com.techpro.chat.ticklechat.models.user.GetUserDetailsBody;
 import com.techpro.chat.ticklechat.models.user.User;
 import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,8 +18,10 @@ public class DataStorage {
 
     public static UserDetailsModel UserDetails = null;
     public static GetUserDetailsBody userDetailsBody = null;
-    public static Tickles.MessageList tickles = null;
-    public static AllMessages.MessageList allMessages = null;
+    public static ArrayList<AllMessages.MessageList.ChatMessagesList> allMessages = null;
     public static List<User> myuserlist = null;
+    public static List<Group> mygrouplist = null;
+//    public static HashMap<User,List<AllMessages.MessageList.ChatMessagesList>> mychatMessages = null;
+//    public static HashMap<Group,List<AllMessages.MessageList.ChatMessagesList>> myGroupchatMessages = null;
 
 }
