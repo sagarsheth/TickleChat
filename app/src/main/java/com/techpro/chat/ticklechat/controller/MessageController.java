@@ -31,24 +31,24 @@ public class MessageController {
         Random r = new Random();
         int i1 = r.nextInt(288) + 1;
         messageList1.add(messageList.get(i1));
-        Log.e("ssssssss", "data=> "+i1);
-        Log.e("ssssssss", "data=> "+(messageList.get(i1).getMessage()));
+//        Log.e("ssssssss", "data=> "+i1);
+//        Log.e("ssssssss", "data=> "+(messageList.get(i1).getMessage()));
         i1 = r.nextInt(288) + 1;
         messageList1.add(messageList.get(i1));
-        Log.e("ssssssss", "data=> "+i1);
-        Log.e("ssssssss", "data=> "+(messageList.get(i1).getMessage()));
+//        Log.e("ssssssss", "data=> "+i1);
+//        Log.e("ssssssss", "data=> "+(messageList.get(i1).getMessage()));
         i1 = r.nextInt(288) + 1;
         messageList1.add(messageList.get(i1));
-        Log.e("ssssssss", "data=> "+i1);
-        Log.e("ssssssss", "data=> "+(messageList.get(i1).getMessage()));
+//        Log.e("ssssssss", "data=> "+i1);
+//        Log.e("ssssssss", "data=> "+(messageList.get(i1).getMessage()));
         i1 = r.nextInt(288) + 1;
         messageList1.add(messageList.get(i1));
-        Log.e("ssssssss", "data=> "+i1);
-        Log.e("ssssssss", "data=> "+(messageList.get(i1).getMessage()));
+//        Log.e("ssssssss", "data=> "+i1);
+//        Log.e("ssssssss", "data=> "+(messageList.get(i1).getMessage()));
         i1 = r.nextInt(288) + 1;
         messageList1.add(messageList.get(i1));
-        Log.e("ssssssss", "data=> "+i1);
-        Log.e("ssssssss", "data=> "+(messageList.get(i1).getMessage()));
+//        Log.e("ssssssss", "data=> "+i1);
+//        Log.e("ssssssss", "data=> "+(messageList.get(i1).getMessage()));
 
         return messageList1;
     }

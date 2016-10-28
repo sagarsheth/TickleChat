@@ -19,7 +19,8 @@ public class DataStorage {
     public static UserDetailsModel UserDetails = null;
     public static GetUserDetailsBody userDetailsBody = null;
     public static ArrayList<AllMessages.MessageList.ChatMessagesList> allMessages = null;
-    public static List<User> myuserlist = null;
+    public static List<User> myAllUserlist = null;
+    public static List<String> chatUserID = null;
     public static List<Group> mygrouplist = null;
 //    public static HashMap<User,List<AllMessages.MessageList.ChatMessagesList>> mychatMessages = null;
 //    public static HashMap<Group,List<AllMessages.MessageList.ChatMessagesList>> myGroupchatMessages = null;

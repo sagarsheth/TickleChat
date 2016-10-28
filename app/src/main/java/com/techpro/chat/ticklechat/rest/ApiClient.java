@@ -45,8 +45,6 @@ public class ApiClient {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(interceptor);
         OkHttpClient client = httpClient.build();
-        Log.e("sagar==>","interceptor => "+interceptor.toString());
-        Log.e("sagar==>","client => "+client.toString());
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
                 .client(client)

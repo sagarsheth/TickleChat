@@ -59,7 +59,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         findViewById(R.id.btnLogin).setOnClickListener(this);
         findViewById(R.id.btnSignup).setOnClickListener(this);
-//        findViewById(R.id.btnGoogle).setOnClickListener(this);
+//        findViewById(R.chatUserID.btnGoogle).setOnClickListener(this);
     }
 
     @Override

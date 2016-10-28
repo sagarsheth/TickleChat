@@ -131,11 +131,20 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
                 @Override
                 public void onClick(View v) {
                     Log.d("RecyclerView", "getPosition：" + getPosition());
-                    Log.d("RecyclerView", "getAdapterPosition：" + getAdapterPosition());
-                    Log.d("RecyclerView", "getLayoutPosition：" + getLayoutPosition());
+//                    Log.d("RecyclerView", "getAdapterPosition：" + getAdapterPosition());
+//                    Log.d("RecyclerView", "getLayoutPosition：" + getLayoutPosition());
                     if (mContext != null){
                         Intent intent = new Intent(mContext, ChatScreen.class);
-                        intent.putExtra("userid",getPosition());
+                        if (UserList.get(getPosition()) instanceof User) {
+                            User user = (User) UserList.get(getPosition());
+                            intent.putExtra("userid",user.getId());
+                            Log.d("RecyclerView", "user.getId()：" + user.getId());
+
+                        } else {
+                            Group grp = (Group) UserList.get(getPosition());
+                            intent.putExtra("groupid",grp.getId());
+                            Log.d("RecyclerView", "grp.getId()：" + grp.getId());
+                        }
                         mContext.startActivity(intent);
                     }
                 }

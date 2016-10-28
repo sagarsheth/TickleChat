@@ -7,7 +7,7 @@ public class GetGroupDetails {
 
     private String message;
 
-    private Group body;
+    private GroupDetails body;
 
     private String status;
 
@@ -19,11 +19,11 @@ public class GetGroupDetails {
         this.message = message;
     }
 
-    public Group getBody() {
+    public GroupDetails getBody() {
         return body;
     }
 
-    public void setBody(Group body) {
+    public void setBody(GroupDetails body) {
         this.body = body;
     }
 
@@ -38,5 +38,18 @@ public class GetGroupDetails {
     @Override
     public String toString() {
         return "GetUserDetails [message = " + message + ", body = " + body + ", status = " + status + "]";
+    }
+
+    public class GroupDetails {
+
+        public Group getGroup() {
+            return group;
+        }
+
+        public void setGroup(Group group) {
+            this.group = group;
+        }
+
+        private Group group;
     }
 }

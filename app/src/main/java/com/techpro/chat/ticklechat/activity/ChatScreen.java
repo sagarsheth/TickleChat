@@ -40,15 +40,18 @@ public class ChatScreen extends Activity {
         mToolbar.setTitle("ABC");
         message_list = (RecyclerView) findViewById(R.id.message_list);
         text_list = (RecyclerView) findViewById(R.id.text_list);
-        int userid = getIntent().getIntExtra("userid",-1);
+        String userid = getIntent().getStringExtra("userid");
+        String groupid = getIntent().getStringExtra("groupid");
         Log.e("RecyclerView", "userid：" +userid);
-//        prepareMovieData();
-        if(userid != -1) {
-            Log.e("RecyclerView", "DataStorage.myuserlist.get(userid)：" +DataStorage.myuserlist.get(userid).toString());
-            movieList = (List<Tickles.MessageList.ChatMessagesTicklesList>) SharedPreferenceUtils.getColleactionObject(getApplicationContext(),DataStorage.myuserlist.get(userid).getId());
-            Log.e("RecyclerView", "DataStorage.myuserlist.get(userid)：" +DataStorage.myuserlist.get(userid).toString());
+        Log.e("RecyclerView", "groupid：" +groupid);
+        if(groupid == null) {
+            movieList = (List<Tickles.MessageList.ChatMessagesTicklesList>) SharedPreferenceUtils.
+                    getColleactionObject(getApplicationContext(),userid);
+        } else {
+            movieList = (List<Tickles.MessageList.ChatMessagesTicklesList>) SharedPreferenceUtils.
+                    getColleactionObject(getApplicationContext(),groupid);
         }
-
+        Log.e("ssssssssssssss","ctrl ==> "+movieList.toString());
         mAdapter = new ChatAdapter(movieList,getApplicationContext(),false,true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         message_list.setLayoutManager(mLayoutManager);
@@ -56,7 +59,7 @@ public class ChatScreen extends Activity {
         message_list.setAdapter(mAdapter);
 
         ArrayList<Messages> ctrl = new MessageController(getApplicationContext()).getMessages();
-        Log.e("ssssssssssssss","ctrl ==> "+ctrl);
+//        Log.e("ssssssssssssss","ctrl ==> "+ctrl);
         mAdapter1 = new MessageAdapter(ctrl,getApplicationContext(),false,true);
         RecyclerView.LayoutManager mLayoutManager1 = new LinearLayoutManager(getApplicationContext());
         text_list.setLayoutManager(mLayoutManager1);

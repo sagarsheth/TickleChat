@@ -219,7 +219,7 @@ public class User extends UserGroupBotModel implements Serializable {
 
     @Override
     public String toString() {
-        return "UserDetails [birthday = " + birthday + ", phone = " + phone + ", status = " + status + ", isbot = " + isbot + ", profile_image = " + profile_image + ", registered_at = " + registered_at + ", user_status = " + user_status + ", lastseen_at = " + lastseen_at + ", password = " + password + ", country_code = " + country_code + ", id = " + id + ", device_os = " + device_os + ", device_model = " + device_model + ", updated_at = " + updated_at + ", email = " + email + ", device_token = " + device_token + ", name = " + name + ", dob = " + dob + ", created_at = " + created_at + ", gender = " + gender + ", mobile = " + mobile + "]";
+        return "UserDetails [birthday = " + birthday + ", phone = " + phone + ", status = " + status + ", isbot = " + isbot + ", profile_image = " + profile_image + ", registered_at = " + registered_at + ", user_status = " + user_status + ", lastseen_at = " + lastseen_at + ", password = " + password + ", country_code = " + country_code + ", chatUserID = " + id + ", device_os = " + device_os + ", device_model = " + device_model + ", updated_at = " + updated_at + ", email = " + email + ", device_token = " + device_token + ", name = " + name + ", dob = " + dob + ", created_at = " + created_at + ", gender = " + gender + ", mobile = " + mobile + "]";
     }
 }
 

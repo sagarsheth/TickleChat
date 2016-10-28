@@ -21,7 +21,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_profile,
                 container, false);
-//        mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+//        mRecyclerView = (RecyclerView) view.findViewById(R.chatUserID.my_recycler_view);
 //
 //        // use this setting to improve performance if you know that changes
 //        // in content do not change the layout size of the RecyclerView

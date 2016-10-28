@@ -28,7 +28,6 @@ import com.techpro.chat.ticklechat.Constants;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.registration.Login;
 import com.techpro.chat.ticklechat.activity.registration.PersonalProfileActivity;
-import com.techpro.chat.ticklechat.controller.MessageController;
 import com.techpro.chat.ticklechat.fragments.HomeScreenFragment;
 import com.techpro.chat.ticklechat.fragments.NewGroupFragment;
 import com.techpro.chat.ticklechat.fragments.ProfileFragment;
@@ -43,7 +42,6 @@ import com.techpro.chat.ticklechat.models.GetGroupDetails;
 import com.techpro.chat.ticklechat.models.Group;
 import com.techpro.chat.ticklechat.models.MenuItems;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
-import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
 import com.techpro.chat.ticklechat.models.user.GetUserDetailsBody;
 import com.techpro.chat.ticklechat.models.user.User;
@@ -53,12 +51,7 @@ import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.FragmentUtils;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -80,7 +73,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     public static final String KEY_TITLE = "title";
     private ApiInterface apiService;
     private ApiInterface apiAUTService;
-    List<String> id = null;
+    public static List<String> id = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,28 +104,30 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         initOneSignal();
 
         DataStorage.mygrouplist  = new ArrayList<Group>();
-        DataStorage.myuserlist = new ArrayList<User>();
+        DataStorage.myAllUserlist = new ArrayList<User>();
         DataStorage.mygrouplist = (List<Group>) SharedPreferenceUtils.getColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist);
-        DataStorage.myuserlist = (List<User>) SharedPreferenceUtils.getColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist);
+        DataStorage.myAllUserlist = (List<User>) SharedPreferenceUtils.getColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist);
 
-        if (DataStorage.myuserlist == null || DataStorage.mygrouplist == null) {
+//        if (DataStorage.myAllUserlist == null || DataStorage.mygrouplist == null) {
             DataStorage.mygrouplist  = new ArrayList<Group>();
-            DataStorage.myuserlist = new ArrayList<User>();
-            Log.e("ssssssssssssss","mymessagelist & myuserlist ==> null");
+            DataStorage.myAllUserlist = new ArrayList<User>();
+            DataStorage.chatUserID = new ArrayList<String>();
+//            Log.e("ssssssssssssss","mymessagelist & myAllUserlist ==> null");
             dialog = ProgressDialog.show(HomeActivity.this, "Loading", "Please wait...", true);
             apiService = ApiClient.getClient().create(ApiInterface.class);
             callGetUserDetailsService(Integer.parseInt(DataStorage.UserDetails.getId()), true);
             apiAUTService = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class);
+//        apiAUTService = ApiClient.createServiceWithAuth("520").create(ApiInterface.class);
             callMessage_ALL_Service();
 //            callTickles_Service();
-        } else {
-            Log.e("ssssssssssssss","mymessagelist & myuserlist ==> not null");
-            Fragment fragment = new HomeScreenFragment();
-            replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
-        }
+//        } else {
+//            Log.e("ssssssssssssss","mymessagelist & myAllUserlist ==> not null");
+//            Fragment fragment = new HomeScreenFragment();
+//            replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
+//        }
 
 //        TODO Vishal to call below method to get 5 messages form preloaded DB
-        Log.e("ssssssssssssss","==> "+new MessageController(getApplicationContext()).getMessages());
+//        Log.e("ssssssssssssss","==> "+new MessageController(getApplicationContext()).getMessages());
 
     }
 
@@ -306,8 +302,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
     /*
-        * Get - User details by user id
-        * @param userId - user id
+        * Get - User details by user chatUserID
+        * @param userId - user chatUserID
         * */
     private synchronized void callGetUserDetailsService(int userId, final boolean iscurrentuser) {
         //Getting webservice instance which we need to call
@@ -322,20 +318,23 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         DataStorage.userDetailsBody = getUserDetails;
                     } else {
                         User usr = getUserDetails.getUser();
-                        if (!DataStorage.myuserlist.contains(usr)) {
+                        if (!DataStorage.myAllUserlist.contains(usr)) {
                             Log.e(TAG, "Success  ADDED USER: " + usr.getName());
-                            DataStorage.myuserlist.add(usr);
+                            DataStorage.myAllUserlist.add(usr);
                         }
 
                         List<AllMessages.MessageList.ChatMessagesList> usermessages = new ArrayList<>();
                         for (int i = 0; i < DataStorage.allMessages.size(); i++) {
                             AllMessages.MessageList.ChatMessagesList msg = DataStorage.allMessages.get(i);
+                            Log.e(TAG, "Success  usr.getId(): " + usr.getId());
+                            Log.e(TAG, "Success  msg.getFrom_id(): " + msg.getFrom_id());
+                            Log.e(TAG, "Success  msg.getIsgroup(): " + msg.getIsgroup());
                             if(usr.getId().equals(msg.getFrom_id()) && msg.getIsgroup().equals(0)) {
 //                                Calendar cl = Calendar.getInstance();
 //                                cl.setTimeInMillis(Long.parseLong(msg.getRequested_at()));  //here your time in miliseconds
 //                                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
 //                                String datenew = format.format(cl.getTime());
-//                                Log.e(TAG,"datenew ======> "+datenew);
+                                Log.e(TAG,usr.getId()+"<= getMessage ======> "+msg.getMessage());
 //                                msg.setRequested_at(datenew);
                                 usermessages.add(msg);
                             }
@@ -349,10 +348,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 //                        Log.e(TAG,"messages ==> "+messages);
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(), usr.getId(), usermessages);
 
-                        if (id.size() == DataStorage.myuserlist.size()) {
+                        if (id.size() == DataStorage.myAllUserlist.size()) {
                             dialog.dismiss();
 
-                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,DataStorage.myuserlist);
+                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,DataStorage.myAllUserlist);
                             SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist,DataStorage.mygrouplist);
 
                             Fragment fragment = new HomeScreenFragment();
@@ -377,8 +376,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /*
-* Get - User details by user id
-* @param userId - user id
+* Get - User details by user chatUserID
+* @param userId - user chatUserID
 * */
     private void callMessage_ALL_Service() {
         //Getting webservice instance which we need to call
@@ -387,23 +386,31 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         callForUserDetailsFromID.enqueue(new Callback<AllMessages>() {
             @Override
             public void onResponse(Call<AllMessages> call, Response<AllMessages> response) {
+                Log.e(TAG, "callMessage_ALL_Service:"+response);
                 if (response != null) {
                     DataStorage.allMessages = response.body().getBody().getMessages();
+                    Log.e(TAG, "DataStorage.allMessages:"+DataStorage.allMessages.toString());
+                    DataStorage.chatUserID = new ArrayList<String>();
                     id = new ArrayList<String>();
-                    id.clear();
+                    Log.e(TAG, "DataStorage.allMessages size :"+DataStorage.allMessages.size());id.clear();
                     for (int i = 0; i < DataStorage.allMessages.size(); i++) {
                         AllMessages.MessageList.ChatMessagesList msg = DataStorage.allMessages.get(i);
                         if (msg.getIsgroup().equals("1")) {
                             String groupID = msg.getTo_id();
+                            Log.e(TAG, "Success groupID:"+groupID);
                             callGetGroupDetailsService(Integer.parseInt(groupID));
-                        }
-
-                        if(!id.contains(msg.getFrom_id())) {
-                            if(msg.getFrom_id() != null) {
-//                                Log.e(TAG, "Success  msg.getUserid() not null: " + msg.getFrom_id());
-                                id.add(msg.getFrom_id());
-                                callGetUserDetailsService(Integer.parseInt(msg.getFrom_id()), false);
+                        } else {
+                            Log.e(TAG, "Success  msg.getFrom_id():"+ msg.getFrom_id());
+                            if(!DataStorage.chatUserID.contains(msg.getFrom_id())) {
+                                DataStorage.chatUserID.add(msg.getFrom_id());
+                                Log.e(TAG, "Success userID:"+msg.getFrom_id());
                             }
+
+                            if(!id.contains(msg.getFrom_id())) {
+                                id.add(msg.getFrom_id());
+                            }
+                            callGetUserDetailsService(Integer.parseInt(msg.getFrom_id()), false);
+
                         }
 
                     }
@@ -424,8 +431,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
     /*
-* Get - User details by user id
-* @param userId - user id
+* Get - User details by user chatUserID
+* @param userId - user chatUserID
 * */
     private void callGetGroupDetailsService(int groupid) {
         //Getting webservice instance which we need to call
@@ -435,15 +442,19 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onResponse(Call<GetGroupDetails> call, Response<GetGroupDetails> response) {
                 if (response != null) {
-                    Group grp = response.body().getBody();
-                    if (grp!=null && grp.getId()!= null  && grp.getName()!=null && !DataStorage.myuserlist.contains(grp)) {
+                    Group grp = response.body().getBody().getGroup();
+
+//                    Log.e(TAG, "Success  ADDED grp: " + grp.getName());
+                    if (grp!=null && grp.getId()!= null  && grp.getName()!=null && !DataStorage.myAllUserlist.contains(grp)) {
                         DataStorage.mygrouplist.add(grp);
                         Log.e(TAG, "Success  ADDED GROUP: " + grp.getName());
-                        if (grp.getId()!= null  && grp.getId().contains(",")) {
-                            String[] ids = grp.getId().split(",");
+                        Log.e(TAG, "Success  getMembers: " + grp.getMembers());
+                        if (grp.getId()!= null  && grp.getMembers().contains(",")) {
+                            String[] ids = grp.getMembers().split(",");
                             for (int i = 0; i < ids.length; i++) {
                                 if (!id.contains(ids[i])) {
                                     id.add(ids[i]);
+                                    Log.e(TAG, "Success  ADDED GROUP Member: "+id);
                                     callGetUserDetailsService(Integer.parseInt(ids[i]), false);
                                 }
                             }
@@ -451,9 +462,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             List<AllMessages.MessageList.ChatMessagesList> groupmessages = new ArrayList<>();
                             for (int i = 0; i < DataStorage.allMessages.size(); i++) {
                                 AllMessages.MessageList.ChatMessagesList msg = DataStorage.allMessages.get(i);
+                                Log.e(TAG, "Success  msg.getFrom_id(): " + msg.getFrom_id());
                                 boolean status = false;
                                 for (int j = 0; j < ids.length; j++) {
-                                    if (msg.getFrom_id().equals(ids[i])) {
+                                    Log.e(TAG, "Success  ids: " + ids[j]);
+                                    if (msg.getFrom_id().equals(ids[j])) {
                                         status = true;
                                         break;
                                     }
@@ -482,8 +495,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
 //    /*
-//* Get - User details by user id
-//* @param userId - user id
+//* Get - User details by user chatUserID
+//* @param userId - user chatUserID
 //* */
 //    private void callTickles_Service() {
 //        //Getting webservice instance which we need to call
@@ -499,15 +512,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 ////                    DataStorage.userDetailsBody = getUserDetails;
 ////                    Log.e(TAG, "Success  callUserListService : " + getUserDetails);
 ////                    DataStorage.mymessagelist = new HashMap<User, List<Tickles.MessageList.ChatMessagesTicklesList>>();
-//                    DataStorage.myuserlist = new ArrayList<User>();
-//                    id = new ArrayList<String>();
-//                    id.clear();
+//                    DataStorage.myAllUserlist = new ArrayList<User>();
+//                    chatUserID = new ArrayList<String>();
+//                    chatUserID.clear();
 //                    for (int i = 0; i < DataStorage.tickles.getTickles().size(); i++) {
 //                        Tickles.MessageList.ChatMessagesTicklesList msg = DataStorage.tickles.getTickles().get(i);
-//                        if(!id.contains(msg.getUserid())) {
+//                        if(!chatUserID.contains(msg.getUserid())) {
 //                            if(msg.getUserid() != null && msg.getRequested_at() != null) {
 //                                Log.e(TAG, "Success  msg.getUserid() not null: " + msg.getUserid());
-//                                id.add(msg.getUserid());
+//                                chatUserID.add(msg.getUserid());
 //                                callGetUserDetailsService(Integer.parseInt(msg.getUserid()), false);
 //                            }
 //                        }

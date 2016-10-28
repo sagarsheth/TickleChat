@@ -53,7 +53,7 @@ public class SignupPagerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(page, container, false);
         signup_background_image = (ImageView) view.findViewById(R.id.ivAppLogo);
-//        ivMomStar = (ImageView) view.findViewById(R.id.ivMomstarImg);
+//        ivMomStar = (ImageView) view.findViewById(R.chatUserID.ivMomstarImg);
         tvBottom_Msg_Signup = (TextView) view.findViewById(R.id.tvBottom_Msg_Signup);
         tvTitle_Msg_Signup = (TextView) view.findViewById(R.id.tvTitle_Msg_Signup);
         String topMsg = "";

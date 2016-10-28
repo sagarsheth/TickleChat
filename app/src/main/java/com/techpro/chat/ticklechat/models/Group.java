@@ -24,6 +24,16 @@ public class Group extends UserGroupBotModel implements Serializable{
 
     private String updated_at;
 
+    private String members;
+
+    public String getMembers() {
+        return members;
+    }
+
+    public void setMembers(String members) {
+        this.members = members;
+    }
+
     public String getId() {
         return id;
     }

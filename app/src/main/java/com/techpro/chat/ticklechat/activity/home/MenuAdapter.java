@@ -45,7 +45,7 @@ public class MenuAdapter extends ArrayAdapter<MenuItems> {
             TextView tvTitle = (TextView) row.findViewById(R.id.tvMenuItemName);
             TextView tvSubTitle = (TextView) row.findViewById(R.id.tvMenuItemSubTitle);
             ImageView logo = (ImageView) row.findViewById(R.id.ivMenuItemIcon);
-            //holder.tvFontIcon = (FontIcon) row.findViewById(R.id.ivMenuItemIcon);
+            //holder.tvFontIcon = (FontIcon) row.findViewById(R.chatUserID.ivMenuItemIcon);
             TextView tvAlert = (TextView)row.findViewById(R.id.tvMenuItemAlert);
 //			holder.title.setTypeface(Typeface.createFromAsset(context.getAssets(), context.getString(R.string.font_type_opensans_semibold)));
 //            row.setTag(holder);
