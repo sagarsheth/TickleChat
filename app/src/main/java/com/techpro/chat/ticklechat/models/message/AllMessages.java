@@ -1,13 +1,14 @@
 package com.techpro.chat.ticklechat.models.message;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Sagar on 10/23/2016.
  */
 
-public class AllMessages {
+public class AllMessages implements Serializable{
     private String message;
     private String status;
     private MessageList body;
@@ -32,7 +33,7 @@ public class AllMessages {
     }
 
 
-    public class MessageList {
+    public class MessageList  implements Serializable{
 
 
         public ArrayList<ChatMessagesList> getMessages() {
@@ -54,7 +55,7 @@ public class AllMessages {
             this.tickles = tickles;
         }
 
-        public class ChatMessagesList {
+        public class ChatMessagesList  implements Serializable{
 
             private String id;
             private String from_id;
@@ -130,7 +131,7 @@ public class AllMessages {
             }
         }
 
-        public class ChatMessagesTicklesList {
+        public class ChatMessagesTicklesList  implements Serializable{
 
             private String id;
             private String message;

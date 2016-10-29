@@ -15,24 +15,25 @@ import android.widget.TextView;
 
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.ChatScreen;
+import com.techpro.chat.ticklechat.models.message.AllMessages;
 import com.techpro.chat.ticklechat.models.message.Tickles;
 
 import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder>{
 
-    private List<Tickles.MessageList.ChatMessagesTicklesList> moviesList;
+    private List<AllMessages.MessageList.ChatMessagesList> moviesList;
     private boolean showCheckbox = false;
     private boolean showBelowDesc = false;
     private Context mContext = null;
 
-    public ChatAdapter(List<Tickles.MessageList.ChatMessagesTicklesList> moviesList, boolean showCheckbox, boolean showBelowDesc) {
+    public ChatAdapter(List<AllMessages.MessageList.ChatMessagesList> moviesList, boolean showCheckbox, boolean showBelowDesc) {
         this.moviesList = moviesList;
         this.showCheckbox = showCheckbox;
         this.showBelowDesc = showBelowDesc;
     }
 
-    public ChatAdapter(List<Tickles.MessageList.ChatMessagesTicklesList> moviesList, Context context, boolean showCheckbox, boolean showBelowDesc) {
+    public ChatAdapter(List<AllMessages.MessageList.ChatMessagesList> moviesList, Context context, boolean showCheckbox, boolean showBelowDesc) {
         this.moviesList = moviesList;
         this.showCheckbox = showCheckbox;
         this.showBelowDesc = showBelowDesc;
@@ -48,7 +49,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder>{
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Tickles.MessageList.ChatMessagesTicklesList movie = moviesList.get(position);
+        AllMessages.MessageList.ChatMessagesList movie = moviesList.get(position);
         holder.friendName.setText(movie.getMessage());
         holder.friendImage.setVisibility(View.GONE);
         if (showCheckbox) {
@@ -56,8 +57,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder>{
         } else {
             holder.addfriends.setVisibility(View.INVISIBLE);
         }
-        if (movie.getName() != null)
-            holder.friendNumber.setText(movie.getName());
+        if (movie.getMessage() != null)
+            holder.friendNumber.setText(movie.getMessage());
         if (showBelowDesc) {
             holder.friendNumber.setVisibility(View.VISIBLE);
         } else {

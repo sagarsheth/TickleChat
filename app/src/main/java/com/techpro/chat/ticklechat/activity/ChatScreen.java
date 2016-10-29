@@ -17,6 +17,7 @@ import com.techpro.chat.ticklechat.controller.MessageController;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.Messages;
 import com.techpro.chat.ticklechat.models.TickleFriend;
+import com.techpro.chat.ticklechat.models.message.AllMessages;
 import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.User;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
@@ -29,7 +30,7 @@ public class ChatScreen extends Activity {
     protected RecyclerView message_list,text_list;
     private ChatAdapter mAdapter;
     private MessageAdapter mAdapter1;
-    private List<Tickles.MessageList.ChatMessagesTicklesList> movieList = new ArrayList<>();
+    private List<AllMessages.MessageList.ChatMessagesList> movieList = new ArrayList<>();
     private List<TickleFriend> movieList1 = new ArrayList<>();
 
     @Override
@@ -45,13 +46,12 @@ public class ChatScreen extends Activity {
         Log.e("RecyclerView", "userid：" +userid);
         Log.e("RecyclerView", "groupid：" +groupid);
         if(groupid == null) {
-            movieList = (List<Tickles.MessageList.ChatMessagesTicklesList>) SharedPreferenceUtils.
+            movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.
                     getColleactionObject(getApplicationContext(),userid);
         } else {
-            movieList = (List<Tickles.MessageList.ChatMessagesTicklesList>) SharedPreferenceUtils.
+            movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.
                     getColleactionObject(getApplicationContext(),groupid);
         }
-        Log.e("ssssssssssssss","ctrl ==> "+movieList.toString());
         mAdapter = new ChatAdapter(movieList,getApplicationContext(),false,true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         message_list.setLayoutManager(mLayoutManager);
