@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class SharedPreferenceUtils {
     public static String LoginuserDetailsPreference = "LoginuserDetailsPreference";
-    public static String chatUserID = "chatUserID";
+    public static String chatUserID = "chatUserList";
     public static String mygrouplist = "mygrouplist";
     public static String myuserlist = "myAllUserlist";
     public static void setValue(Context context, String name, String value) {

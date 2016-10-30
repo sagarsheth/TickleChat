@@ -12,7 +12,7 @@
 
 
     <!--<com.facebook.login.widget.LoginButton
-        android:chatUserID="@+chatUserID/login_button"
+        android:chatUserList="@+chatUserList/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -21,10 +21,10 @@
         android:layout_marginTop="30dp" />-->
 
     <!-- <com.google.android.gms.common.SignInButton
-         android:chatUserID="@+chatUserID/btnGoogle"
+         android:chatUserList="@+chatUserList/btnGoogle"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:layout_above="@+chatUserID/btnSignup"
+         android:layout_above="@+chatUserList/btnSignup"
          android:layout_centerHorizontal="true"
          android:layout_marginBottom="@dimen/dimen_10" />-->
 

@@ -32,7 +32,7 @@ import com.techpro.chat.ticklechat.fragments.HomeScreenFragment;
 import com.techpro.chat.ticklechat.fragments.NewGroupFragment;
 import com.techpro.chat.ticklechat.fragments.ProfileFragment;
 import com.techpro.chat.ticklechat.fragments.SearchTicklerFragment;
-import com.techpro.chat.ticklechat.fragments.SentanceFragment;
+import com.techpro.chat.ticklechat.fragments.SentenceFragment;
 import com.techpro.chat.ticklechat.fragments.SettingsFragment;
 import com.techpro.chat.ticklechat.fragments.StatusUpdateFragment;
 import com.techpro.chat.ticklechat.fragments.TickleFriendFragment;
@@ -230,7 +230,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         replaceFragment(fragment, getResources().getString(R.string.menu_status_update), true);
                         return;
                     case SENTENCE:
-                        fragment = new SentanceFragment();
+                        fragment = new SentenceFragment();
                         replaceFragment(fragment, getResources().getString(R.string.menu_add_sentence), true);
                         return;
                     case SETTING:

@@ -87,7 +87,7 @@ public class MessageDetails {
 
     @Override
     public String toString() {
-        return "UserDetails [message = " + messages + ", from_id = " + from_id + ", to_id = " + to_id + ", chatUserID = " + id + ", read = " +
+        return "UserDetails [message = " + messages + ", from_id = " + from_id + ", to_id = " + to_id + ", chatUserList = " + id + ", read = " +
                 read + ", tickle_id = " + tickle_id + ", isgroup = " + isgroup + ", sentat = " + sentat + "]";
     }
 }

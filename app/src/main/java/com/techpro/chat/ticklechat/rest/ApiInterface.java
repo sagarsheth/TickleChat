@@ -57,6 +57,6 @@ public interface ApiInterface {
 
     /*//Get response in json string
     @GET("users/{userid}")
-    Call<ResponseBody> getUserDetails(@Path("userid") int chatUserID);*/
+    Call<ResponseBody> getUserDetails(@Path("userid") int chatUserList);*/
 
 }

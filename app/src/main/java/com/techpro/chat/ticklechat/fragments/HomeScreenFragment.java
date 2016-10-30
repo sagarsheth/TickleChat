@@ -29,7 +29,7 @@ public class HomeScreenFragment extends Fragment {
                 container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         List<UserGroupBotModel> list = new ArrayList<>();
-        list.addAll(DataStorage.chatUserID);
+        list.addAll(DataStorage.chatUserList);
         list.addAll(DataStorage.mygrouplist);
         mAdapter = new UserListAdapter(list,getContext(),false,true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());

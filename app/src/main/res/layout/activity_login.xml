@@ -28,7 +28,7 @@
 
 
     <!--<com.facebook.login.widget.LoginButton-->
-        <!--android:chatUserID="@+chatUserID/login_button"-->
+        <!--android:chatUserList="@+chatUserList/login_button"-->
         <!--xmlns:facebook="http://schemas.android.com/apk/res-auto"-->
         <!--facebook:com_facebook_login_text="INSTANT FACEBOOK CONNECT"-->
         <!--facebook:com_facebook_logout_text="INSTANT FACEBOOK CONNECT"-->
@@ -43,14 +43,14 @@
         <!--style="@style/FacebookLoginButton"/>-->
 
     <!--<com.facebook.login.widget.LoginButton
-        android:chatUserID="@+chatUserID/login_button"
+        android:chatUserList="@+chatUserList/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="@dimen/dimen_10"
 
         android:background="@color/bg_color"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+chatUserID/btnGoogle"
+        android:layout_above="@+chatUserList/btnGoogle"
         android:layout_marginBottom="@dimen/dimen_10"
          />-->
 
@@ -58,7 +58,7 @@
 
 
     <!--<com.google.android.gms.common.SignInButton-->
-        <!--android:chatUserID="@+chatUserID/btnGoogle"-->
+        <!--android:chatUserList="@+chatUserList/btnGoogle"-->
         <!--android:layout_width="265dp"-->
         <!--android:layout_height="37.5dp"-->
         <!--android:layout_above="@+chatUserID/btnSignup"-->

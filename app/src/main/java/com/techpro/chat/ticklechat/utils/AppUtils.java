@@ -210,7 +210,7 @@ public class AppUtils {
             }
         } else {
             Intent intent = new Intent();
-            intent.setData(Uri.parse("market://details?chatUserID=" + application));
+            intent.setData(Uri.parse("market://details?chatUserList=" + application));
             context.startActivity(intent);
         }
     }
