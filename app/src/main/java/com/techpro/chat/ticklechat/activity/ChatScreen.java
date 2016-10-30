@@ -1,7 +1,7 @@
 package com.techpro.chat.ticklechat.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,7 +25,8 @@ import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatScreen extends Activity {
+public class ChatScreen extends AppCompatActivity
+{
     protected Toolbar mToolbar;
     protected RecyclerView message_list,text_list;
     private ChatAdapter mAdapter;
@@ -40,6 +41,9 @@ public class ChatScreen extends Activity {
         setContentView(R.layout.activity_chat);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitle("ABC");
+        setSupportActionBar(mToolbar);
+
+
         message_list = (RecyclerView) findViewById(R.id.message_list);
         text_list = (RecyclerView) findViewById(R.id.text_list);
         String userid = getIntent().getStringExtra("userid");

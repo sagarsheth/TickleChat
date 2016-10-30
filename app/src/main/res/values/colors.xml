@@ -33,4 +33,16 @@
     <color name="textColorSecondary_trans">#50000000</color>
 
     <color name="textColorSecondary_trans_40">#40000000</color>
+
+    <color name="black_overlay">#66000000</color>
+
+
+    <color name="v2_light_pink">#fc88b0</color> <!--#fc88b0-->
+    <color name="v2_dark_pink">#fc55a0</color>
+    <color name="v2_light_grey">#9b9b9b</color>
+
+    <color name="v2_text_Color_Primary">#000000</color>
+    <color name="v2_text_Color_Secondary">#4a4a4a</color>
+    <color name="v2_text_Color_Tertiary">#9b9b9b</color>
+
 </resources>

@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/menu_item_1" android:title="Manage Ticklers"
-          app:showAsAction="always|withText" />
+          app:showAsAction="withText" />
     <item android:id="@+id/menu_item_2" android:title="Add Ticklers"
-          app:showAsAction="always|withText" />
+          app:showAsAction="withText" />
     <item android:id="@+id/menu_item_3" android:title="Update Group"
-          app:showAsAction="always|withText" />
+          app:showAsAction="withText" />
     <item android:id="@+id/menu_item_4" android:title="Exit Group"
-          app:showAsAction="always|withText" />
+          app:showAsAction="withText" />
 </menu>

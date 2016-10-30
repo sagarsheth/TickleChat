@@ -32,9 +32,10 @@ import com.techpro.chat.ticklechat.fragments.HomeScreenFragment;
 import com.techpro.chat.ticklechat.fragments.NewGroupFragment;
 import com.techpro.chat.ticklechat.fragments.ProfileFragment;
 import com.techpro.chat.ticklechat.fragments.SearchTicklerFragment;
-import com.techpro.chat.ticklechat.fragments.SentanceFragment;
+import com.techpro.chat.ticklechat.fragments.SentenceFragment;
 import com.techpro.chat.ticklechat.fragments.SettingsFragment;
 import com.techpro.chat.ticklechat.fragments.StatusUpdateFragment;
+import com.techpro.chat.ticklechat.fragments.SubmittedTickles;
 import com.techpro.chat.ticklechat.fragments.TickleFriendFragment;
 import com.techpro.chat.ticklechat.listeners.FragmentChangeCallback;
 import com.techpro.chat.ticklechat.models.DataStorage;
@@ -141,7 +142,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         final int PROFILE = 3;
         final int STATUS_UPDATE = 4;
         final int SENTENCE = 5;
-        final int SETTING = 6;
+        final int SUBMITTED_TICKLE = 6;
+        final int SETTING = 7;
 
         String menuItmesArray[] = {
                 getResources().getString(R.string.menu_tickle_a_friend),
@@ -150,6 +152,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 getResources().getString(R.string.menu_profile),
                 getResources().getString(R.string.menu_status_update),
                 getResources().getString(R.string.menu_add_sentence),
+                getResources().getString(R.string.menu_submitted_tickles),
                 getResources().getString(R.string.menu_setting)
         };
 
@@ -160,7 +163,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 getResources().getString(R.string.menu_subtitle_4),
                 getResources().getString(R.string.menu_subtitle_5),
                 getResources().getString(R.string.menu_subtitle_6),
-                getResources().getString(R.string.menu_subtitle_7)
+                getResources().getString(R.string.menu_subtitle_7),
+                getResources().getString(R.string.menu_subtitle_8)
         };
 
         int menuItmesDrawableArray[] = {
@@ -170,8 +174,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 R.drawable.ic_launcher,
                 R.drawable.ic_launcher,
                 R.drawable.ic_launcher,
+                R.drawable.ic_launcher,
                 R.drawable.ic_launcher
-
         };
 
 
@@ -227,9 +231,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         replaceFragment(fragment, getResources().getString(R.string.menu_status_update), true);
                         return;
                     case SENTENCE:
-                        fragment = new SentanceFragment();
+                        fragment = new SentenceFragment();
                         replaceFragment(fragment, getResources().getString(R.string.menu_add_sentence), true);
                         return;
+                    case SUBMITTED_TICKLE:
+                        fragment = new SubmittedTickles();
+                        replaceFragment(fragment, getResources().getString(R.string.menu_submitted_tickles), true);
+                        return;
+
                     case SETTING:
                         fragment = new SettingsFragment();
                         replaceFragment(fragment, getResources().getString(R.string.menu_setting), true);
@@ -313,32 +322,34 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onResponse(Call<GetUserDetails> call, Response<GetUserDetails> response) {
                 if (response != null) {
-                    GetUserDetailsBody getUserDetails = response.body().getBody();
-                    if (iscurrentuser) {
-                        DataStorage.userDetailsBody = getUserDetails;
-                    } else {
-                        User usr = getUserDetails.getUser();
-                        if (!DataStorage.myAllUserlist.contains(usr)) {
-                            Log.e(TAG, "Success  ADDED USER: " + usr.getName());
-                            DataStorage.myAllUserlist.add(usr);
-                        }
+                    try
+                    {
+                        GetUserDetailsBody getUserDetails = response.body().getBody();
+                        if (iscurrentuser) {
+                            DataStorage.userDetailsBody = getUserDetails;
+                        } else {
+                            User usr = getUserDetails.getUser();
+                            if (!DataStorage.myAllUserlist.contains(usr)) {
+                                Log.e(TAG, "Success  ADDED USER: " + usr.getName());
+                                DataStorage.myAllUserlist.add(usr);
+                            }
 
-                        List<AllMessages.MessageList.ChatMessagesList> usermessages = new ArrayList<>();
-                        for (int i = 0; i < DataStorage.allMessages.size(); i++) {
-                            AllMessages.MessageList.ChatMessagesList msg = DataStorage.allMessages.get(i);
-                            Log.e(TAG, "Success  usr.getId(): " + usr.getId());
-                            Log.e(TAG, "Success  msg.getFrom_id(): " + msg.getFrom_id());
-                            Log.e(TAG, "Success  msg.getIsgroup(): " + msg.getIsgroup());
-                            if(usr.getId().equals(msg.getFrom_id()) && msg.getIsgroup().equals(0)) {
+                            List<AllMessages.MessageList.ChatMessagesList> usermessages = new ArrayList<>();
+                            for (int i = 0; i < DataStorage.allMessages.size(); i++) {
+                                AllMessages.MessageList.ChatMessagesList msg = DataStorage.allMessages.get(i);
+                                Log.e(TAG, "Success  usr.getId(): " + usr.getId());
+                                Log.e(TAG, "Success  msg.getFrom_id(): " + msg.getFrom_id());
+                                Log.e(TAG, "Success  msg.getIsgroup(): " + msg.getIsgroup());
+                                if(usr.getId().equals(msg.getFrom_id()) && msg.getIsgroup().equals(0)) {
 //                                Calendar cl = Calendar.getInstance();
 //                                cl.setTimeInMillis(Long.parseLong(msg.getRequested_at()));  //here your time in miliseconds
 //                                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
 //                                String datenew = format.format(cl.getTime());
-                                Log.e(TAG,usr.getId()+"<= getMessage ======> "+msg.getMessage());
+                                    Log.e(TAG,usr.getId()+"<= getMessage ======> "+msg.getMessage());
 //                                msg.setRequested_at(datenew);
-                                usermessages.add(msg);
+                                    usermessages.add(msg);
+                                }
                             }
-                        }
 //                        Collections.sort(messages, new Comparator<Tickles.MessageList.ChatMessagesTicklesList>() {
 //                            @Override
 //                            public int compare(Tickles.MessageList.ChatMessagesTicklesList s1, Tickles.MessageList.ChatMessagesTicklesList s2) {
@@ -346,20 +357,27 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 //                            }
 //                        });
 //                        Log.e(TAG,"messages ==> "+messages);
-                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(), usr.getId(), usermessages);
+                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(), usr.getId(), usermessages);
 
-                        if (id.size() == DataStorage.myAllUserlist.size()) {
-                            dialog.dismiss();
+                            if (id.size() == DataStorage.myAllUserlist.size()) {
+                                dialog.dismiss();
 
-                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,DataStorage.myAllUserlist);
-                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist,DataStorage.mygrouplist);
+                                SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,DataStorage.myAllUserlist);
+                                SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist,DataStorage.mygrouplist);
 
-                            Fragment fragment = new HomeScreenFragment();
-                            replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
+                                Fragment fragment = new HomeScreenFragment();
+                                replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
 
 
+                            }
                         }
+
                     }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+
                 } else {
                     Log.e(TAG, "Success but null response");
                 }
