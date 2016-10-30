@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -12,10 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.ChatScreen;
 import com.techpro.chat.ticklechat.models.Group;
@@ -75,10 +74,10 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
             } else {
                 holder.friendNumber.setVisibility(View.INVISIBLE);
             }
-            Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
-            if ((position % 2) == 0) {
-                holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
-            }
+//            Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
+//            if ((position % 2) == 0) {
+//                holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
+//            }
         } else {
             Group user = (Group) UserList.get(position);
             holder.friendName.setText(user.getName());
@@ -100,10 +99,10 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
             } else {
                 holder.friendNumber.setVisibility(View.INVISIBLE);
             }
-            Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
-            if ((position % 2) == 0) {
-                holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
-            }
+//            Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
+//            if ((position % 2) == 0) {
+//                holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
+//            }
         }
 
     }
@@ -116,7 +115,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView friendName,  friendNumber;
-        public ImageView friendImage;
+        public CircularImageView friendImage;
         public CheckBox addfriends;
         public LinearLayout backgroundlayout;
 
@@ -125,7 +124,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
             backgroundlayout = (LinearLayout) view.findViewById(R.id.backgroundlayout);
             friendName = (TextView) view.findViewById(R.id.friendName);
             friendNumber = (TextView) view.findViewById(R.id.friendNumber);
-            friendImage = (ImageView) view.findViewById(R.id.friendImage);
+            friendImage = (CircularImageView) view.findViewById(R.id.friendImage);
             addfriends = (CheckBox) view.findViewById(R.id.checkBox);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override

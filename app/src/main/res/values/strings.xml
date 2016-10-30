@@ -34,6 +34,7 @@
     <string name ="menu_profile">Profile</string>
     <string name ="menu_status_update">Status Update</string>
     <string name ="menu_add_sentence">Add Sentence</string>
+    <string name ="menu_submitted_tickles">Submitted Tickles</string>
     <string name ="menu_setting">Setting</string>
 
 
@@ -43,7 +44,8 @@
     <string name ="menu_subtitle_4">Let the world see the star</string>
     <string name ="menu_subtitle_5">Emotions here please</string>
     <string name ="menu_subtitle_6">Contribute-Popular-Boast-Repeat</string>
-    <string name ="menu_subtitle_7">Tweek Setting</string>
+    <string name ="menu_subtitle_7">See your Contributions</string>
+    <string name ="menu_subtitle_8">Tweek Setting</string>
 
     <string name="internet_connection_error">Internet is either disconnected or very slow.</string>
     <string name="unexpected_error">Some unexpected error occurred. Please try after some time.</string>
@@ -55,4 +57,14 @@
 
     <!--HEADERS ITMES-->
     <string name ="header_ticklers">Ticklers</string>
+
+    <string name="setting_delete_account">Delete Account</string>
+    <string name="setting_enable_notifications">Enable Notifications</string>
+    <string name="setting_delete_confirmation_statments">Delete your account will -\n
+        \n- Delete your account from Tickle
+        \n- Delete your Tickle chat history
+        \n- Delete you from all of your Tickle groups
+        \n- All data would be lost and non-recoverable
+        \n- User would not be able to received regular funny Tickles</string>
+    <string name="delete">Delete</string>
 </resources>

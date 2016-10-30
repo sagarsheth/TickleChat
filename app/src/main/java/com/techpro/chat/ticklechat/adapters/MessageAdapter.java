@@ -1,26 +1,17 @@
 package com.techpro.chat.ticklechat.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.techpro.chat.ticklechat.R;
-import com.techpro.chat.ticklechat.activity.ChatScreen;
 import com.techpro.chat.ticklechat.models.Messages;
-import com.techpro.chat.ticklechat.models.TickleFriend;
-import com.techpro.chat.ticklechat.models.message.Tickles;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHolder>{
 
@@ -44,7 +35,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.tickle_friend_row, parent, false);
+                .inflate(R.layout.layout_chat_text_row, parent, false);
 
         return new MyViewHolder(itemView);
     }
@@ -52,48 +43,34 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Messages movie = moviesList.get(position);
-        holder.friendName.setText(movie.getMessage());
-        holder.friendImage.setVisibility(View.GONE);
-        if (showCheckbox) {
-            holder.addfriends.setVisibility(View.VISIBLE);
-        } else {
-            holder.addfriends.setVisibility(View.INVISIBLE);
-        }
-        if (movie.getMessage() != null)
-            holder.friendNumber.setText(movie.getMessage());
-        if (showBelowDesc) {
-            holder.friendNumber.setVisibility(View.VISIBLE);
-        } else {
-            holder.friendNumber.setVisibility(View.INVISIBLE);
-        }
-        Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
-        if ((position % 2) == 0) {
-            holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
-        }
+        holder.tvChatMessage.setText(movie.getMessage());
+//        Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
+//        if ((position % 2) == 0) {
+//            holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
+//        }
     }
 
     @Override
     public int getItemCount() {
         if (moviesList == null)
             return 0;
-
         return moviesList.size();
     }
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView friendName,  friendNumber;
-        public ImageView friendImage;
-        public CheckBox addfriends;
-        public LinearLayout backgroundlayout;
+        public TextView tvChatMessage;
+//        public ImageView friendImage;
+//        public CheckBox addfriends;
+//        public LinearLayout backgroundlayout;
 
         public MyViewHolder(View view) {
             super(view);
-            backgroundlayout = (LinearLayout) view.findViewById(R.id.backgroundlayout);
-            friendName = (TextView) view.findViewById(R.id.friendName);
-            friendNumber = (TextView) view.findViewById(R.id.friendNumber);
-            friendImage = (ImageView) view.findViewById(R.id.friendImage);
-            addfriends = (CheckBox) view.findViewById(R.id.checkBox);
+//            backgroundlayout = (LinearLayout) view.findViewById(R.id.backgroundlayout);
+            tvChatMessage = (TextView) view.findViewById(R.id.tv_chat_message);
+//            friendNumber = (TextView) view.findViewById(R.id.friendNumber);
+//            friendImage = (ImageView) view.findViewById(R.id.friendImage);
+//            addfriends = (CheckBox) view.findViewById(R.id.checkBox);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

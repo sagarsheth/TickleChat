@@ -349,6 +349,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,DataStorage.myAllUserlist);
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist,DataStorage.mygrouplist);
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.chatUserID,DataStorage.chatUserList);
+                                SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,DataStorage.myAllUserlist);
+                                SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist,DataStorage.mygrouplist);
 
                         Fragment fragment = new HomeScreenFragment();
                         replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);

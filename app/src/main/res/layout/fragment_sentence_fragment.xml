@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:gravity="center_vertical|center_horizontal"
+              android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/tickle_logo" />
+
+    <EditText
+        android:id="@+id/tv_add_new_tickle"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:minHeight="150dp"
+        android:padding="@dimen/dimen_15"
+        android:layout_margin="@dimen/dimen_30"
+        android:minLines="6"
+        android:gravity="left"
+        android:inputType="textMultiLine"
+        android:background="@drawable/drawable_round_edit_view"
+        android:hint="tickle tickel tickle tickel tickle tickel tickle tickel tickle tickel tickle tickel tickle tickel tickle tickel tickle tickel tickle tickel "
+        />
+
+
+    <TextView
+        android:id="@+id/tv_btn_save"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:gravity="center"
+        android:layout_marginRight="@dimen/dimen_5"
+        android:background="@drawable/selector_button"
+        android:text="Save" />
+
+
+</LinearLayout>

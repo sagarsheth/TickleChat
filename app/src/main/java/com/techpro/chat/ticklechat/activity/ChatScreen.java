@@ -66,10 +66,60 @@ public class ChatScreen extends Activity {
         text_list.setItemAnimator(new DefaultItemAnimator());
         text_list.setAdapter(mAdapter1);
 
+        final ImageView ivSlideUpDown = (ImageView)findViewById(R.id.iv_slide_up_down);
+        ivSlideUpDown.setColorFilter(getResources().getColor(R.color.white));
+        ivSlideUpDown.setImageResource(R.drawable.down_white_arrow_icon);
+        ivSlideUpDown.setSelected(true);
+        ivSlideUpDown.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick (View v)
+            {
+                if(!ivSlideUpDown.isSelected())
+                {
+                    ivSlideUpDown.setSelected(true);
+                    ivSlideUpDown.setImageResource(R.drawable.down_white_arrow_icon);
+                    text_list.setVisibility(View.VISIBLE);
 
+                }
+                else
+                {
+                    ivSlideUpDown.setSelected(false);
+                    ivSlideUpDown.setImageResource(R.drawable.up_arrow_icon);
+                    text_list.setVisibility(View.GONE);
+                }
+            }
+
+            });
     }
 
-//    private void prepareMovieData() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_chat_options, menu);//Menu Resource, Menu
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected (MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_1:
+                Toast.makeText(getApplicationContext(), "Item 1 Selected", Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.menu_item_2:
+                Toast.makeText(getApplicationContext(),"Item 2 Selected",Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.menu_item_3:
+                Toast.makeText(getApplicationContext(),"Item 3 Selected",Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.menu_item_4:
+                Toast.makeText(getApplicationContext(),"Item 4 Selected",Toast.LENGTH_LONG).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    //    private void prepareMovieData() {
 //        movieList.clear();
 //        TickleFriend movie = new TickleFriend("KLM", "ABC", "2 new message",null);
 //        movieList.add(movie);

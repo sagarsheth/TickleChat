@@ -2,7 +2,6 @@ package com.techpro.chat.ticklechat.activity.registration;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,8 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
-import com.facebook.CallbackManager;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.home.HomeActivity;
