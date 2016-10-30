@@ -36,7 +36,7 @@ public class ChatScreen extends Activity {
     private MessageAdapter mAdapter1;
     private List<AllMessages.MessageList.ChatMessagesList> movieList = new ArrayList<>();
     private List<TickleFriend> movieList1 = new ArrayList<>();
-
+    private ArrayList<Messages> ctrl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,14 +45,19 @@ public class ChatScreen extends Activity {
         mToolbar.setTitle("ABC");
         message_list = (RecyclerView) findViewById(R.id.message_list);
         text_list = (RecyclerView) findViewById(R.id.text_list);
+        int isgroup = 0;
+        String sentID = "";
         String userid = getIntent().getStringExtra("userid");
         String groupid = getIntent().getStringExtra("groupid");
         Log.e("RecyclerView", "userid：" +userid);
         Log.e("RecyclerView", "groupid：" +groupid);
         if(groupid == null) {
+            sentID = userid;
             movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.
                     getColleactionObject(getApplicationContext(),userid);
         } else {
+            isgroup = 1;
+            sentID = groupid;
             movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.
                     getColleactionObject(getApplicationContext(),groupid);
         }
@@ -62,13 +67,31 @@ public class ChatScreen extends Activity {
         message_list.setItemAnimator(new DefaultItemAnimator());
         message_list.setAdapter(mAdapter);
 
-        ArrayList<Messages> ctrl = new MessageController(getApplicationContext()).getMessages();
+       ctrl = new MessageController(getApplicationContext()).getMessages();
 //        Log.e("ssssssssssssss","ctrl ==> "+ctrl);
-        mAdapter1 = new MessageAdapter(ctrl,getApplicationContext(),false,true);
+        mAdapter1 = new MessageAdapter(ctrl,getApplicationContext(),false,true,sentID,isgroup);
         RecyclerView.LayoutManager mLayoutManager1 = new LinearLayoutManager(getApplicationContext());
         text_list.setLayoutManager(mLayoutManager1);
         text_list.setItemAnimator(new DefaultItemAnimator());
         text_list.setAdapter(mAdapter1);
+        mAdapter1.setDataUpdateListener(new MessageAdapter.DataUpdated() {
+            @Override
+            public void dataUpdated(int isgroup, final String id) {
+                Log.e("ssssssssssssss","idididid ==> "+id);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.
+                                getColleactionObject(getApplicationContext(),id);
+                        ctrl = new MessageController(getApplicationContext()).getMessages();
+                        mAdapter.notifyDataSetChanged();
+                        mAdapter1.notifyDataSetChanged();
+                    }
+                });
+
+
+            }
+        });
 
         final ImageView ivSlideUpDown = (ImageView)findViewById(R.id.iv_slide_up_down);
         ivSlideUpDown.setColorFilter(getResources().getColor(R.color.white));

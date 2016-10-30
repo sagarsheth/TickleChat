@@ -18,10 +18,15 @@ import com.mikhaellopez.circularimageview.CircularImageView;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.ChatScreen;
 import com.techpro.chat.ticklechat.models.Group;
+import com.techpro.chat.ticklechat.models.message.AllMessages;
 import com.techpro.chat.ticklechat.models.user.User;
 import com.techpro.chat.ticklechat.models.user.UserGroupBotModel;
+import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyViewHolder>{
 
@@ -53,6 +58,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
+        List<AllMessages.MessageList.ChatMessagesList> movieList = new ArrayList<>();
         if (UserList.get(position) instanceof User){
             User user = (User) UserList.get(position);
             holder.friendName.setText(user.getName());
@@ -67,8 +73,11 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
             } else {
                 holder.addfriends.setVisibility(View.INVISIBLE);
             }
-            if (user.getStatus() != null)
-                holder.friendNumber.setText(user.getStatus());
+
+            movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(mContext,user.getId());
+            Log.e("Sssssssssssssss","User => "+movieList.get(0).getMessage());
+            holder.friendNumber.setText(movieList.get(0).getMessage());
+
             if (showBelowDesc) {
                 holder.friendNumber.setVisibility(View.VISIBLE);
             } else {
@@ -92,8 +101,10 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
             } else {
                 holder.addfriends.setVisibility(View.INVISIBLE);
             }
-            if (user.getName() != null)
-                holder.friendNumber.setText(user.getName());
+            movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(mContext,user.getId());
+            Log.e("Sssssssssssssss","Group => "+movieList.get(0).getMessage());
+                holder.friendNumber.setText(movieList.get(0).getMessage());
+
             if (showBelowDesc) {
                 holder.friendNumber.setVisibility(View.VISIBLE);
             } else {

@@ -15,12 +15,21 @@ import android.widget.TextView;
 
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.ChatScreen;
+import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
+import com.techpro.chat.ticklechat.models.message.SendMessage;
 import com.techpro.chat.ticklechat.models.message.Tickles;
+import com.techpro.chat.ticklechat.rest.ApiClient;
+import com.techpro.chat.ticklechat.rest.ApiInterface;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder>{
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> {
 
     private List<AllMessages.MessageList.ChatMessagesList> moviesList;
     private boolean showCheckbox = false;
@@ -39,6 +48,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder>{
         this.showBelowDesc = showBelowDesc;
         this.mContext = context;
     }
+
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
@@ -64,7 +74,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder>{
         } else {
             holder.friendNumber.setVisibility(View.INVISIBLE);
         }
-        Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
+        Log.e("(position % 2) => " + position, "(position % 2)=>" + (position % 2));
         if ((position % 2) == 0) {
             holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
         }
@@ -80,7 +90,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder>{
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView friendName,  friendNumber;
+        public TextView friendName, friendNumber;
         public ImageView friendImage;
         public CheckBox addfriends;
         public LinearLayout backgroundlayout;
@@ -98,6 +108,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder>{
                     Log.d("RecyclerView", "getPosition：" + getPosition());
                     Log.d("RecyclerView", "getAdapterPosition：" + getAdapterPosition());
                     Log.d("RecyclerView", "getLayoutPosition：" + getLayoutPosition());
+
 //                    if (mContext != null){
 //                        Intent intent = new Intent(mContext, ChatScreen.class);
 //                        mContext.startActivity(intent);
@@ -107,3 +118,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder>{
         }
     }
 }
+
+
+

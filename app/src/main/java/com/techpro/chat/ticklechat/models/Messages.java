@@ -1,7 +1,5 @@
 package com.techpro.chat.ticklechat.models;
 
-import java.util.ArrayList;
-
 /**
  * Created by sagars on 10/19/16.
  */

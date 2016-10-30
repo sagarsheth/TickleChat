@@ -2,6 +2,7 @@ package com.techpro.chat.ticklechat.rest;
 
 import com.techpro.chat.ticklechat.models.GetGroupDetails;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
+import com.techpro.chat.ticklechat.models.message.SendMessage;
 import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
 import com.techpro.chat.ticklechat.models.user.UserModel;
@@ -33,8 +34,8 @@ public interface ApiInterface {
     Call<GetGroupDetails> getGroupDetials(@Path("groupId") int groupId);
 
     @FormUrlEncoded
-    @POST("users/invite")
-    Call<GetUserDetails> getUserListFromID5(@Field("userName") String userName, @Field("userMail") String userMail);
+    @POST("messages")
+    Call<SendMessage> postChatMessage(@Field("tickleId") String tickleId, @Field("withId") String withId, @Field("message") String message);
 
     @FormUrlEncoded
     @POST("users/login")

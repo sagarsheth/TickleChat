@@ -9,16 +9,30 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.techpro.chat.ticklechat.R;
+import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.Messages;
+import com.techpro.chat.ticklechat.models.message.AllMessages;
+import com.techpro.chat.ticklechat.models.message.SendMessage;
+import com.techpro.chat.ticklechat.rest.ApiClient;
+import com.techpro.chat.ticklechat.rest.ApiInterface;
+import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHolder>{
 
     private ArrayList<Messages> moviesList;
     private boolean showCheckbox = false;
     private boolean showBelowDesc = false;
+    private String sentID = "";
+    private int isGroup = 0;
     private Context mContext = null;
+    private DataUpdated dataupdate = null;
 
     public MessageAdapter( ArrayList<Messages> moviesList, boolean showCheckbox, boolean showBelowDesc) {
         this.moviesList = moviesList;
@@ -26,10 +40,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
         this.showBelowDesc = showBelowDesc;
     }
 
-    public MessageAdapter( ArrayList<Messages> moviesList, Context context, boolean showCheckbox, boolean showBelowDesc) {
+    public MessageAdapter( ArrayList<Messages> moviesList, Context context, boolean showCheckbox, boolean showBelowDesc,
+                           String sentID, int isGroup) {
         this.moviesList = moviesList;
         this.showCheckbox = showCheckbox;
         this.showBelowDesc = showBelowDesc;
+        this.isGroup = isGroup;
+        this.sentID = sentID;
         this.mContext = context;
     }
     @Override
@@ -77,6 +94,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
                     Log.d("RecyclerView", "getPosition：" + getPosition());
                     Log.d("RecyclerView", "getAdapterPosition：" + getAdapterPosition());
                     Log.d("RecyclerView", "getLayoutPosition：" + getLayoutPosition());
+                    callMessage_ALL_Service(String.valueOf(moviesList.get(getPosition()).getID()),sentID,moviesList.get(getPosition()).getMessage());
 //                    if (mContext != null){
 //                        Intent intent = new Intent(mContext, ChatScreen.class);
 //                        mContext.startActivity(intent);
@@ -84,5 +102,56 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
                 }
             });
         }
+    }
+
+    /*
+* Get - User details by user chatUserList
+* @param userId - user chatUserList
+* */
+    private void callMessage_ALL_Service(String tickleId, String toID, String message) {
+        //Getting webservice instance which we need to call
+        Call<SendMessage> callForUserDetailsFromID = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class).postChatMessage(tickleId,toID,message);
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<SendMessage>() {
+            @Override
+            public void onResponse(Call<SendMessage> call, Response<SendMessage> response) {
+                if (response != null) {
+                    if (response.body().getStatus().equals("success")) {
+                        AllMessages.MessageList.ChatMessagesList msg= new AllMessages().new MessageList().new ChatMessagesList();
+                        msg.setFrom_id(response.body().getBody().getFrom_id());
+                        msg.setId(response.body().getBody().getId());
+                        msg.setIsgroup(String.valueOf(isGroup));
+                        msg.setMessage(response.body().getBody().getMessage());
+                        msg.setRead(response.body().getBody().getRead());
+                        msg.setSentat(response.body().getBody().getSent());
+                        msg.setTickle_id(response.body().getBody().getTickle_id());
+                        msg.setTo_id(response.body().getBody().getTo_id());
+                        List<AllMessages.MessageList.ChatMessagesList> usermessages  = (List<AllMessages.MessageList.
+                                ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(mContext,msg.getTo_id());
+                        usermessages.add(msg);
+                        SharedPreferenceUtils.setColleactionObject(mContext,msg.getTo_id(),usermessages);
+                        dataupdate.dataUpdated(isGroup,msg.getTo_id());
+                    }
+                } else {
+                    Log.e("SendMessage", "Success callMessage_ALL_Service but null response");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SendMessage> call, Throwable t) {
+                // Log error here since request failed
+                Log.e("SendMessage", t.toString());
+//                dialog.dismiss();
+            }
+        });
+
+    }
+
+    public interface DataUpdated {
+        void dataUpdated(int isgroup, String id);
+    }
+
+    public void setDataUpdateListener(DataUpdated dataupdate){
+        this.dataupdate = dataupdate;
     }
 }

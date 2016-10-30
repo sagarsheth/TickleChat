@@ -330,7 +330,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             List<AllMessages.MessageList.ChatMessagesList> usermessages = new ArrayList<>();
                             for (int i = 0; i < DataStorage.allMessages.size(); i++) {
                                 AllMessages.MessageList.ChatMessagesList msg = DataStorage.allMessages.get(i);
-                                if (msg.getFrom_id().equals(usr.getId()) && msg.getIsgroup().equals("0")) {
+                                if ((msg.getFrom_id().equals(usr.getId()) || (msg.getTo_id().equals(usr.getId()))) && msg.getIsgroup().equals("0")) {
 //                                    Log.e(TAG, "Success  usermessages: " + msg.getMessage() );
                                     usermessages.add(msg);
                                 }
@@ -349,8 +349,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,DataStorage.myAllUserlist);
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist,DataStorage.mygrouplist);
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.chatUserID,DataStorage.chatUserList);
-                                SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,DataStorage.myAllUserlist);
-                                SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist,DataStorage.mygrouplist);
 
                         Fragment fragment = new HomeScreenFragment();
                         replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
