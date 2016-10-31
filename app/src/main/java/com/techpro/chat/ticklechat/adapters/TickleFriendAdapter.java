@@ -2,8 +2,11 @@ package com.techpro.chat.ticklechat.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,23 +19,25 @@ import android.widget.TextView;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.ChatScreen;
 import com.techpro.chat.ticklechat.models.TickleFriend;
+import com.techpro.chat.ticklechat.models.user.User;
+import com.techpro.chat.ticklechat.models.user.UserGroupBotModel;
 
 import java.util.List;
 
 public class TickleFriendAdapter extends RecyclerView.Adapter<TickleFriendAdapter.MyViewHolder>{
 
-    private List<TickleFriend> moviesList;
+    private List<User> moviesList;
     private boolean showCheckbox = false;
     private boolean showBelowDesc = false;
     private Context mContext = null;
 
-    public TickleFriendAdapter(List<TickleFriend> moviesList,boolean showCheckbox,boolean showBelowDesc) {
+    public TickleFriendAdapter(List<User> moviesList, boolean showCheckbox, boolean showBelowDesc) {
         this.moviesList = moviesList;
         this.showCheckbox = showCheckbox;
         this.showBelowDesc = showBelowDesc;
     }
 
-    public TickleFriendAdapter(List<TickleFriend> moviesList, Context context, boolean showCheckbox, boolean showBelowDesc) {
+    public TickleFriendAdapter(List<User> moviesList, Context context, boolean showCheckbox, boolean showBelowDesc) {
         this.moviesList = moviesList;
         this.showCheckbox = showCheckbox;
         this.showBelowDesc = showBelowDesc;
@@ -48,17 +53,20 @@ public class TickleFriendAdapter extends RecyclerView.Adapter<TickleFriendAdapte
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        TickleFriend movie = moviesList.get(position);
+        User movie = moviesList.get(position);
         holder.friendName.setText(movie.getName());
-        if (movie.getImage() != null)
-            holder.friendImage.setImageBitmap(movie.getImage());
+        if (movie.getProfile_image() != null) {
+            byte[] decodedString = Base64.decode(movie.getProfile_image().getBytes(), Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            holder.friendImage.setImageBitmap(decodedByte);
+        }
         if (showCheckbox) {
             holder.addfriends.setVisibility(View.VISIBLE);
         } else {
             holder.addfriends.setVisibility(View.INVISIBLE);
         }
-        if (movie.getNumber() != null)
-            holder.friendNumber.setText(movie.getNumber());
+        if (movie.getUser_status() != null)
+            holder.friendNumber.setText(movie.getUser_status());
         if (showBelowDesc) {
             holder.friendNumber.setVisibility(View.VISIBLE);
         } else {
@@ -95,10 +103,10 @@ public class TickleFriendAdapter extends RecyclerView.Adapter<TickleFriendAdapte
                     Log.d("RecyclerView", "getPosition：" + getPosition());
                     Log.d("RecyclerView", "getAdapterPosition：" + getAdapterPosition());
                     Log.d("RecyclerView", "getLayoutPosition：" + getLayoutPosition());
-                    if (mContext != null){
-                        Intent intent = new Intent(mContext, ChatScreen.class);
-                        mContext.startActivity(intent);
-                    }
+                    User user = moviesList.get(getPosition());
+                    Intent intent = new Intent(mContext, ChatScreen.class);
+                    intent.putExtra("userid",user.getId());
+                    mContext.startActivity(intent);
                 }
             });
         }

@@ -5,13 +5,17 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.adapters.TickleFriendAdapter;
+import com.techpro.chat.ticklechat.adapters.UserListAdapter;
+import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.TickleFriend;
+import com.techpro.chat.ticklechat.models.user.UserGroupBotModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +32,7 @@ public class TickleFriendFragment extends Fragment {
 
 
 
-        mAdapter = new TickleFriendAdapter(movieList,false,true);
+        mAdapter = new TickleFriendAdapter(DataStorage.chatUserList,getContext(),false,true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());

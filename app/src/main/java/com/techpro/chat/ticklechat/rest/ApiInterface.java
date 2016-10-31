@@ -1,11 +1,16 @@
 package com.techpro.chat.ticklechat.rest;
 
+import com.google.gson.JsonArray;
+import com.techpro.chat.ticklechat.models.CustomModel;
 import com.techpro.chat.ticklechat.models.GetGroupDetails;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
+import com.techpro.chat.ticklechat.models.message.CreateGroup;
 import com.techpro.chat.ticklechat.models.message.SendMessage;
 import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
 import com.techpro.chat.ticklechat.models.user.UserModel;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.DELETE;
@@ -36,6 +41,14 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("messages")
     Call<SendMessage> postChatMessage(@Field("tickleId") String tickleId, @Field("withId") String withId, @Field("message") String message);
+
+    @FormUrlEncoded
+    @POST("groups")
+    Call<CreateGroup> postNewGroup(@Field("name") String name, @Field("image") String image, @Field("created_by") String created_by, @Field("admin") String admin);
+
+    @FormUrlEncoded
+    @POST("groups/{groupId}/members")
+    Call<CustomModel> postGroupMembers(@Path("groupId") int groupId, @Field("members") List<Integer> members);
 
     @FormUrlEncoded
     @POST("users/login")

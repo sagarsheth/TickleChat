@@ -94,7 +94,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
                     Log.d("RecyclerView", "getPosition：" + getPosition());
                     Log.d("RecyclerView", "getAdapterPosition：" + getAdapterPosition());
                     Log.d("RecyclerView", "getLayoutPosition：" + getLayoutPosition());
-                    callMessage_ALL_Service(String.valueOf(moviesList.get(getPosition()).getID()),sentID,moviesList.get(getPosition()).getMessage());
+                    callSendMessageService(String.valueOf(moviesList.get(getPosition()).getID()),sentID,moviesList.get(getPosition()).getMessage());
 //                    if (mContext != null){
 //                        Intent intent = new Intent(mContext, ChatScreen.class);
 //                        mContext.startActivity(intent);
@@ -108,7 +108,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
 * Get - User details by user chatUserList
 * @param userId - user chatUserList
 * */
-    private void callMessage_ALL_Service(String tickleId, String toID, String message) {
+    private void callSendMessageService(String tickleId, String toID, String message) {
         //Getting webservice instance which we need to call
         Call<SendMessage> callForUserDetailsFromID = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class).postChatMessage(tickleId,toID,message);
         //Calling Webservice by enqueue
