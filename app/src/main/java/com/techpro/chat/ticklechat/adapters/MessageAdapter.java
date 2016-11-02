@@ -128,6 +128,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
                         msg.setTo_id(response.body().getBody().getTo_id());
                         List<AllMessages.MessageList.ChatMessagesList> usermessages  = (List<AllMessages.MessageList.
                                 ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(mContext,msg.getTo_id());
+                        if (usermessages == null)
+                            usermessages =  new ArrayList<AllMessages.MessageList.ChatMessagesList>();
                         usermessages.add(msg);
                         SharedPreferenceUtils.setColleactionObject(mContext,msg.getTo_id(),usermessages);
                         dataupdate.dataUpdated(isGroup,msg.getTo_id());

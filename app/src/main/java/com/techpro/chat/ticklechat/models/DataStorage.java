@@ -17,8 +17,9 @@ import java.util.List;
 public class DataStorage {
 
     public static UserDetailsModel UserDetails = null;
-    public static GetUserDetailsBody userDetailsBody = null;
+    public static User currentUserDetailsBody = null;
     public static ArrayList<AllMessages.MessageList.ChatMessagesList> allMessages = null;
+    public static User randomUser = null;
     public static List<User> myAllUserlist = null;
     public static List<User> chatUserList = null;
     public static List<Group> mygrouplist = null;

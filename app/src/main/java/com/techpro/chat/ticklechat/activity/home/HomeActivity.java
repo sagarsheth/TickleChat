@@ -26,12 +26,12 @@ import com.onesignal.OneSignal;
 import com.techpro.chat.ticklechat.AppConfigs;
 import com.techpro.chat.ticklechat.Constants;
 import com.techpro.chat.ticklechat.R;
+import com.techpro.chat.ticklechat.activity.ChatScreen;
 import com.techpro.chat.ticklechat.activity.registration.Login;
 import com.techpro.chat.ticklechat.activity.registration.PersonalProfileActivity;
 import com.techpro.chat.ticklechat.fragments.HomeScreenFragment;
 import com.techpro.chat.ticklechat.fragments.NewGroupFragment;
 import com.techpro.chat.ticklechat.fragments.ProfileFragment;
-import com.techpro.chat.ticklechat.fragments.SearchTicklerFragment;
 import com.techpro.chat.ticklechat.fragments.SentenceFragment;
 import com.techpro.chat.ticklechat.fragments.SettingsFragment;
 import com.techpro.chat.ticklechat.fragments.StatusUpdateFragment;
@@ -72,7 +72,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     public static final String KEY_TITLE = "title";
     private ApiInterface apiService;
-    private ApiInterface apiAUTService;;
+    private ApiInterface apiAUTService;
     private List<String> allUserID = null;
     private List<String> userid = null;
     private List<String> grpid = null;
@@ -218,8 +218,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
                         return;
                     case SEARCH_TICKLER:
-                        fragment = new SearchTicklerFragment();
-                        replaceFragment(fragment, getResources().getString(R.string.menu_search_tickler), true);
+                        dialog = ProgressDialog.show(HomeActivity.this, "Loading", "Please wait...", true);
+                        getRandomUser();
                         return;
                     case PROFILE:
                         fragment = new ProfileFragment();
@@ -249,6 +249,41 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    /*
+  * Get - User details by user chatUserList
+  * @param userId - user chatUserList
+  * */
+    private void getRandomUser() {
+        //Getting webservice instance which we need to call
+        Call<GetUserDetails> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class)).getRandomUser();
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<GetUserDetails>() {
+            @Override
+            public void onResponse(Call<GetUserDetails> call, Response<GetUserDetails> response) {
+                if (response != null) {
+                    User usr = response.body().getBody().getUser();
+                    if (usr != null) {
+                        Intent intent = new Intent(getApplicationContext(), ChatScreen.class);
+                        intent.putExtra("userid", usr.getId());
+//                    intent.putExtra("israndom",true);
+                        Log.d("DataStorage.randomUser", "user.getId()：" + usr.getId());
+                        startActivity(intent);
+                    }
+                } else {
+                    Log.e(TAG, "Success callMessage_ALL_Service but null response");
+                }
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<GetUserDetails> call, Throwable t) {
+                // Log error here since request failed
+                Log.e(TAG, t.toString());
+                dialog.dismiss();
+            }
+        });
+
+    }
 
     @Override
     public void setContentView(int layoutResID) {
@@ -320,7 +355,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     User usr = getUserDetails.getUser();
                     if (iscurrentuser) {
                         allUserID = new ArrayList<String>();
-                        DataStorage.userDetailsBody = getUserDetails;
+                        DataStorage.currentUserDetailsBody = getUserDetails.getUser();
                     } else if (!isgroup) {
 
                         if (usr!=null && usr.getId()!= null  && usr.getName()!=null) {
@@ -500,7 +535,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 //                    DataStorage.tickles = response.body().getBody();
 //                    Log.e(TAG, "Success  callTickles_Service response.getTickles: " + response.body().getBody().getTickles().get(0).getMessage());
 ////                    GetUserDetailsBody getUserDetails = response.body().getBody();
-////                    DataStorage.userDetailsBody = getUserDetails;
+////                    DataStorage.currentUserDetailsBody = getUserDetails;
 ////                    Log.e(TAG, "Success  callUserListService : " + getUserDetails);
 ////                    DataStorage.mymessagelist = new HashMap<User, List<Tickles.MessageList.ChatMessagesTicklesList>>();
 //                    DataStorage.myAllUserlist = new ArrayList<User>();

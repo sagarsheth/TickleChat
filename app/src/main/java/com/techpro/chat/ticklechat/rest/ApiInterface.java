@@ -1,6 +1,7 @@
 package com.techpro.chat.ticklechat.rest;
 
 import com.google.gson.JsonArray;
+import com.squareup.okhttp.RequestBody;
 import com.techpro.chat.ticklechat.models.CustomModel;
 import com.techpro.chat.ticklechat.models.GetGroupDetails;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
@@ -8,11 +9,14 @@ import com.techpro.chat.ticklechat.models.message.CreateGroup;
 import com.techpro.chat.ticklechat.models.message.SendMessage;
 import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
+import com.techpro.chat.ticklechat.models.user.User;
 import com.techpro.chat.ticklechat.models.user.UserModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -33,10 +37,24 @@ public interface ApiInterface {
     Call<AllMessages> getAllMessageList();
 
     @GET("tickles")
+    Call<GetUserDetails> getRandomUser();
+
+    @GET("tickles")
     Call<Tickles> getTickles();
 
     @GET("groups/{groupId}")
     Call<GetGroupDetails> getGroupDetials(@Path("groupId") int groupId);
+
+    @FormUrlEncoded
+    @PUT("users/{userid}")
+    Call<UserModel> callUpdateUserDataService(@Path("userid") int userid, @Field("name") String name, @Field("gender") String gender,
+                                              @Field("dob") String dob, @Field("phone") String phone, @Field("email") String email, @Field("profile_image") String profile_image);
+
+
+    @FormUrlEncoded
+    @PUT("users/{userid}/status")
+    Call<CustomModel> callupdateStatusService(@Path("userid") int userid, @Field("status") String status);
+
 
     @FormUrlEncoded
     @POST("messages")
@@ -48,7 +66,7 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST("groups/{groupId}/members")
-    Call<CustomModel> postGroupMembers(@Path("groupId") int groupId, @Field("members") List<Integer> members);
+    Call<CustomModel> postGroupMembers(@Path("groupId") int groupId, @Body String members);
 
     @FormUrlEncoded
     @POST("users/login")

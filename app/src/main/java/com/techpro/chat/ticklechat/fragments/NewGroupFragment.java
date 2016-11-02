@@ -13,19 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.techpro.chat.ticklechat.R;
-import com.techpro.chat.ticklechat.activity.home.TicklersAdapter;
 import com.techpro.chat.ticklechat.adapters.AddGroupMembersAdapter;
-import com.techpro.chat.ticklechat.adapters.TickleFriendAdapter;
 import com.techpro.chat.ticklechat.models.CustomModel;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.Group;
 import com.techpro.chat.ticklechat.models.TickleFriend;
-import com.techpro.chat.ticklechat.models.message.AllMessages;
 import com.techpro.chat.ticklechat.models.message.CreateGroup;
-import com.techpro.chat.ticklechat.models.message.SendMessage;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
@@ -146,9 +141,10 @@ public class NewGroupFragment extends Fragment {
 * */
     private void callAddMembersService(final List<Integer> members, int groupId) {
         //Getting webservice instance which we need to call
-
+        String idList = members.toString();
+        String csv = idList.substring(1, idList.length() - 1).replace(", ", ",");
         Call<CustomModel> callForUserDetailsFromID = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).
-                create(ApiInterface.class).postGroupMembers(groupId,members);
+                create(ApiInterface.class).postGroupMembers(groupId,csv.toString());
         //Calling Webservice by enqueue
         callForUserDetailsFromID.enqueue(new Callback<CustomModel>() {
             @Override

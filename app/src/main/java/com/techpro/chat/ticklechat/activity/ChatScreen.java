@@ -49,6 +49,7 @@ public class ChatScreen extends Activity {
         String sentID = "";
         String userid = getIntent().getStringExtra("userid");
         String groupid = getIntent().getStringExtra("groupid");
+//        boolean israndom = getIntent().getBooleanExtra("israndom",false);
         Log.e("RecyclerView", "userid：" +userid);
         Log.e("RecyclerView", "groupid：" +groupid);
         if(groupid == null) {
@@ -61,6 +62,9 @@ public class ChatScreen extends Activity {
             movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.
                     getColleactionObject(getApplicationContext(),groupid);
         }
+        if (movieList == null)
+            movieList = new ArrayList<>();
+
         mAdapter = new ChatAdapter(movieList,getApplicationContext(),false,true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         message_list.setLayoutManager(mLayoutManager);
