@@ -167,7 +167,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             public void onFailure(Call<UserModel> call, Throwable t) {
                 // Log error here since request failed
                 Log.e(TAG, t.toString());
-//                dialog.dismiss();
+                dialog.dismiss();
             }
         });
     }
