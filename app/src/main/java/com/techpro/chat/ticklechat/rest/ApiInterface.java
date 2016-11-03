@@ -36,11 +36,14 @@ public interface ApiInterface {
     @GET("messages/all")
     Call<AllMessages> getAllMessageList();
 
-    @GET("tickles")
+    @POST("users/random")
     Call<GetUserDetails> getRandomUser();
 
     @GET("tickles")
     Call<Tickles> getTickles();
+
+    @GET("tickles/{userId}/tickles")
+    Call<Tickles> getTickles(@Path("userid") int userid);
 
     @GET("groups/{groupId}")
     Call<GetGroupDetails> getGroupDetials(@Path("groupId") int groupId);
@@ -50,6 +53,8 @@ public interface ApiInterface {
     Call<UserModel> callUpdateUserDataService(@Path("userid") int userid, @Field("name") String name, @Field("gender") String gender,
                                               @Field("dob") String dob, @Field("phone") String phone, @Field("email") String email, @Field("profile_image") String profile_image);
 
+    @POST("tickles")
+    Call<CustomModel> callAddSentenceService(@Field("message") String message, @Field("requester") String requester);
 
     @FormUrlEncoded
     @PUT("users/{userid}/status")
@@ -65,8 +70,8 @@ public interface ApiInterface {
     Call<CreateGroup> postNewGroup(@Field("name") String name, @Field("image") String image, @Field("created_by") String created_by, @Field("admin") String admin);
 
     @FormUrlEncoded
-    @POST("groups/{groupId}/members")
-    Call<CustomModel> postGroupMembers(@Path("groupId") int groupId, @Body String members);
+    @POST("groups/{groupId}/addmembers")
+    Call<CustomModel> postGroupMembers(@Path("groupId") int groupId, @Field("members") String members);
 
     @FormUrlEncoded
     @POST("users/login")

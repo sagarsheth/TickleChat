@@ -260,7 +260,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         callForUserDetailsFromID.enqueue(new Callback<GetUserDetails>() {
             @Override
             public void onResponse(Call<GetUserDetails> call, Response<GetUserDetails> response) {
-                if (response != null) {
+                if (response != null || response.body().getBody() != null) {
                     User usr = response.body().getBody().getUser();
                     if (usr != null) {
                         Intent intent = new Intent(getApplicationContext(), ChatScreen.class);
@@ -268,6 +268,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 //                    intent.putExtra("israndom",true);
                         Log.d("DataStorage.randomUser", "user.getId()：" + usr.getId());
                         startActivity(intent);
+                    } else {
+
+                        Log.e(TAG, "onResponse callMessage_ALL_Service but null response");
                     }
                 } else {
                     Log.e(TAG, "Success callMessage_ALL_Service but null response");
@@ -277,6 +280,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onFailure(Call<GetUserDetails> call, Throwable t) {
+                Log.e(TAG, "onFailure callMessage_ALL_Service but null response");
                 // Log error here since request failed
                 Log.e(TAG, t.toString());
                 dialog.dismiss();

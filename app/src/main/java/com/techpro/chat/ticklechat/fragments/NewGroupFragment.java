@@ -143,8 +143,11 @@ public class NewGroupFragment extends Fragment {
         //Getting webservice instance which we need to call
         String idList = members.toString();
         String csv = idList.substring(1, idList.length() - 1).replace(", ", ",");
+        Log.e("===============>","groupId ==> "+groupId);
+        Log.e("===============>","csv.toString() ==> "+csv);
+//        csv = "{\"members\"}:\""+csv+"\"";
         Call<CustomModel> callForUserDetailsFromID = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).
-                create(ApiInterface.class).postGroupMembers(groupId,csv.toString());
+                create(ApiInterface.class).postGroupMembers(groupId,csv);
         //Calling Webservice by enqueue
         callForUserDetailsFromID.enqueue(new Callback<CustomModel>() {
             @Override
