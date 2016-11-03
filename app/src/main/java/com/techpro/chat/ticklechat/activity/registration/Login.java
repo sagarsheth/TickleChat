@@ -12,8 +12,11 @@ import android.util.Log;
 import android.view.View;
 
 import com.google.gson.Gson;
+import com.techpro.chat.ticklechat.LoginDialog;
 import com.techpro.chat.ticklechat.R;
+import com.techpro.chat.ticklechat.StatusUpdateDialog;
 import com.techpro.chat.ticklechat.activity.home.HomeActivity;
+import com.techpro.chat.ticklechat.adapters.StatusAdapter;
 import com.techpro.chat.ticklechat.listeners.GenericListener;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
@@ -39,6 +42,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private ProgressDialog dialog;
     private static final String TAG = Login.class.getSimpleName();
     private ApiInterface apiService;
+    private LoginDialog mStatusUpdateDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,23 +68,38 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         switch (v.getId()) {
             case R.id.btnLogin:
-//                break;
+                mStatusUpdateDialog = new LoginDialog(Login.this, new GenericListener<String>() {
+                    @Override
+                    public void onResponse(int callerID, String messages) {
+
+                        switch (callerID) {
+                            case R.id.tvPositive:
+
+//                                if (Login.SHA1(messages.split("~")[1]) == null) {
+//
+//                                } else {
+                                    dialog = ProgressDialog.show(Login.this, "Loading", "Please wait...", true);
+                                    callLoginService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
+//                                    callLoginService(messages.split("~")[0], Login.SHA1(messages.split("~")[1]));
+//                                }
+                                break;
+
+                            case R.id.tvNegative:
+                                mStatusUpdateDialog.cancel();
+                                break;
+                        }
+                    }
+                });
+
+                mStatusUpdateDialog.setTitle("Hey! We do not take any pictures without your permission. Wanna try again ?");
+                mStatusUpdateDialog.setPositiveButtonText("OK");
+                mStatusUpdateDialog.setNegativeButtonText("CANCEL");
+                mStatusUpdateDialog.setCancelable(false);
+                mStatusUpdateDialog.show();
+                break;
             case R.id.btnSignup:
-
-//                TODO create Dialog to ask phone and pass and use SHA1 for pass
-                dialog = ProgressDialog.show(Login.this, "Loading", "Please wait...", true);
-                callLoginService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
-
-//                LoginModel.Data objData = new LoginModel.Data();
-//                objData.setEmail("a@a.com");
-//                objData.setName("asgfag");
-//                objData.setId("12434");
-//                objData.setPhoto_uri(null);
-//                getInstance().setData(objData);
-//                startActivity(new Intent(Login.this, HomeActivity.class));
-//                TODO uncomment below
-//                Intent mainIntent = new Intent(Login.this,LoginActivity.class);
-//                Login.this.startActivity(mainIntent);
+                Intent mainIntent = new Intent(Login.this,LoginActivity.class);
+                Login.this.startActivity(mainIntent);
                 break;
 
         }
@@ -174,19 +193,24 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
 
 // For Password
-    public static String SHA1(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
-        md.update(text.getBytes("iso-8859-1"), 0, text.length());
-        byte[] sha1hash = md.digest();
-        StringBuilder buf = new StringBuilder();
-        for (byte b : sha1hash) {
-            int halfbyte = (b >>> 4) & 0x0F;
-            int two_halfs = 0;
-            do {
-                buf.append((0 <= halfbyte) && (halfbyte <= 9) ? (char) ('0' + halfbyte) : (char) ('a' + (halfbyte - 10)));
-                halfbyte = b & 0x0F;
-            } while (two_halfs++ < 1);
+    public static String SHA1(String text) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            md.update(text.getBytes("iso-8859-1"), 0, text.length());
+            byte[] sha1hash = md.digest();
+            StringBuilder buf = new StringBuilder();
+            for (byte b : sha1hash) {
+                int halfbyte = (b >>> 4) & 0x0F;
+                int two_halfs = 0;
+                do {
+                    buf.append((0 <= halfbyte) && (halfbyte <= 9) ? (char) ('0' + halfbyte) : (char) ('a' + (halfbyte - 10)));
+                    halfbyte = b & 0x0F;
+                } while (two_halfs++ < 1);
+            }
+            return buf.toString();
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        return buf.toString();
+        return null;
     }
 }
