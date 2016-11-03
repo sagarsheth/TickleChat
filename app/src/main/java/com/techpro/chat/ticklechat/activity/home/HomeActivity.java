@@ -29,6 +29,7 @@ import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.ChatScreen;
 import com.techpro.chat.ticklechat.activity.registration.Login;
 import com.techpro.chat.ticklechat.activity.registration.PersonalProfileActivity;
+import com.techpro.chat.ticklechat.database.DataBaseHelper;
 import com.techpro.chat.ticklechat.fragments.HomeScreenFragment;
 import com.techpro.chat.ticklechat.fragments.NewGroupFragment;
 import com.techpro.chat.ticklechat.fragments.ProfileFragment;
@@ -42,6 +43,7 @@ import com.techpro.chat.ticklechat.models.GetGroupDetails;
 import com.techpro.chat.ticklechat.models.Group;
 import com.techpro.chat.ticklechat.models.MenuItems;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
+import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
 import com.techpro.chat.ticklechat.models.user.GetUserDetailsBody;
 import com.techpro.chat.ticklechat.models.user.User;
@@ -125,6 +127,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             callMessage_ALL_Service();
         } else {
             Log.e("ssssssssssssss","mymessagelist & myAllUserlist ==> not null");
+            getTicklesService();
             Fragment fragment = new HomeScreenFragment();
             replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
         }
@@ -388,7 +391,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,DataStorage.myAllUserlist);
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist,DataStorage.mygrouplist);
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.chatUserID,DataStorage.chatUserList);
-
+                        getTicklesService();
                         Fragment fragment = new HomeScreenFragment();
                         replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
                     }
@@ -619,5 +622,36 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
+    }
+
+    /*
+* Get - User details by user chatUserList
+* @param userId - user chatUserList
+* */
+    private synchronized void getTicklesService() {
+        //Getting webservice instance which we need to call
+        Call<Tickles> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
+                .create(ApiInterface.class)).getTickles();
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<Tickles>() {
+            @Override
+            public void onResponse(Call<Tickles> call, Response<Tickles> response) {
+                if (response != null) {
+                    if (response.body() != null && response.body().getStatus().equals("success")) {
+                        new DataBaseHelper(getApplicationContext()).insertMessages(response.body().getBody().getTickles());
+                    }
+
+                } else {
+                    Log.e("profile", "Success callTickles_Service but null response");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Tickles> call, Throwable t) {
+                // Log error here since request failed
+                Log.e("profile", t.toString());
+            }
+        });
+
     }
 }

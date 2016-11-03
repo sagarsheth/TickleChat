@@ -42,7 +42,7 @@ public interface ApiInterface {
     @GET("tickles")
     Call<Tickles> getTickles();
 
-    @GET("tickles/{userId}/tickles")
+    @GET("tickles/{userid}/tickles")
     Call<Tickles> getTickles(@Path("userid") int userid);
 
     @GET("groups/{groupId}")
