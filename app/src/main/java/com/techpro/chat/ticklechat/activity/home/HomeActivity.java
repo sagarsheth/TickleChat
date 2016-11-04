@@ -15,15 +15,14 @@ import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.techpro.chat.ticklechat.AppConfigs;
 import com.techpro.chat.ticklechat.Constants;
@@ -31,6 +30,7 @@ import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.ChatScreen;
 import com.techpro.chat.ticklechat.activity.registration.Login;
 import com.techpro.chat.ticklechat.activity.registration.PersonalProfileActivity;
+import com.techpro.chat.ticklechat.database.DataBaseHelper;
 import com.techpro.chat.ticklechat.fragments.HomeScreenFragment;
 import com.techpro.chat.ticklechat.fragments.NewGroupFragment;
 import com.techpro.chat.ticklechat.fragments.ProfileFragment;
@@ -44,6 +44,7 @@ import com.techpro.chat.ticklechat.models.GetGroupDetails;
 import com.techpro.chat.ticklechat.models.Group;
 import com.techpro.chat.ticklechat.models.MenuItems;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
+import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
 import com.techpro.chat.ticklechat.models.user.GetUserDetailsBody;
 import com.techpro.chat.ticklechat.models.user.User;
@@ -69,7 +70,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     protected Toolbar mToolbar;
     protected DrawerLayout mDrawerLayout;
     private FrameLayout mContainer;
-    private static final String TAG = HomeActivity.class.getSimpleName();
+    private static final String TAG = Login.class.getSimpleName();
     private ProgressDialog dialog;
 
     public static final String KEY_TITLE = "title";
@@ -107,7 +108,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         setUpHeaderLayout(mNavigation);
         initSlidingDrawer();
-//        initOneSignal();
+        gcmRegistration();
+
 
         DataStorage.mygrouplist  = new ArrayList<Group>();
         DataStorage.myAllUserlist = new ArrayList<User>();
@@ -133,9 +135,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 //        TODO Vishal to call below method to get 5 messages form preloaded DB
 //        Log.e("ssssssssssssss","==> "+new MessageController(getApplicationContext()).getMessages());
-
-
-        gcmRegistration();
 
     }
 
@@ -265,7 +264,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         callForUserDetailsFromID.enqueue(new Callback<GetUserDetails>() {
             @Override
             public void onResponse(Call<GetUserDetails> call, Response<GetUserDetails> response) {
-                if (response != null) {
+                if (response != null || response.body().getBody() != null) {
                     User usr = response.body().getBody().getUser();
                     if (usr != null) {
                         Intent intent = new Intent(getApplicationContext(), ChatScreen.class);
@@ -273,6 +272,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 //                    intent.putExtra("israndom",true);
                         Log.d("DataStorage.randomUser", "user.getId()：" + usr.getId());
                         startActivity(intent);
+                    } else {
+
+                        Log.e(TAG, "onResponse callMessage_ALL_Service but null response");
                     }
                 } else {
                     Log.e(TAG, "Success callMessage_ALL_Service but null response");
@@ -282,6 +284,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onFailure(Call<GetUserDetails> call, Throwable t) {
+                Log.e(TAG, "onFailure callMessage_ALL_Service but null response");
                 // Log error here since request failed
                 Log.e(TAG, t.toString());
                 dialog.dismiss();
@@ -389,7 +392,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,DataStorage.myAllUserlist);
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist,DataStorage.mygrouplist);
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.chatUserID,DataStorage.chatUserList);
-
+                        getTicklesService();
                         Fragment fragment = new HomeScreenFragment();
                         replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
                     }
@@ -525,52 +528,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-//    /*
-//* Get - User details by user chatUserList
-//* @param userId - user chatUserList
-//* */
-//    private void callTickles_Service() {
-//        //Getting webservice instance which we need to call
-//        Call<Tickles> callForUserDetailsFromID = apiAUTService.getTickles();
-//        //Calling Webservice by enqueue
-//        callForUserDetailsFromID.enqueue(new Callback<Tickles>() {
-//            @Override
-//            public void onResponse(Call<Tickles> call, Response<Tickles> response) {
-//                if (response != null) {
-//                    DataStorage.tickles = response.body().getBody();
-//                    Log.e(TAG, "Success  callTickles_Service response.getTickles: " + response.body().getBody().getTickles().get(0).getMessage());
-////                    GetUserDetailsBody getUserDetails = response.body().getBody();
-////                    DataStorage.currentUserDetailsBody = getUserDetails;
-////                    Log.e(TAG, "Success  callUserListService : " + getUserDetails);
-////                    DataStorage.mymessagelist = new HashMap<User, List<Tickles.MessageList.ChatMessagesTicklesList>>();
-//                    DataStorage.myAllUserlist = new ArrayList<User>();
-//                    chatUserList = new ArrayList<String>();
-//                    chatUserList.clear();
-//                    for (int i = 0; i < DataStorage.tickles.getTickles().size(); i++) {
-//                        Tickles.MessageList.ChatMessagesTicklesList msg = DataStorage.tickles.getTickles().get(i);
-//                        if(!chatUserList.contains(msg.getUserid())) {
-//                            if(msg.getUserid() != null && msg.getRequested_at() != null) {
-//                                Log.e(TAG, "Success  msg.getUserid() not null: " + msg.getUserid());
-//                                chatUserList.add(msg.getUserid());
-//                                callGetUserDetailsService(Integer.parseInt(msg.getUserid()), false);
-//                            }
-//                        }
-//
-//                    }
-//                } else {
-//                    Log.e(TAG, "Success callTickles_Service but null response");
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Tickles> call, Throwable t) {
-//                // Log error here since request failed
-//                Log.e(TAG, t.toString());
-////                dialog.dismiss();
-//            }
-//        });
-//
-//    }
     private void replaceFragment(Fragment fragment, CharSequence title, boolean addToBackstack) {
         Bundle bundle = new Bundle();
         bundle.putString(KEY_TITLE, title.toString());
@@ -606,18 +563,39 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         return false;
     }
 
+    /*
+* Get - User details by user chatUserList
+* @param userId - user chatUserList
+* */
+    private synchronized void getTicklesService() {
+        //Getting webservice instance which we need to call
+        Call<Tickles> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
+                                                           .create(ApiInterface.class)).getTickles();
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<Tickles>() {
+            @Override
+            public void onResponse(Call<Tickles> call, Response<Tickles> response) {
+                if (response != null) {
+                    if (response.body() != null && response.body().getStatus().equals("success")) {
+                        new DataBaseHelper(getApplicationContext()).insertMessages(response.body().getBody().getTickles());
+                    }
+
+                } else {
+                    Log.e("profile", "Success callTickles_Service but null response");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Tickles> call, Throwable t) {
+                // Log error here since request failed
+                Log.e("profile", t.toString());
+            }
+        });
+
+    }
 
     void gcmRegistration()
     {
-
-
-        // If a notification message is tapped, any data accompanying the notification
-        // message is available in the intent extras. In this sample the launcher
-        // intent is fired when the notification is tapped, so any accompanying data would
-        // be handled here. If you want a different intent fired, set the click_action
-        // field of the notification message to the desired intent. The launcher intent
-        // is used when no click_action is specified.
-        //
         // Handle possible data accompanying notification message.
         // [START handle_data_extras]
         if (getIntent().getExtras() != null) {
@@ -628,136 +606,22 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
         // [END handle_data_extras]
 
-        Button subscribeButton = (Button) findViewById(R.id.subscribeButton);
-        subscribeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        // Get token
+        FirebaseApp.initializeApp(HomeActivity.this);
+        String token = FirebaseInstanceId.getInstance().getToken();
 
-                FirebaseApp.initializeApp(HomeActivity.this);
-                // [START subscribe_topics]
-                FirebaseMessaging.getInstance().subscribeToTopic("news");
-                // [END subscribe_topics]
+        Log.d(TAG, token);
+        Toast.makeText(HomeActivity.this, token, Toast.LENGTH_SHORT).show();
 
-                // Log and toast
-                String msg = getString(R.string.app_name);
-                Log.d(TAG, msg);
-                Toast.makeText(HomeActivity.this, msg, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        Button logTokenButton = (Button) findViewById(R.id.logTokenButton);
-        logTokenButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Get token
-                FirebaseApp.initializeApp(HomeActivity.this);
-                String token = FirebaseInstanceId.getInstance().getToken();
-
-                // Log and toast
-//                String msg = getString(R.string.msg_token_fmt, token);
-                Log.d(TAG, token);
-                Toast.makeText(HomeActivity.this, token, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+//        FirebaseApp.initializeApp(HomeActivity.this);
+//                // [START subscribe_topics]
+//                FirebaseMessaging.getInstance().subscribeToTopic("news");
+//                // [END subscribe_topics]
+//
+//                // Log and toast
+//                String msg = getString(R.string.app_name);
+//                Log.d(TAG, msg);
+//                Toast.makeText(HomeActivity.this, msg, Toast.LENGTH_SHORT).show();
+        }
 
 }
-
-
-
-
-
-
-
-//    void initOneSignal() {
-//        OneSignal.enableNotificationsWhenActive(true);
-//        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
-//            @Override
-//            public void idsAvailable(String userId, String registrationId) {
-//                Log.d("debug", "User:" + userId);
-//                if (registrationId != null)
-//                    Log.d("debug", "registrationId:" + registrationId);
-//
-//                OneSignal.setEmail("V@V.com");
-//
-//
-//            }
-//        });
-//    }
-
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        registerReceiver();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-//        isReceiverRegistered = false;
-//        super.onPause();
-//    }
-//
-//    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-//    private BroadcastReceiver mRegistrationBroadcastReceiver;
-//    private TextView mInformationTextView;
-//    private boolean isReceiverRegistered;
-//    void gcmRegistration()
-//    {
-//
-//        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive (Context context, Intent intent) {
-//
-//                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-//                boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
-//                if (sentToken) {
-//                    mInformationTextView.setText("GCM RECEIVED");
-//                } else {
-//                    mInformationTextView.setText("An error occurred");
-//                }
-//            }
-//        };
-//        mInformationTextView = (TextView) findViewById(R.id.tv_information);
-//
-//        // Registering BroadcastReceiver
-//        registerReceiver();
-//
-//        if (checkPlayServices()) {
-//            // Start IntentService to register this application with GCM.
-//            Intent intent = new Intent(this, RegistrationIntentService.class);
-//            startService(intent);
-//        }
-//
-//    }
-//
-//
-//    private void registerReceiver(){
-//        if(!isReceiverRegistered) {
-//            LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver, new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));
-//            isReceiverRegistered = true;
-//        }
-//    }
-//    /**
-//     * Check the device to make sure it has the Google Play Services APK. If
-//     * it doesn't, display a dialog that allows users to download the APK from
-//     * the Google Play Store or enable it in the device's system settings.
-//     */
-//    private boolean checkPlayServices() {
-//        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-//        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
-//        if (resultCode != ConnectionResult.SUCCESS) {
-//            if (apiAvailability.isUserResolvableError(resultCode)) {
-//                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
-//                               .show();
-//            } else {
-//                Log.i(TAG, "This device is not supported.");
-//                finish();
-//            }
-//            return false;
-//        }
-//        return true;
-//    }
-
-//}

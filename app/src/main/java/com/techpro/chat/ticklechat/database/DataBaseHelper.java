@@ -1,5 +1,6 @@
 package com.techpro.chat.ticklechat.database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -8,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.techpro.chat.ticklechat.models.Messages;
+import com.techpro.chat.ticklechat.models.message.Tickles;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,14 +32,42 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "ticklechat.sqlite";
     private static final String DB_PATH_SUFFIX = "/databases/";
     static Context ctx;
+    private boolean isSavingDone = true;
+    private ArrayList<Messages> savedmessage;
 
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         ctx = context;
+        savedmessage = GetMeMessage();
     }
 
+    public void insertMessages(ArrayList<Tickles.MessageList.ChatMessagesTicklesList> msgs){
+        SQLiteDatabase db = this.getWritableDatabase();
+        isSavingDone = false;
+        for (int i=0; i<msgs.size(); i++) {
+
+            if (isMessageExist(msgs.get(i).getId())) {
+                continue;
+            }
+
+            Log.e("profile", "inserter ==> "+msgs.get(i).getMessage());
+            ContentValues values = new ContentValues();
+            values.put("id", msgs.get(i).getId());
+            values.put("message", msgs.get(i).getMessage());
+            values.put("requested_by", msgs.get(i).getRequested_by());
+            values.put("approved", msgs.get(i).getApproved());
+            values.put("modified_at", msgs.get(i).getRequested_at());
+            db.insert("tickle_messages", null, values);
+        }
+        isSavingDone = true;
+        db.close();
+    }
     // Getting single contact
     public ArrayList<Messages> GetMeMessage() {
+
+        if (isSavingDone == false)
+            return savedmessage;
+
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Messages> messages = new ArrayList<>();
         Cursor cursor = db.rawQuery("SELECT * FROM 'tickle_messages';", null);
@@ -56,6 +86,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         }
         return null;
+    }
+
+    // Getting single contact
+    public boolean isMessageExist(String id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<Messages> messages = new ArrayList<>();
+        Cursor cursor = db.rawQuery("SELECT * FROM tickle_messages where id == "+id+";", null);
+        if (cursor != null ) {
+            if (cursor.getCount() == 0) {
+                cursor.close();
+                db.close();
+                return false;
+            }
+        }
+        cursor.close();
+        db.close();
+        return true;
     }
 
     public void CopyDataBaseFromAsset() throws IOException {

@@ -1,9 +1,11 @@
 package com.techpro.chat.ticklechat.fragments;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.techpro.chat.ticklechat.R;
+import com.techpro.chat.ticklechat.models.DataStorage;
+import com.techpro.chat.ticklechat.models.message.Tickles;
+import com.techpro.chat.ticklechat.models.user.UserModel;
+import com.techpro.chat.ticklechat.rest.ApiClient;
+import com.techpro.chat.ticklechat.rest.ApiInterface;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SettingsFragment extends Fragment implements View.OnClickListener
 {
@@ -21,6 +32,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
     private Snackbar mSnackbar;
     private View mViewBlackOverlay;
     private RelativeLayout mRlMainContainer;
+    private ProgressDialog dialog;
 
     @Override
     public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -92,6 +104,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
 
                 if (mSnackbar != null && mSnackbar.isShown())
                 {
+                    dialog = ProgressDialog.show(SettingsFragment.this.getActivity(), "Loading", "Please wait...", true);
+                    deletUserService(Integer.parseInt(DataStorage.UserDetails.getId()));
                     mSnackbar.dismiss();
                 }
                 if (mViewBlackOverlay != null)
@@ -121,6 +135,40 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
 
         mSnackbar.show();
         mViewBlackOverlay.setVisibility(View.VISIBLE);
+
+    }
+
+
+    /*
+* Get - User details by user chatUserList
+* @param userId - user chatUserList
+* */
+    private synchronized void deletUserService(int userid) {
+        //Getting webservice instance which we need to call
+        Call<UserModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
+                .create(ApiInterface.class)).deleteUser(userid);
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<UserModel>() {
+            @Override
+            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                if (response != null) {
+                    if (response.body() != null && response.body().getStatus().equals("success")) {
+
+                    }
+
+                } else {
+                    Log.e("profile", "Success callTickles_Service but null response");
+                }
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<UserModel> call, Throwable t) {
+                // Log error here since request failed
+                Log.e("profile", t.toString());
+                dialog.dismiss();
+            }
+        });
 
     }
 

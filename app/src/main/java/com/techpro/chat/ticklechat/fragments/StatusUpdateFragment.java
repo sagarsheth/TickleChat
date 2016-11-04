@@ -87,7 +87,6 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
 
                         switch (callerID) {
                             case R.id.tvPositive:
-                                mTvStatus.setText(messages);
                                 dialog = ProgressDialog.show(StatusUpdateFragment.this.getActivity(), "Loading", "Please wait...", true);
                                 callupdateStatusService(Integer.parseInt(DataStorage.UserDetails.getId()),messages.toString());
                                 break;
@@ -138,13 +137,14 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
                         String json = gson.toJson(DataStorage.UserDetails);
                         SharedPreferenceUtils.setValue(StatusUpdateFragment.this.getContext(),SharedPreferenceUtils.LoginuserDetailsPreference,json);
                         Log.e("onResponse","getUserDetails ==> "+json);
+                        mTvStatus.setText(status);
                     }
 
                 } else {
                     Log.e("profile", "Success callTickles_Service but null response");
                 }
-                mStatusUpdateDialog.dismiss();
                 dialog.dismiss();
+                mStatusUpdateDialog.dismiss();
             }
 
             @Override
@@ -152,6 +152,7 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
                 // Log error here since request failed
                 Log.e("profile", t.toString());
                 dialog.dismiss();
+                mStatusUpdateDialog.dismiss();
             }
         });
 
