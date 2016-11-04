@@ -52,7 +52,7 @@ public class TickleFriendAdapter extends RecyclerView.Adapter<TickleFriendAdapte
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder (MyViewHolder holder, final int position) {
         User movie = moviesList.get(position);
         holder.friendName.setText(movie.getName());
         if (movie.getProfile_image() != null) {
@@ -76,6 +76,21 @@ public class TickleFriendAdapter extends RecyclerView.Adapter<TickleFriendAdapte
         if ((position % 2) == 0) {
             holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
         }
+
+
+        holder.backgroundlayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mContext != null)
+                {
+                    User user = moviesList.get(position);
+                    Intent intent = new Intent(mContext, ChatScreen.class);
+                    intent.putExtra("userid",user.getId());
+                    mContext.startActivity(intent);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -97,18 +112,7 @@ public class TickleFriendAdapter extends RecyclerView.Adapter<TickleFriendAdapte
             friendNumber = (TextView) view.findViewById(R.id.friendNumber);
             friendImage = (ImageView) view.findViewById(R.id.friendImage);
             addfriends = (CheckBox) view.findViewById(R.id.checkBox);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d("RecyclerView", "getPosition：" + getPosition());
-                    Log.d("RecyclerView", "getAdapterPosition：" + getAdapterPosition());
-                    Log.d("RecyclerView", "getLayoutPosition：" + getLayoutPosition());
-                    User user = moviesList.get(getPosition());
-                    Intent intent = new Intent(mContext, ChatScreen.class);
-                    intent.putExtra("userid",user.getId());
-                    mContext.startActivity(intent);
-                }
-            });
+
         }
     }
 }

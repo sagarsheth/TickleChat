@@ -1,16 +1,9 @@
 apply plugin: 'com.android.application'
-
 android {
     compileSdkVersion 23
     buildToolsVersion '23.0.1'
 
     defaultConfig {
-        applicationId "com.techpro.chat.ticklechat"
-
-        manifestPlaceholders = [manifestApplicationId          : "${applicationId}",
-                                onesignal_app_id               : "78cfb1a4-31c3-44b3-80a4-3af519d4d386",
-                                onesignal_google_project_number: "393976039601"]
-
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
@@ -25,7 +18,6 @@ android {
     }
 }
 
-
 repositories {
     maven { url 'http://repo1.maven.org/maven2' }
 }
@@ -34,8 +26,8 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     provided 'org.projectlombok:lombok:1.16.6'
-    // retrofit, gson
     compile 'com.android.support:multidex:1.0.1'
+    // support lib
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:recyclerview-v7:25.0.0'
     compile 'com.android.support:cardview-v7:25.0.0'
@@ -43,19 +35,31 @@ dependencies {
     compile 'com.android.support:design:25.0.0'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.mikhaellopez:circularimageview:2.0.2'
+    //retrofit and picasso http connection and image loading and caching lib
     compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
     compile 'com.squareup.picasso:picasso:2.5.0'
     compile 'com.squareup.okhttp:logging-interceptor:2.7.0'
     compile 'com.makeramen:roundedimageview:2.2.1'
-    compile 'com.google.android.gms:play-services:9.6.1'
+    //firebase gcm
+    compile 'com.google.firebase:firebase-messaging:9.8.0'
+    // google play service
+    compile 'com.google.android.gms:play-services:9.8.0'
+    // google ads
+    compile 'com.google.android.gms:play-services-ads:9.8.0'
+    // google login
+    compile 'com.google.android.gms:play-services-auth:9.8.0'
+    //fb login
     compile 'com.facebook.android:facebook-android-sdk:4.+'
+    //vie pager indicators
     compile 'fr.avianey.com.viewpagerindicator:library:2.4.1@aar'
-    compile 'com.onesignal:OneSignal:2.+@aar'
+
+    // retrofit, gson
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
-    compile 'com.google.android.gms:play-services-ads:9.6.1'
-    compile 'com.google.android.gms:play-services-auth:9.6.1'
-    compile 'com.google.android.gms:play-services-gcm:9.6.1'
 }
+
+// ADD THIS AT THE BOTTOM
+apply plugin: 'com.google.gms.google-services'
+

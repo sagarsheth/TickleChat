@@ -1,4 +1,7 @@
 <resources>
+
+    <string name="gcm_sender_id">561310604781</string>
+
     <string name="app_name">TickleChat</string>
     <string name="facebook_app_id">1592527504392182</string>
     <string name="review_me_on_ticklechat">Review us on TickleChat</string>

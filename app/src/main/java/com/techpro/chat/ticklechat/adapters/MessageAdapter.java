@@ -2,6 +2,8 @@ package com.techpro.chat.ticklechat.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,11 +62,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Messages movie = moviesList.get(position);
-        holder.tvChatMessage.setText(movie.getMessage());
-//        Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
-//        if ((position % 2) == 0) {
-//            holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
-//        }
+        if(!TextUtils.isEmpty(movie.getMessage()))
+            holder.tvChatMessage.setText(Html.fromHtml(movie.getMessage()));
     }
 
     @Override

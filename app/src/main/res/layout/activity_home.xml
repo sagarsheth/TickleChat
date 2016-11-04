@@ -14,11 +14,30 @@
 
         <include layout="@layout/layout_toolbar"/>
 
+        <TextView
+            android:id="@+id/tv_information"
+            android:layout_width="wrap_content"
+            android:text="INFORMATION"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/subscribeButton"
+            android:text="SUBSCRIBE"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/logTokenButton"
+            android:text="TOKEN BUTTON"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/white"/>
+
     </LinearLayout>
     
     <android.support.design.widget.NavigationView
