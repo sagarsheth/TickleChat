@@ -32,41 +32,41 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "ticklechat.sqlite";
     private static final String DB_PATH_SUFFIX = "/databases/";
     static Context ctx;
-    private boolean isSavingDone = true;
-    private ArrayList<Messages> savedmessage;
+//    private boolean isSavingDone = true;
+//    private ArrayList<Messages> savedmessage;
 
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         ctx = context;
-        savedmessage = GetMeMessage();
+//        savedmessage = GetMeMessage();
     }
 
     public void insertMessages(ArrayList<Tickles.MessageList.ChatMessagesTicklesList> msgs){
-        SQLiteDatabase db = this.getWritableDatabase();
-        isSavingDone = false;
-        for (int i=0; i<msgs.size(); i++) {
-
-            if (isMessageExist(msgs.get(i).getId())) {
-                continue;
-            }
-
-            Log.e("profile", "inserter ==> "+msgs.get(i).getMessage());
-            ContentValues values = new ContentValues();
-            values.put("id", msgs.get(i).getId());
-            values.put("message", msgs.get(i).getMessage());
-            values.put("requested_by", msgs.get(i).getRequested_by());
-            values.put("approved", msgs.get(i).getApproved());
-            values.put("modified_at", msgs.get(i).getRequested_at());
-            db.insert("tickle_messages", null, values);
-        }
-        isSavingDone = true;
-        db.close();
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        isSavingDone = false;
+//        for (int i=0; i<msgs.size(); i++) {
+//
+//            if (isMessageExist(msgs.get(i).getId())) {
+//                continue;
+//            }
+//
+//            Log.e("profile", "inserter ==> "+msgs.get(i).getMessage());
+//            ContentValues values = new ContentValues();
+//            values.put("id", msgs.get(i).getId());
+//            values.put("message", msgs.get(i).getMessage());
+//            values.put("requested_by", msgs.get(i).getRequested_by());
+//            values.put("approved", msgs.get(i).getApproved());
+//            values.put("modified_at", msgs.get(i).getRequested_at());
+//            db.insert("tickle_messages", null, values);
+//        }
+//        isSavingDone = true;
+//        db.close();
     }
     // Getting single contact
     public ArrayList<Messages> GetMeMessage() {
 
-        if (isSavingDone == false)
-            return savedmessage;
+//        if (isSavingDone == false)
+//            return savedmessage;
 
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Messages> messages = new ArrayList<>();
