@@ -91,6 +91,10 @@ public interface ApiInterface {
     @DELETE("users/{userid}")
     Call<UserModel> deleteUser(@Path("userid") int userId);
 
+    @FormUrlEncoded
+    @POST("users/updateDT")
+    Call<CustomModel> UpdateDeviceTockan(@Field("devicetoken") String devicetoken);
+
 
     /*//Get response in json string
     @GET("users/{userid}")

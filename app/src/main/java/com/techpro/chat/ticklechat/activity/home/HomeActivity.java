@@ -39,6 +39,7 @@ import com.techpro.chat.ticklechat.fragments.SettingsFragment;
 import com.techpro.chat.ticklechat.fragments.StatusUpdateFragment;
 import com.techpro.chat.ticklechat.fragments.TickleFriendFragment;
 import com.techpro.chat.ticklechat.listeners.FragmentChangeCallback;
+import com.techpro.chat.ticklechat.models.CustomModel;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.GetGroupDetails;
 import com.techpro.chat.ticklechat.models.Group;
@@ -48,6 +49,7 @@ import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
 import com.techpro.chat.ticklechat.models.user.GetUserDetailsBody;
 import com.techpro.chat.ticklechat.models.user.User;
+import com.techpro.chat.ticklechat.models.user.UserModel;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
@@ -70,7 +72,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     protected Toolbar mToolbar;
     protected DrawerLayout mDrawerLayout;
     private FrameLayout mContainer;
-    private static final String TAG = Login.class.getSimpleName();
+    private static final String TAG = HomeActivity.class.getSimpleName();
     private ProgressDialog dialog;
 
     public static final String KEY_TITLE = "title";
@@ -610,7 +612,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         FirebaseApp.initializeApp(HomeActivity.this);
         String token = FirebaseInstanceId.getInstance().getToken();
 
-        Log.d(TAG, token);
+        Log.e(TAG, token);
+        UpdateDeviceTockan(token);
         Toast.makeText(HomeActivity.this, token, Toast.LENGTH_SHORT).show();
 
 //        FirebaseApp.initializeApp(HomeActivity.this);
@@ -623,5 +626,37 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 //                Log.d(TAG, msg);
 //                Toast.makeText(HomeActivity.this, msg, Toast.LENGTH_SHORT).show();
         }
+
+    /*
+* Get - User details by user chatUserList
+* @param userId - user chatUserList
+* */
+    private synchronized void UpdateDeviceTockan(String userid) {
+        //Getting webservice instance which we need to call
+        Call<CustomModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
+                .create(ApiInterface.class)).UpdateDeviceTockan(userid);
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<CustomModel>() {
+            @Override
+            public void onResponse(Call<CustomModel> call, Response<CustomModel> response) {
+                if (response != null) {
+                    if (response.body() != null && response.body().getStatus().equals("success")) {
+                        Log.e("UpdateDeviceTockan", "Success callTickles_Service done");
+
+                    }
+
+                } else {
+                    Log.e("UpdateDeviceTockan", "Success callTickles_Service but null response");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CustomModel> call, Throwable t) {
+                // Log error here since request failed
+                Log.e("profile", t.toString());
+            }
+        });
+
+    }
 
 }
