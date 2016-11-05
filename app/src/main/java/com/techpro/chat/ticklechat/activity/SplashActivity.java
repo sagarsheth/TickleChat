@@ -31,7 +31,6 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 /* Create an Intent that will start the Menu-Activity. */
                 String json = SharedPreferenceUtils.getValue(getApplicationContext(),SharedPreferenceUtils.LoginuserDetailsPreference,"");
-                Log.e("onCreate","user ==> "+json);
                 if (json.equals("")) {
                     Intent mainIntent = new Intent(SplashActivity.this,Login.class);
                     SplashActivity.this.startActivity(mainIntent);

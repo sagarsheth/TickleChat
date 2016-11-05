@@ -659,4 +659,100 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    /*
+* Get - User details by user chatUserList
+* @param userId - user chatUserList
+* */
+    private synchronized void getBot() {
+        //Getting webservice instance which we need to call
+        Call<CustomModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
+                .create(ApiInterface.class)).getBot();
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<CustomModel>() {
+            @Override
+            public void onResponse(Call<CustomModel> call, Response<CustomModel> response) {
+                if (response != null) {
+                    if (response.body() != null && response.body().getStatus().equals("success")) {
+                        Log.e("UpdateDeviceTockan", "Success callTickles_Service done");
+
+                    }
+
+                } else {
+                    Log.e("UpdateDeviceTockan", "Success callTickles_Service but null response");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CustomModel> call, Throwable t) {
+                // Log error here since request failed
+                Log.e("profile", t.toString());
+            }
+        });
+
+    }
+
+    /*
+* Get - User details by user chatUserList
+* @param userId - user chatUserList
+* */
+    private synchronized void deleteBot(int botid) {
+        //Getting webservice instance which we need to call
+        Call<CustomModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
+                .create(ApiInterface.class)).deleteBot(botid);
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<CustomModel>() {
+            @Override
+            public void onResponse(Call<CustomModel> call, Response<CustomModel> response) {
+                if (response != null) {
+                    if (response.body() != null && response.body().getStatus().equals("success")) {
+                        Log.e("UpdateDeviceTockan", "Success callTickles_Service done");
+
+                    }
+
+                } else {
+                    Log.e("UpdateDeviceTockan", "Success callTickles_Service but null response");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CustomModel> call, Throwable t) {
+                // Log error here since request failed
+                Log.e("profile", t.toString());
+            }
+        });
+
+    }
+
+    /*
+* Get - User details by user chatUserList
+* @param userId - user chatUserList
+* */
+    private synchronized void createBot(String name, String Image) {
+        //Getting webservice instance which we need to call
+        Call<CustomModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
+                .create(ApiInterface.class)).createBot(name,Image);
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<CustomModel>() {
+            @Override
+            public void onResponse(Call<CustomModel> call, Response<CustomModel> response) {
+                if (response != null) {
+                    if (response.body() != null && response.body().getStatus().equals("success")) {
+                        Log.e("UpdateDeviceTockan", "Success callTickles_Service done");
+
+                    }
+
+                } else {
+                    Log.e("UpdateDeviceTockan", "Success callTickles_Service but null response");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CustomModel> call, Throwable t) {
+                // Log error here since request failed
+                Log.e("profile", t.toString());
+            }
+        });
+
+    }
+
 }

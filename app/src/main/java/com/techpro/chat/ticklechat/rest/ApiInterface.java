@@ -42,6 +42,15 @@ public interface ApiInterface {
     @GET("tickles")
     Call<Tickles> getTickles();
 
+    @GET("bots")
+    Call<CustomModel> getBot();
+
+    @GET("bots/{botId}")
+    Call<CustomModel> deleteBot(@Path("userid") int userid);
+
+    @GET("bots")
+    Call<CustomModel> createBot(@Field("name") String name, @Field("image") String image);
+
     @GET("tickles/{userid}/tickles")
     Call<Tickles> getTickles(@Path("userid") int userid);
 
