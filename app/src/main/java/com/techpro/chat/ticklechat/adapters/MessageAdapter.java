@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.techpro.chat.ticklechat.R;
+import com.techpro.chat.ticklechat.controller.MessageController;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.Messages;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
@@ -21,6 +22,7 @@ import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,8 +66,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Messages movie = moviesList.get(position);
-        if(!TextUtils.isEmpty(movie.getMessage()))
-            holder.tvChatMessage.setText(Html.fromHtml(movie.getMessage()));
+        if(!TextUtils.isEmpty(movie.getMessage())) {
+            try {
+                String messages  = movie.getMessage().replaceAll("%(?![0-9a-fA-F]{2})", "%25");
+                messages = URLDecoder.decode(messages, "UTF-8");
+                holder.tvChatMessage.setText(messages);
+            } catch (Exception e) {
+                holder.tvChatMessage.setText(movie.getMessage());
+            }
+        }
     }
 
     @Override
@@ -124,12 +133,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
             public void onResponse(Call<SendMessage> call, Response<SendMessage> response) {
                 if (response != null) {
                     if (response.body().getStatus().equals("success")) {
+                        moviesList = new MessageController(mContext).getMessages();
+                        notifyDataSetChanged();
                         AllMessages.MessageList.ChatMessagesList msg= new AllMessages().new MessageList().new ChatMessagesList();
                         msg.setFrom_id(response.body().getBody().getFrom_id());
                         msg.setId(response.body().getBody().getId());
                         msg.setIsgroup(String.valueOf(isGroup));
                         msg.setMessage(response.body().getBody().getMessage());
-                        msg.setRead(response.body().getBody().getRead());
+                        msg.setRead("0");
                         msg.setSentat(response.body().getBody().getSent());
                         msg.setTickle_id(response.body().getBody().getTickle_id());
                         msg.setTo_id(response.body().getBody().getTo_id());

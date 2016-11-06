@@ -38,4 +38,10 @@ public class HomeScreenFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mAdapter.notifyDataSetChanged();
+    }
 }

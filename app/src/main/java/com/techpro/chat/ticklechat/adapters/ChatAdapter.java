@@ -2,7 +2,6 @@ package com.techpro.chat.ticklechat.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +12,13 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.techpro.chat.ticklechat.R;
+import com.techpro.chat.ticklechat.controller.MessageController;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
 import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
+import java.net.URLDecoder;
 import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> {
@@ -26,6 +27,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     private boolean showCheckbox = false;
     private boolean showBelowDesc = false;
     private Context mContext = null;
+    private MessageAdapter mAdapter1 = null;
 
     public ChatAdapter(List<AllMessages.MessageList.ChatMessagesList> moviesList, boolean showCheckbox, boolean showBelowDesc) {
         this.moviesList = moviesList;
@@ -33,11 +35,20 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         this.showBelowDesc = showBelowDesc;
     }
 
-    public ChatAdapter(List<AllMessages.MessageList.ChatMessagesList> moviesList, Context context, boolean showCheckbox, boolean showBelowDesc) {
+    public ChatAdapter(MessageAdapter mAdapter1,List<AllMessages.MessageList.ChatMessagesList> moviesList, Context context, boolean showCheckbox, boolean showBelowDesc) {
         this.moviesList = moviesList;
         this.showCheckbox = showCheckbox;
         this.showBelowDesc = showBelowDesc;
         this.mContext = context;
+        this.mAdapter1 = mAdapter1;
+        mAdapter1.setDataUpdateListener(new MessageAdapter.DataUpdated() {
+            @Override
+            public void dataUpdated(int isgroup, String id) {
+                ChatAdapter.this.moviesList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.
+                        getColleactionObject(mContext, id);;
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -65,14 +76,26 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         {
             holder.llRightRow.setVisibility(View.VISIBLE);
             holder.llLeftRow.setVisibility(View.GONE);
-            holder.tvMessageRight.setText(Html.fromHtml(mChatMessageList.getMessage()));
+            try {
+                String messages  = mChatMessageList.getMessage().replaceAll("%(?![0-9a-fA-F]{2})", "%25");
+                messages = URLDecoder.decode(messages, "UTF-8");
+                holder.tvMessageRight.setText(messages);
+            } catch (Exception e) {
+                holder.tvMessageRight.setText(mChatMessageList.getMessage());
+            }
 
         }
         else
         {
             holder.llRightRow.setVisibility(View.GONE);
             holder.llLeftRow.setVisibility(View.VISIBLE);
-            holder.tvMessage.setText(Html.fromHtml(mChatMessageList.getMessage()));
+            try {
+                String messages  = mChatMessageList.getMessage().replaceAll("%(?![0-9a-fA-F]{2})", "%25");
+                messages = URLDecoder.decode(messages, "UTF-8");
+                holder.tvMessage.setText(messages);
+            } catch (Exception e) {
+                holder.tvMessage.setText(mChatMessageList.getMessage());
+            }
         }
     }
 

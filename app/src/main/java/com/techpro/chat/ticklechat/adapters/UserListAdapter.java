@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.ChatScreen;
+import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.Group;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
 import com.techpro.chat.ticklechat.models.user.User;
@@ -33,7 +34,7 @@ import java.util.List;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
-public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyViewHolder>{
+public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyViewHolder> {
 
     private List<UserGroupBotModel> UserList;
     private boolean showCheckbox = false;
@@ -52,6 +53,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
         this.showBelowDesc = showBelowDesc;
         this.mContext = context;
     }
+
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
@@ -62,86 +64,60 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-
+        AllMessages.MessageList.ChatMessagesList msg;
         List<AllMessages.MessageList.ChatMessagesList> movieList = new ArrayList<>();
-        if (UserList.get(position) instanceof User){
+        if (UserList.get(position) instanceof User) {
             User user = (User) UserList.get(position);
             holder.friendName.setText(user.getName());
-            Log.e("(position % 2) => "+position,"(User.getName()=>"+user.getName());
+            Log.e("(position % 2) => " + position, "(User.getName()=>" + user.getName());
             if (user.getProfile_image() != null) {
                 byte[] decodedString = Base64.decode(user.getProfile_image().getBytes(), Base64.DEFAULT);
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 if (decodedByte != null)
                     holder.friendImage.setImageBitmap(decodedByte);
             }
-            if (showCheckbox) {
-                holder.addfriends.setVisibility(View.VISIBLE);
-            } else {
-                holder.addfriends.setVisibility(View.INVISIBLE);
-            }
 
-            movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(mContext,user.getId());
-            Log.e("Sssssssssssssss","User => "+movieList.get(0).getMessage());
-            try {
-                String messages  = movieList.get(0).getMessage().replaceAll("%(?![0-9a-fA-F]{2})", "%25");
-                messages = URLDecoder.decode(messages, "UTF-8");
-                holder.friendNumber.setText(messages);
-            }catch (Exception e){
-
-                holder.friendNumber.setText(movieList.get(0).getMessage());
-            }
-
-            if (showBelowDesc) {
-                holder.friendNumber.setVisibility(View.VISIBLE);
-            } else {
-                holder.friendNumber.setVisibility(View.INVISIBLE);
-            }
-
-
-//            Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
-//            if ((position % 2) == 0) {
-//                holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
-//            }
+            movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(mContext, user.getId());
+            msg = movieList.get(movieList.size() - 1);
         } else {
             Group user = (Group) UserList.get(position);
             holder.friendName.setText(user.getName());
-            Log.e("(position % 2) => "+position,"(Group.getName()=>"+user.getName());
+            Log.e("(position % 2) => " + position, "(Group.getName()=>" + user.getName());
             if (user.getGroup_image() != null) {
                 byte[] decodedString = Base64.decode(user.getGroup_image().getBytes(), Base64.DEFAULT);
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 if (decodedByte != null)
                     holder.friendImage.setImageBitmap(decodedByte);
             }
-            if (showCheckbox) {
-                holder.addfriends.setVisibility(View.VISIBLE);
+
+            movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(mContext, user.getId());
+            msg = movieList.get(movieList.size() - 1);
+        }
+
+        Log.e("Sssssssssssssss", "User => " + msg.getMessage());
+        try {
+            String messages = msg.getMessage().replaceAll("%(?![0-9a-fA-F]{2})", "%25");
+            messages = URLDecoder.decode(messages, "UTF-8");
+            if (msg.getFrom_id().equals(DataStorage.UserDetails.getId())) {
+                holder.friendNumber.setText("You: " + messages);
             } else {
-                holder.addfriends.setVisibility(View.INVISIBLE);
-            }
-            movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(mContext,user.getId());
-            Log.e("Sssssssssssssss","Group => "+movieList.get(0).getMessage());
-            try {
-                String messages  = movieList.get(0).getMessage().replaceAll("%(?![0-9a-fA-F]{2})", "%25");
-                messages = URLDecoder.decode(messages, "UTF-8");
                 holder.friendNumber.setText(messages);
-            }catch (Exception e){
-
-                holder.friendNumber.setText(movieList.get(0).getMessage());
             }
-
-            if (showBelowDesc) {
-                holder.friendNumber.setVisibility(View.VISIBLE);
-            } else {
-                holder.friendNumber.setVisibility(View.INVISIBLE);
-            }
-
-//            Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
-//            if ((position % 2) == 0) {
-//                holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
-//            }
+        } catch (Exception e) {
+            holder.friendNumber.setText(msg.getMessage());
+        }
+        if (showBelowDesc) {
+            holder.friendNumber.setVisibility(View.VISIBLE);
+        } else {
+            holder.friendNumber.setVisibility(View.INVISIBLE);
+        }
+        if (showCheckbox) {
+            holder.addfriends.setVisibility(View.VISIBLE);
+        } else {
+            holder.addfriends.setVisibility(View.INVISIBLE);
         }
         holder.friendName.setTextColor(Color.GRAY);
-        if (movieList.get(0).getRead().equals("1")){
-//                holder.friendNumber.setTypeface(null, Typeface.BOLD);
+        if (movieList.get(movieList.size() - 1).getRead().equals("1")) {
             holder.friendName.setTextColor(Color.BLACK);
             holder.friendName.setTypeface(null, Typeface.BOLD);
         }
@@ -155,7 +131,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView friendName,  friendNumber;
+        public TextView friendName, friendNumber;
         public CircularImageView friendImage;
         public CheckBox addfriends;
         public LinearLayout backgroundlayout;
@@ -173,16 +149,18 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
                     Log.d("RecyclerView", "getPosition：" + getPosition());
 //                    Log.d("RecyclerView", "getAdapterPosition：" + getAdapterPosition());
 //                    Log.d("RecyclerView", "getLayoutPosition：" + getLayoutPosition());
-                    if (mContext != null){
+                    if (mContext != null) {
                         Intent intent = new Intent(mContext, ChatScreen.class);
                         if (UserList.get(getPosition()) instanceof User) {
                             User user = (User) UserList.get(getPosition());
-                            intent.putExtra("userid",user.getId());
+                            intent.putExtra("userid", user.getId());
+                            intent.putExtra("username", user.getName());
                             Log.d("RecyclerView", "user.getId()：" + user.getId());
 
                         } else {
                             Group grp = (Group) UserList.get(getPosition());
-                            intent.putExtra("groupid",grp.getId());
+                            intent.putExtra("groupid", grp.getId());
+                            intent.putExtra("username", grp.getName());
                             Log.d("RecyclerView", "grp.getId()：" + grp.getId());
                         }
                         mContext.startActivity(intent);
