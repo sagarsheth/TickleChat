@@ -5,12 +5,12 @@
               android:background="@color/white"
               android:orientation="vertical">
 
-    <TextView
+   <!-- <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/dimen_10"
         android:text="Delete your account will - "
-        android:textSize="@dimen/txt_size_15"/>
+        android:textSize="@dimen/txt_size_15"/>-->
 
     <TextView
         android:layout_width="match_parent"
@@ -18,34 +18,34 @@
         android:padding="@dimen/dimen_10"
         android:text="Delete your account from Tickle"
         android:textSize="@dimen/txt_size_15"/>
+    <!--
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_10"
+            android:text="Delete your Tickle chat history"
+            android:textSize="@dimen/txt_size_15"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dimen_10"
-        android:text="Delete your Tickle chat history"
-        android:textSize="@dimen/txt_size_15"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_10"
+            android:text="Delete you from all of your Tickle groups"
+            android:textSize="@dimen/txt_size_15"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dimen_10"
-        android:text="Delete you from all of your Tickle groups"
-        android:textSize="@dimen/txt_size_15"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_10"
+            android:text="All data would be lost and non-recoverable"
+            android:textSize="@dimen/txt_size_15"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dimen_10"
-        android:text="All data would be lost and non-recoverable"
-        android:textSize="@dimen/txt_size_15"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dimen_10"
-        android:text="User would not be able to received regular funny Tickles"
-        android:textSize="@dimen/txt_size_15"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dimen_10"
+            android:text="User would not be able to received regular funny Tickles"
+            android:textSize="@dimen/txt_size_15"/>-->
 
     <TextView
         android:id="@+id/tv_btn_delete"

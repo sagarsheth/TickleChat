@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.GetGroupDetails;
@@ -93,7 +94,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         if (DataStorage.UserDetails.getProfile_image() != null) {
             byte[] decodedString = Base64.decode(DataStorage.UserDetails.getProfile_image().getBytes(), Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            ivProfileIcon.setImageBitmap(decodedByte);
+            if (decodedByte != null)
+                ivProfileIcon.setImageBitmap(decodedByte);
         }
         profilename.setText(DataStorage.UserDetails.getName());
         profileemail.setText(DataStorage.UserDetails.getEmail());
@@ -126,13 +128,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                         profilephone.getText().toString().equals("") || profileemail.getText().toString().equals("")) {
                     Toast.makeText(ProfileFragment.this.getActivity(),"Please enter complete details.", Toast.LENGTH_LONG).show();
                 } else {
+                    dialog = ProgressDialog.show(ProfileFragment.this.getActivity(), "Loading", "Please wait...", true);
                     String profileImage  = "";
                     if (selectedBitmap != null) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                         profileImage = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
                     }
-                    dialog = ProgressDialog.show(ProfileFragment.this.getActivity(), "Loading", "Please wait...", true);
                     callUpdateUserDataService(Integer.parseInt(DataStorage.UserDetails.getId()), profilename.getText().toString(), gender, profile_date.getText().toString(),
                             profilephone.getText().toString(), profileemail.getText().toString(), profileImage);
                 }
@@ -173,9 +175,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 if (response != null) {
                     UserDetailsModel getUserDetails = response.body().getBody();
                     DataStorage.UserDetails = getUserDetails;
-                    Log.e("profile", "Success  callLoginService : " + getUserDetails);
-                    Log.e("profile", "Success  getUserDetails.getId() : " + getUserDetails.getId());
-
+                    Gson gson = new Gson();
+                    String json = gson.toJson(getUserDetails);
+                    Log.e("ProfileFragment", "json ==> "+json);
+                    SharedPreferenceUtils.setValue(getContext(),SharedPreferenceUtils.LoginuserDetailsPreference,json);
                 } else {
                     Toast.makeText(ProfileFragment.this.getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("profile", "Success callTickles_Service but null response");

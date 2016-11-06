@@ -3,6 +3,9 @@ package com.techpro.chat.ticklechat.fragments;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +15,19 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.techpro.chat.ticklechat.R;
+import com.techpro.chat.ticklechat.adapters.AddSentenseAdapter;
+import com.techpro.chat.ticklechat.adapters.StatusAdapter;
 import com.techpro.chat.ticklechat.models.CustomModel;
 import com.techpro.chat.ticklechat.models.DataStorage;
+import com.techpro.chat.ticklechat.models.TickleFriend;
 import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,6 +39,9 @@ public class SentenceFragment extends Fragment implements View.OnClickListener{
     private TextView mTvAddNewTickle;
     private TextView mTvBtnSave;
     private ProgressDialog dialog;
+    private RecyclerView mRvChangeStatus;
+    private AddSentenseAdapter mStatusAdapter;
+    private List<TickleFriend> mTempList = new ArrayList<>();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if(mView ==null)
@@ -42,6 +54,11 @@ public class SentenceFragment extends Fragment implements View.OnClickListener{
 
     private void initUi()
     {
+        mRvChangeStatus = (RecyclerView) mView.findViewById(R.id.rv_select_sentence);
+        mRvChangeStatus.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRvChangeStatus.setHasFixedSize(false);
+        mRvChangeStatus.setItemAnimator(new DefaultItemAnimator());
+
         dialog = ProgressDialog.show(SentenceFragment.this.getActivity(), "Loading", "Please wait...", true);
         getTicklesService(Integer.parseInt(DataStorage.UserDetails.getId()));
         mTvAddNewTickle = (TextView) mView.findViewById(R.id.tv_add_new_tickle);
@@ -87,6 +104,9 @@ public class SentenceFragment extends Fragment implements View.OnClickListener{
                 if (response != null) {
                     if (response.body() != null && response.body().getStatus().equals("success")) {
                         mTvAddNewTickle.setText("");
+                        mTempList.add(new TickleFriend("nnn",status,"0", null));
+                        mRvChangeStatus.notify();
+                        mStatusAdapter.notifyDataSetChanged();
                     }
 
                 } else {
@@ -127,7 +147,19 @@ public class SentenceFragment extends Fragment implements View.OnClickListener{
             public void onResponse(Call<Tickles> call, Response<Tickles> response) {
                 if (response != null) {
                     if (response.body() != null && response.body().getStatus().equals("success")) {
-
+                        ArrayList<Tickles.MessageList.ChatMessagesTicklesList> tickles = response.body().getBody().getTickles();
+                        for (int i=0; i<tickles.size();i++){
+                            mTempList.add(new TickleFriend(tickles.get(i).getId(),tickles.get(i).getMessage(), tickles.get(i).getApproved(), null));
+                        }
+                        mStatusAdapter = new AddSentenseAdapter(mTempList, getContext());
+                        mRvChangeStatus.setAdapter(mStatusAdapter);
+                        mStatusAdapter.setDataUpdateListener(new AddSentenseAdapter.DataUpdated() {
+                            @Override
+                            public void dataUpdated(String id) {
+//                                dialog = ProgressDialog.show(SentenceFragment.this.getActivity(), "Loading", "Please wait...", true);
+//                                callupdateStatusService(Integer.parseInt(DataStorage.UserDetails.getId()), id);
+                            }
+                        });
                     }
 
                 } else {

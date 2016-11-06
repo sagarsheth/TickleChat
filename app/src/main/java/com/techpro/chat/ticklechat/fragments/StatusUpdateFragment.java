@@ -1,19 +1,15 @@
 package com.techpro.chat.ticklechat.fragments;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,8 +22,6 @@ import com.techpro.chat.ticklechat.listeners.GenericListener;
 import com.techpro.chat.ticklechat.models.CustomModel;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.TickleFriend;
-import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
-import com.techpro.chat.ticklechat.models.user.UserModel;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
@@ -67,6 +61,13 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
 
         mStatusAdapter = new StatusAdapter(mTempList, getContext());
         mRvChangeStatus.setAdapter(mStatusAdapter);
+        mStatusAdapter.setDataUpdateListener(new StatusAdapter.DataUpdated() {
+            @Override
+            public void dataUpdated(String id) {
+                dialog = ProgressDialog.show(StatusUpdateFragment.this.getActivity(), "Loading", "Please wait...", true);
+                callupdateStatusService(Integer.parseInt(DataStorage.UserDetails.getId()), id);
+            }
+        });
 
         mTvStatus = (TextView) mView.findViewById(R.id.tv_status);
         mIvEditStatus = (ImageView) mView.findViewById(R.id.iv_edit_status);
@@ -120,10 +121,10 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
     }
 
     private void assignTempData() {
-        mTempList.add(new TickleFriend("Mad Max: Fury Road", "Action & Adventure", "2015", null));
-        mTempList.add(new TickleFriend("Mad Max: Fury Road", "Action & Adventure", "2015", null));
-        mTempList.add(new TickleFriend("Mad Max: Fury Road", "Action & Adventure", "2015", null));
-        mTempList.add(new TickleFriend("Mad Max: Fury Road", "Action & Adventure", "2015", null));
+        mTempList.add(new TickleFriend("1","Available.", "2015", null));
+        mTempList.add(new TickleFriend("1","Do not disturb.", "2015", null));
+        mTempList.add(new TickleFriend("1","Please only calls.", "2015", null));
+        mTempList.add(new TickleFriend("1","I need you now", "2015", null));
     }
 
 
@@ -155,8 +156,10 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
                     Toast.makeText(getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("profile", "Success callTickles_Service but null response");
                 }
-                dialog.dismiss();
-                mStatusUpdateDialog.dismiss();
+                if (dialog.isShowing())
+                    dialog.dismiss();
+                if (mStatusUpdateDialog != null && mStatusUpdateDialog.isShowing())
+                    mStatusUpdateDialog.dismiss();
             }
 
             @Override
@@ -164,8 +167,10 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
                 // Log error here since request failed
                 Toast.makeText(getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                 Log.e("profile", t.toString());
-                dialog.dismiss();
-                mStatusUpdateDialog.dismiss();
+                if (dialog.isShowing())
+                    dialog.dismiss();
+                if (mStatusUpdateDialog != null && mStatusUpdateDialog.isShowing())
+                    mStatusUpdateDialog.dismiss();
             }
         });
 

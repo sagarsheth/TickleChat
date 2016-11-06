@@ -274,8 +274,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 if (response != null || response.body().getBody() != null) {
                     User usr = response.body().getBody().getUser();
                     if (usr != null) {
+                        DataStorage.randomUser = usr;
                         Intent intent = new Intent(getApplicationContext(), ChatScreen.class);
                         intent.putExtra("userid", usr.getId());
+                        intent.putExtra("username", usr.getName());
 //                    intent.putExtra("israndom",true);
                         Log.d("DataStorage.randomUser", "user.getId()：" + usr.getId());
                         startActivity(intent);

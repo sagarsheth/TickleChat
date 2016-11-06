@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -115,7 +116,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         profilephone.getText().toString().equals("") || profileemail.getText().toString().equals("") ||
                         confirm_password.getText().toString().equals("") || password.getText().toString().equals("") || countrycode.getText().toString().equals("") ) {
                     Toast.makeText(getApplicationContext(),"Please enter complete details.", Toast.LENGTH_LONG).show();
-                } else if (!confirm_password.equals(password)) {
+                } else if (!confirm_password.getText().toString().equals(password.getText().toString())) {
                     Toast.makeText(getApplicationContext(),"Invalid Password.", Toast.LENGTH_LONG).show();
                  } else if (!AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
                     Toast.makeText(getApplicationContext(),
@@ -129,9 +130,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                     dialog = ProgressDialog.show(LoginActivity.this, "Loading", "Please wait...", true);
 
-                    callUpdateUserDataService(Integer.parseInt(DataStorage.UserDetails.getId()), profilename.getText().toString(),
+                    callUpdateUserDataService(profilename.getText().toString(),
                             gender,profile_date.getText().toString(), profilephone.getText().toString(),
-                            profileemail.getText().toString(), profileImage,countrycode.getText().toString(),password.getText().toString());
+                            profileemail.getText().toString(), profileImage,countrycode.getText().toString(),SHA1(password.getText().toString()));
                 }
                 break;
 
@@ -161,9 +162,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 * Get - User details by user chatUserList
 * @param userId - user chatUserList
 * */
-    private synchronized void callUpdateUserDataService(int userid, String name,String gender,String dob,String phone,String email,String profile_image,String code,String pass) {
+    private synchronized void callUpdateUserDataService(String name,String gender,String dob,String phone,String email,String profile_image,String code,String pass) {
         //Getting webservice instance which we need to call
-        Call<UserModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
+        Call<UserModel> callForUserDetailsFromID = (ApiClient.getClient()
                 .create(ApiInterface.class)).registeruser(name,gender,dob,phone,email,profile_image,code,pass);
         //Calling Webservice by enqueue
         callForUserDetailsFromID.enqueue(new Callback<UserModel>() {
@@ -305,5 +306,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         selectedBitmap = bm;
         ivProfileIcon.setImageBitmap(bm);
     }
-
+    // For Password
+    public static String SHA1(String text) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            md.update(text.getBytes("iso-8859-1"), 0, text.length());
+            byte[] sha1hash = md.digest();
+            StringBuilder buf = new StringBuilder();
+            for (byte b : sha1hash) {
+                int halfbyte = (b >>> 4) & 0x0F;
+                int two_halfs = 0;
+                do {
+                    buf.append((0 <= halfbyte) && (halfbyte <= 9) ? (char) ('0' + halfbyte) : (char) ('a' + (halfbyte - 10)));
+                    halfbyte = b & 0x0F;
+                } while (two_halfs++ < 1);
+            }
+            return buf.toString();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
