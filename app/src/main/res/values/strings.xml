@@ -59,7 +59,7 @@
 
 
     <!--HEADERS ITMES-->
-    <string name ="header_ticklers">Ticklers</string>
+    <string name ="header_ticklers">TickleChat</string>
 
     <string name="setting_delete_account">Delete Account</string>
     <string name="setting_enable_notifications">Enable Notifications</string>
@@ -70,4 +70,6 @@
         \n- All data would be lost and non-recoverable
         \n- User would not be able to received regular funny Tickles</string>
     <string name="delete">Delete</string>
+
+    <string name="failmessage"> Unable to perform operation at this moment. Please try again."</string>
 </resources>

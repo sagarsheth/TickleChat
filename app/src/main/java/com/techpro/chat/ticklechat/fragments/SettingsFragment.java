@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.models.DataStorage;
@@ -19,6 +20,8 @@ import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.UserModel;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
+import com.techpro.chat.ticklechat.utils.AppUtils;
+import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -104,6 +107,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
 
                 if (mSnackbar != null && mSnackbar.isShown())
                 {
+                    if (!AppUtils.isNetworkConnectionAvailable(getContext())) {
+                        Toast.makeText(getContext(),
+                                getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     dialog = ProgressDialog.show(SettingsFragment.this.getActivity(), "Loading", "Please wait...", true);
                     deletUserService(Integer.parseInt(DataStorage.UserDetails.getId()));
                     mSnackbar.dismiss();
@@ -153,10 +162,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                 if (response != null) {
                     if (response.body() != null && response.body().getStatus().equals("success")) {
-
+                        SharedPreferenceUtils.setValue(getContext(),SharedPreferenceUtils.LoginuserDetailsPreference,"");
+                        Toast.makeText(getContext(), "User Deleted.", Toast.LENGTH_LONG).show();
                     }
 
                 } else {
+                    Toast.makeText(getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("profile", "Success callTickles_Service but null response");
                 }
                 dialog.dismiss();
@@ -164,6 +175,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
 
             @Override
             public void onFailure(Call<UserModel> call, Throwable t) {
+                Toast.makeText(getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                 // Log error here since request failed
                 Log.e("profile", t.toString());
                 dialog.dismiss();

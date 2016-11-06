@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.models.DataStorage;
@@ -17,6 +18,7 @@ import com.techpro.chat.ticklechat.models.message.AllMessages;
 import com.techpro.chat.ticklechat.models.message.SendMessage;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
+import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
 import java.util.ArrayList;
@@ -93,6 +95,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
                     Log.d("RecyclerView", "getPosition：" + getPosition());
                     Log.d("RecyclerView", "getAdapterPosition：" + getAdapterPosition());
                     Log.d("RecyclerView", "getLayoutPosition：" + getLayoutPosition());
+                    if (!AppUtils.isNetworkConnectionAvailable(mContext)) {
+                        Toast.makeText(mContext,
+                                mContext.getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     callSendMessageService(String.valueOf(moviesList.get(getPosition()).getID()),sentID,moviesList.get(getPosition()).getMessage());
 //                    if (mContext != null){
 //                        Intent intent = new Intent(mContext, ChatScreen.class);

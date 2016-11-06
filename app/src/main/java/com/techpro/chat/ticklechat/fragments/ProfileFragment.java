@@ -1,10 +1,17 @@
 package com.techpro.chat.ticklechat.fragments;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -14,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.models.DataStorage;
@@ -24,8 +32,15 @@ import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
 import com.techpro.chat.ticklechat.models.user.UserModel;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
+import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
+import com.techpro.chat.ticklechat.utils.UtilityImage;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +63,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private TextView submit;
     private ProgressDialog dialog;
     private View view;
+    private String gender = "m";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -83,6 +99,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         profileemail.setText(DataStorage.UserDetails.getEmail());
         profilephone.setText(DataStorage.UserDetails.getPhone());
         profile_date.setText(DataStorage.UserDetails.getBirthday());
+        gender = DataStorage.UserDetails.getGender();
         if (DataStorage.UserDetails.getGender().equals("m")) {
             tvBtnFemale.setSelected(false);
             tvBtnMale.setSelected(true);
@@ -99,23 +116,42 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         switch (v.getId())
         {
             case R.id.submit:
-                dialog = ProgressDialog.show(ProfileFragment.this.getActivity(), "Loading", "Please wait...", true);
-                callUpdateUserDataService(Integer.parseInt(DataStorage.UserDetails.getId()),profilename.getText().toString(), "m" ,profile_date.getText().toString(),
-                        profilephone.getText().toString(),profileemail.getText().toString(),"");
+                if (!AppUtils.isNetworkConnectionAvailable(ProfileFragment.this.getContext())) {
+                    Toast.makeText(ProfileFragment.this.getContext(),
+                            getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (profilename.getText().toString().equals("") || profile_date.getText().toString().equals("") ||
+                        profilephone.getText().toString().equals("") || profileemail.getText().toString().equals("")) {
+                    Toast.makeText(ProfileFragment.this.getActivity(),"Please enter complete details.", Toast.LENGTH_LONG).show();
+                } else {
+                    String profileImage  = "";
+                    if (selectedBitmap != null) {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        profileImage = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+                    }
+                    dialog = ProgressDialog.show(ProfileFragment.this.getActivity(), "Loading", "Please wait...", true);
+                    callUpdateUserDataService(Integer.parseInt(DataStorage.UserDetails.getId()), profilename.getText().toString(), gender, profile_date.getText().toString(),
+                            profilephone.getText().toString(), profileemail.getText().toString(), profileImage);
+                }
                 break;
 
             case R.id.iv_profile_icon:
-                // TODO: 30/10/16
+                selectImage();
                 break;
 
             case R.id.tv_btn_male:
                 // TODO: 30/10/16
+                gender = "m";
                 tvBtnFemale.setSelected(false);
                 tvBtnMale.setSelected(true);
                 break;
 
             case R.id.tv_btn_female:
                 // TODO: 30/10/16
+                gender = "f";
                 tvBtnMale.setSelected(false);
                 tvBtnFemale.setSelected(true);
                 break;
@@ -141,6 +177,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                     Log.e("profile", "Success  getUserDetails.getId() : " + getUserDetails.getId());
 
                 } else {
+                    Toast.makeText(ProfileFragment.this.getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("profile", "Success callTickles_Service but null response");
                 }
                 dialog.dismiss();
@@ -149,10 +186,128 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onFailure(Call<UserModel> call, Throwable t) {
                 // Log error here since request failed
+                Toast.makeText(ProfileFragment.this.getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                 Log.e("profile", t.toString());
                 dialog.dismiss();
             }
         });
 
     }
+
+
+
+    private Bitmap selectedBitmap = null;
+    private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
+    private String userChoosenTask;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case UtilityImage.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if(userChoosenTask.equals("Take Photo"))
+                        cameraIntent();
+                    else if(userChoosenTask.equals("Choose from Library"))
+                        galleryIntent();
+                } else {
+                    //code for deny
+                }
+                break;
+        }
+    }
+
+    private void selectImage() {
+        final CharSequence[] items = { "Take Photo", "Choose from Library",
+                "Cancel" };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ProfileFragment.this.getActivity());
+        builder.setTitle("Add Photo!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                boolean result= UtilityImage.checkPermission(ProfileFragment.this.getActivity());
+
+                if (items[item].equals("Take Photo")) {
+                    userChoosenTask ="Take Photo";
+                    if(result)
+                        cameraIntent();
+
+                } else if (items[item].equals("Choose from Library")) {
+                    userChoosenTask ="Choose from Library";
+                    if(result)
+                        galleryIntent();
+
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void galleryIntent()
+    {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);//
+        startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
+    }
+
+    private void cameraIntent()
+    {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, REQUEST_CAMERA);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_FILE)
+                onSelectFromGalleryResult(data);
+            else if (requestCode == REQUEST_CAMERA)
+                onCaptureImageResult(data);
+        }
+    }
+
+    private void onCaptureImageResult(Intent data) {
+        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+
+        File destination = new File(Environment.getExternalStorageDirectory(),
+                System.currentTimeMillis() + ".jpg");
+
+        FileOutputStream fo;
+        try {
+            destination.createNewFile();
+            fo = new FileOutputStream(destination);
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        selectedBitmap = thumbnail;
+        ivProfileIcon.setImageBitmap(thumbnail);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void onSelectFromGalleryResult(Intent data) {
+
+        Bitmap bm=null;
+        if (data != null) {
+            try {
+                bm = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), data.getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        selectedBitmap = bm;
+        ivProfileIcon.setImageBitmap(bm);
+    }
+
 }

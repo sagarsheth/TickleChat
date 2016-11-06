@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.techpro.chat.ticklechat.R;
@@ -16,6 +17,7 @@ import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
+import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
 import retrofit2.Call;
@@ -53,12 +55,20 @@ public class SentenceFragment extends Fragment implements View.OnClickListener{
         switch (v.getId())
         {
             case R.id.tv_btn_save:
-                dialog = ProgressDialog.show(SentenceFragment.this.getActivity(), "Loading", "Please wait...", true);
-                callAddSentenceService(DataStorage.UserDetails.getId(),mTvAddNewTickle.getText().toString());
+                if (!AppUtils.isNetworkConnectionAvailable(getContext())) {
+                    Toast.makeText(getContext(),
+                            getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (mTvAddNewTickle.getText() != null && mTvAddNewTickle.getText().toString().equals("")){
+                    Toast.makeText(getContext(), "Please add valid sentence.", Toast.LENGTH_LONG).show();
+                } else {
+                    dialog = ProgressDialog.show(SentenceFragment.this.getActivity(), "Loading", "Please wait...", true);
+                    callAddSentenceService(DataStorage.UserDetails.getId(), mTvAddNewTickle.getText().toString());
+                }
                 break;
-
         }
-
     }
 
 
@@ -80,6 +90,7 @@ public class SentenceFragment extends Fragment implements View.OnClickListener{
                     }
 
                 } else {
+                    Toast.makeText(getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("profile", "Success callTickles_Service but null response");
                 }
                 dialog.dismiss();
@@ -87,6 +98,7 @@ public class SentenceFragment extends Fragment implements View.OnClickListener{
 
             @Override
             public void onFailure(Call<CustomModel> call, Throwable t) {
+                Toast.makeText(getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                 // Log error here since request failed
                 Log.e("profile", t.toString());
                 dialog.dismiss();
@@ -101,6 +113,11 @@ public class SentenceFragment extends Fragment implements View.OnClickListener{
 * @param userId - user chatUserList
 * */
     private synchronized void getTicklesService(int userid) {
+        if (!AppUtils.isNetworkConnectionAvailable(getContext())) {
+//            Toast.makeText(getContext(),
+//                    getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
+            return;
+        }
         //Getting webservice instance which we need to call
         Call<Tickles> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
                 .create(ApiInterface.class)).getTickles(userid);

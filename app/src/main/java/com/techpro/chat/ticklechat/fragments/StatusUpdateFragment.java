@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.techpro.chat.ticklechat.R;
@@ -29,6 +30,7 @@ import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
 import com.techpro.chat.ticklechat.models.user.UserModel;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
+import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
 import java.util.ArrayList;
@@ -87,8 +89,17 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
 
                         switch (callerID) {
                             case R.id.tvPositive:
-                                dialog = ProgressDialog.show(StatusUpdateFragment.this.getActivity(), "Loading", "Please wait...", true);
-                                callupdateStatusService(Integer.parseInt(DataStorage.UserDetails.getId()),messages.toString());
+                                if (!AppUtils.isNetworkConnectionAvailable(getContext())) {
+                                    Toast.makeText(getContext(),
+                                            getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                if (messages != null && !messages.toString().equals("")) {
+                                    dialog = ProgressDialog.show(StatusUpdateFragment.this.getActivity(), "Loading", "Please wait...", true);
+                                    callupdateStatusService(Integer.parseInt(DataStorage.UserDetails.getId()), messages.toString());
+                                } else {
+                                    Toast.makeText(getContext(), "Please enter status.", Toast.LENGTH_LONG).show();
+                                }
                                 break;
 
                             case R.id.tvNegative:
@@ -135,12 +146,13 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
                         Log.e("callupdateStatusService", "Success  getUserDetails.getId() : " + DataStorage.UserDetails.getId());
                         Gson gson = new Gson();
                         String json = gson.toJson(DataStorage.UserDetails);
-                        SharedPreferenceUtils.setValue(StatusUpdateFragment.this.getContext(),SharedPreferenceUtils.LoginuserDetailsPreference,json);
-                        Log.e("onResponse","getUserDetails ==> "+json);
+                        SharedPreferenceUtils.setValue(StatusUpdateFragment.this.getContext(), SharedPreferenceUtils.LoginuserDetailsPreference, json);
+                        Log.e("onResponse", "getUserDetails ==> " + json);
+                        Toast.makeText(getContext(), "Status updated Succesfully.", Toast.LENGTH_LONG).show();
                         mTvStatus.setText(status);
                     }
-
                 } else {
+                    Toast.makeText(getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("profile", "Success callTickles_Service but null response");
                 }
                 dialog.dismiss();
@@ -150,6 +162,7 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
             @Override
             public void onFailure(Call<CustomModel> call, Throwable t) {
                 // Log error here since request failed
+                Toast.makeText(getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                 Log.e("profile", t.toString());
                 dialog.dismiss();
                 mStatusUpdateDialog.dismiss();
@@ -157,32 +170,4 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
         });
 
     }
-
-//    private void showDialog() {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(StatusUpdateFragment.this.getActivity());
-//        builder.setTitle("Title");
-//
-//// Set up the input
-//        final EditText input = new EditText(StatusUpdateFragment.this.getActivity());
-//// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-//        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-//        builder.setView(input);
-//
-//// Set up the buttons
-//        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                m_Text = input.getText().toString();
-////                callupdateStatusService(m_Text);
-//            }
-//        });
-//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.cancel();
-//            }
-//        });
-//
-//        builder.show();
-//    }
 }

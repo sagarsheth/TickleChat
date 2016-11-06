@@ -10,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.techpro.chat.ticklechat.LoginDialog;
@@ -23,6 +24,7 @@ import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
 import com.techpro.chat.ticklechat.models.user.UserModel;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
+import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 import com.viewpagerindicator.CirclePageIndicator;
 
@@ -74,15 +76,20 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
                         switch (callerID) {
                             case R.id.tvPositive:
-
-//                                if (Login.SHA1(messages.split("~")[1]) == null) {
-//
-//                                } else {
-                                mStatusUpdateDialog.cancel();
-                                    dialog = ProgressDialog.show(Login.this, "Loading", "Please wait...", true);
-                                    callLoginService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
-//                                    callLoginService(messages.split("~")[0], Login.SHA1(messages.split("~")[1]));
-//                                }
+                                if (AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
+                                    if (messages != null && !messages.equals("") && messages.contains("~")
+                                            && Login.SHA1(messages.split("~")[1]) != null) {
+                                        mStatusUpdateDialog.cancel();
+                                        dialog = ProgressDialog.show(Login.this, "Loading", "Please wait...", true);
+                                        callLoginService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
+//                                        callLoginService(messages.split("~")[0], Login.SHA1(messages.split("~")[1]));
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Please enter complete details.", Toast.LENGTH_LONG).show();
+                                    }
+                                } else{
+                                    Toast.makeText(getApplicationContext(),
+                                            getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
+                                }
                                 break;
 
                             case R.id.tvNegative:
@@ -92,7 +99,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     }
                 });
 
-                mStatusUpdateDialog.setTitle("Hey! We do not take any pictures without your permission. Wanna try again ?");
+                mStatusUpdateDialog.setTitle("Enter your login details.");
                 mStatusUpdateDialog.setPositiveButtonText("OK");
                 mStatusUpdateDialog.setNegativeButtonText("CANCEL");
                 mStatusUpdateDialog.setCancelable(false);
@@ -166,18 +173,17 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
-                if (response != null) {
+                if (response != null && response.body() != null  && response.body().getBody() != null) {
                     UserDetailsModel getUserDetails = response.body().getBody();
                     DataStorage.UserDetails = getUserDetails;
-                    Log.e(TAG, "Success  callLoginService : " + getUserDetails);
-                    Log.e(TAG, "Success  getUserDetails.getId() : " + getUserDetails.getId());
                     Gson gson = new Gson();
                     String json = gson.toJson(getUserDetails);
                     SharedPreferenceUtils.setValue(getApplicationContext(),SharedPreferenceUtils.LoginuserDetailsPreference,json);
-                    Log.e("onResponse","getUserDetails ==> "+json);
+                    Toast.makeText(getApplicationContext(), "Registration Successful please login now.", Toast.LENGTH_LONG).show();
                     startActivity(new Intent(Login.this, HomeActivity.class));
                     finish();
                 } else {
+                    Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e(TAG, "Success but null response");
                 }
                 dialog.dismiss();
@@ -186,6 +192,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             @Override
             public void onFailure(Call<UserModel> call, Throwable t) {
                 // Log error here since request failed
+                Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                 Log.e(TAG, t.toString());
                 dialog.dismiss();
             }
