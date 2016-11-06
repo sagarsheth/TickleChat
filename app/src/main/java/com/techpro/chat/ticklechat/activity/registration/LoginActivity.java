@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private EditText confirm_password;
     private EditText profilename;
     private EditText profileemail;
-    private EditText profilephone;
+    private EditText profilephone,countrycode;
     private EditText profile_date;
     private TextView tvBtnMale;
     private TextView tvBtnFemale;
@@ -74,6 +74,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         profileemail = (EditText) findViewById(R.id.profileemail);
         profilephone = (EditText) findViewById(R.id.profilephone);
         profile_date = (EditText) findViewById(R.id.profile_date);
+        countrycode = (EditText) findViewById(R.id.countrycode);
         tvBtnMale = (TextView) findViewById(R.id.tv_btn_male);
         tvBtnFemale = (TextView) findViewById(R.id.tv_btn_female);
         submit = (TextView) findViewById(R.id.submit);
@@ -112,7 +113,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.submit:
                 if (profilename.getText().toString().equals("") || profile_date.getText().toString().equals("") ||
                         profilephone.getText().toString().equals("") || profileemail.getText().toString().equals("") ||
-                        confirm_password.getText().toString().equals("") || password.getText().toString().equals("")) {
+                        confirm_password.getText().toString().equals("") || password.getText().toString().equals("") || countrycode.getText().toString().equals("") ) {
                     Toast.makeText(getApplicationContext(),"Please enter complete details.", Toast.LENGTH_LONG).show();
                 } else if (!confirm_password.equals(password)) {
                     Toast.makeText(getApplicationContext(),"Invalid Password.", Toast.LENGTH_LONG).show();
@@ -130,7 +131,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     callUpdateUserDataService(Integer.parseInt(DataStorage.UserDetails.getId()), profilename.getText().toString(),
                             gender,profile_date.getText().toString(), profilephone.getText().toString(),
-                            profileemail.getText().toString(), profileImage);
+                            profileemail.getText().toString(), profileImage,countrycode.getText().toString(),password.getText().toString());
                 }
                 break;
 
@@ -160,10 +161,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 * Get - User details by user chatUserList
 * @param userId - user chatUserList
 * */
-    private synchronized void callUpdateUserDataService(int userid, String name,String gender,String dob,String phone,String email,String profile_image) {
+    private synchronized void callUpdateUserDataService(int userid, String name,String gender,String dob,String phone,String email,String profile_image,String code,String pass) {
         //Getting webservice instance which we need to call
         Call<UserModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
-                .create(ApiInterface.class)).callUpdateUserDataService(userid,name,gender,dob,phone,email,profile_image);
+                .create(ApiInterface.class)).registeruser(name,gender,dob,phone,email,profile_image,code,pass);
         //Calling Webservice by enqueue
         callForUserDetailsFromID.enqueue(new Callback<UserModel>() {
             @Override

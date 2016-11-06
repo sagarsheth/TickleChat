@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +26,8 @@ import com.techpro.chat.ticklechat.models.user.User;
 import com.techpro.chat.ticklechat.models.user.UserGroupBotModel;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +71,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
             if (user.getProfile_image() != null) {
                 byte[] decodedString = Base64.decode(user.getProfile_image().getBytes(), Base64.DEFAULT);
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                holder.friendImage.setImageBitmap(decodedByte);
+                if (decodedByte != null)
+                    holder.friendImage.setImageBitmap(decodedByte);
             }
             if (showCheckbox) {
                 holder.addfriends.setVisibility(View.VISIBLE);
@@ -76,13 +82,22 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
 
             movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(mContext,user.getId());
             Log.e("Sssssssssssssss","User => "+movieList.get(0).getMessage());
-            holder.friendNumber.setText(movieList.get(0).getMessage());
+            try {
+                String messages  = movieList.get(0).getMessage().replaceAll("%(?![0-9a-fA-F]{2})", "%25");
+                messages = URLDecoder.decode(messages, "UTF-8");
+                holder.friendNumber.setText(messages);
+            }catch (Exception e){
+
+                holder.friendNumber.setText(movieList.get(0).getMessage());
+            }
 
             if (showBelowDesc) {
                 holder.friendNumber.setVisibility(View.VISIBLE);
             } else {
                 holder.friendNumber.setVisibility(View.INVISIBLE);
             }
+
+
 //            Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
 //            if ((position % 2) == 0) {
 //                holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
@@ -94,7 +109,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
             if (user.getGroup_image() != null) {
                 byte[] decodedString = Base64.decode(user.getGroup_image().getBytes(), Base64.DEFAULT);
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                holder.friendImage.setImageBitmap(decodedByte);
+                if (decodedByte != null)
+                    holder.friendImage.setImageBitmap(decodedByte);
             }
             if (showCheckbox) {
                 holder.addfriends.setVisibility(View.VISIBLE);
@@ -103,17 +119,31 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
             }
             movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(mContext,user.getId());
             Log.e("Sssssssssssssss","Group => "+movieList.get(0).getMessage());
+            try {
+                String messages  = movieList.get(0).getMessage().replaceAll("%(?![0-9a-fA-F]{2})", "%25");
+                messages = URLDecoder.decode(messages, "UTF-8");
+                holder.friendNumber.setText(messages);
+            }catch (Exception e){
+
                 holder.friendNumber.setText(movieList.get(0).getMessage());
+            }
 
             if (showBelowDesc) {
                 holder.friendNumber.setVisibility(View.VISIBLE);
             } else {
                 holder.friendNumber.setVisibility(View.INVISIBLE);
             }
+
 //            Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
 //            if ((position % 2) == 0) {
 //                holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
 //            }
+        }
+        holder.friendName.setTextColor(Color.GRAY);
+        if (movieList.get(0).getRead().equals("1")){
+//                holder.friendNumber.setTypeface(null, Typeface.BOLD);
+            holder.friendName.setTextColor(Color.BLACK);
+            holder.friendName.setTypeface(null, Typeface.BOLD);
         }
 
     }

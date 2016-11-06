@@ -56,11 +56,15 @@ public class ChatScreen extends Activity {
             sentID = userid;
             movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.
                     getColleactionObject(getApplicationContext(),userid);
+            movieList.get(0).setRead("1");
+            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),userid,movieList);
         } else {
             isgroup = 1;
             sentID = groupid;
             movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.
                     getColleactionObject(getApplicationContext(),groupid);
+            movieList.get(0).setRead("1");
+            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),groupid,movieList);
         }
         if (movieList == null)
             movieList = new ArrayList<>();

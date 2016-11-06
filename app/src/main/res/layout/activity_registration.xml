@@ -49,6 +49,12 @@
             android:inputType="phone" />
 
         <EditText
+            android:id="@+id/countrycode"
+            style= "@style/style_et"
+            android:hint="countrycode"
+            android:inputType="phone" />
+
+        <EditText
             android:id="@+id/profile_date"
             style= "@style/style_et"
             android:hint="DOB"

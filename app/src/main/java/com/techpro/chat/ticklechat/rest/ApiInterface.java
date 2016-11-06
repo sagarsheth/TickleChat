@@ -61,6 +61,12 @@ public interface ApiInterface {
     @PUT("users/{userid}")
     Call<UserModel> callUpdateUserDataService(@Path("userid") int userid, @Field("name") String name, @Field("gender") String gender,
                                               @Field("dob") String dob, @Field("phone") String phone, @Field("email") String email, @Field("profile_image") String profile_image);
+    @FormUrlEncoded
+    @POST("users")
+    Call<UserModel> registeruser(@Field("name") String name, @Field("gender") String gender,@Field("dob") String dob, @Field("phone")
+            String phone, @Field("email") String email, @Field("profile_image") String profile_image,
+                                 @Field("country_code") String country_code,  @Field("password") String password);
+
 
     @POST("tickles")
     Call<CustomModel> callAddSentenceService(@Field("message") String message, @Field("requester") String requester);

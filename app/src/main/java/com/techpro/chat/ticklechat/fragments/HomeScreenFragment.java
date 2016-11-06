@@ -22,7 +22,7 @@ import java.util.List;
 public class HomeScreenFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private UserListAdapter mAdapter;
-    private List<TickleFriend> movieList = new ArrayList<>();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_tickle_friend,
@@ -36,35 +36,6 @@ public class HomeScreenFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("RecyclerView", "getPosition：" );
-//                Intent intent = new Intent(getContext(), ChatScreen.class);
-//                startActivity(intent);
-
-            }
-        });
-        prepareMovieData();
         return view;
-    }
-    private void prepareMovieData() {
-        movieList.clear();
-        TickleFriend movie = new TickleFriend(null, "ABC", "2 new message",null);
-        movieList.add(movie);
-
-        movie = new TickleFriend(null,"XYZ", "checked",null);
-        movieList.add(movie);
-
-        movie = new TickleFriend(null,"PQR", "1 new message",null);
-        movieList.add(movie);
-
-        movie = new TickleFriend(null,"MNO", "checked",null);
-        movieList.add(movie);
-
-        movie = new TickleFriend(null,"KLM", "checked",null);
-        movieList.add(movie);
-
-        mAdapter.notifyDataSetChanged();
     }
 }
