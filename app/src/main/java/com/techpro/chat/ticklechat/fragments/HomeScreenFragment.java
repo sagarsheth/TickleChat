@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.view.ViewGroup;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.adapters.UserListAdapter;
 import com.techpro.chat.ticklechat.models.DataStorage;
-import com.techpro.chat.ticklechat.models.TickleFriend;
 import com.techpro.chat.ticklechat.models.user.UserGroupBotModel;
 
 import java.util.ArrayList;
@@ -28,6 +26,13 @@ public class HomeScreenFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_tickle_friend,
                 container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         List<UserGroupBotModel> list = new ArrayList<>();
         list.addAll(DataStorage.chatUserList);
         list.addAll(DataStorage.mygrouplist);
@@ -36,12 +41,6 @@ public class HomeScreenFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
-        return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         mAdapter.notifyDataSetChanged();
     }
 }

@@ -149,6 +149,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
                         if (usermessages == null)
                             usermessages =  new ArrayList<AllMessages.MessageList.ChatMessagesList>();
                         usermessages.add(msg);
+                        if (DataStorage.randomUser != null) {
+                            DataStorage.chatUserList.add(DataStorage.randomUser);
+                            DataStorage.myAllUserlist.add(DataStorage.randomUser);
+
+                            SharedPreferenceUtils.setColleactionObject(mContext, SharedPreferenceUtils.myuserlist,
+                                    DataStorage.myAllUserlist);
+                            SharedPreferenceUtils.setColleactionObject(mContext, SharedPreferenceUtils.chatUserID,
+                                    DataStorage.chatUserList);
+                            DataStorage.randomUser = null;
+                        }
                         SharedPreferenceUtils.setColleactionObject(mContext,msg.getTo_id(),usermessages);
                         dataupdate.dataUpdated(isGroup,msg.getTo_id());
                     }

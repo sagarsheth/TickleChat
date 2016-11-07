@@ -86,6 +86,7 @@ public class TickleFriendAdapter extends RecyclerView.Adapter<TickleFriendAdapte
                     User user = moviesList.get(position);
                     Intent intent = new Intent(mContext, ChatScreen.class);
                     intent.putExtra("userid",user.getId());
+                    intent.putExtra("username", user.getName());
                     mContext.startActivity(intent);
                 }
             }

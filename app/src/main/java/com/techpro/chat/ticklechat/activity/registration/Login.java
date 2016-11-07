@@ -15,9 +15,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.techpro.chat.ticklechat.LoginDialog;
 import com.techpro.chat.ticklechat.R;
-import com.techpro.chat.ticklechat.StatusUpdateDialog;
 import com.techpro.chat.ticklechat.activity.home.HomeActivity;
-import com.techpro.chat.ticklechat.adapters.StatusAdapter;
 import com.techpro.chat.ticklechat.listeners.GenericListener;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
@@ -28,9 +26,7 @@ import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 import com.viewpagerindicator.CirclePageIndicator;
 
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -82,7 +78,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                                         mStatusUpdateDialog.cancel();
                                         dialog = ProgressDialog.show(Login.this, "Loading", "Please wait...", true);
                                         callLoginService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
-//                                        callLoginService(messages.split("~")[0], Login.SHA1(messages.split("~")[1]));
+//                                        callLoginService(messages.split("~")[0], SHA1(messages.split("~")[1]));
                                     } else {
                                         Toast.makeText(getApplicationContext(), "Please enter complete details.", Toast.LENGTH_LONG).show();
                                     }
@@ -173,18 +169,24 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
-                if (response != null && response.body() != null  && response.body().getBody() != null) {
+                if (response != null && response.body() != null  && response.body().getBody() != null && response.body().getMessage().equals("")) {
                     UserDetailsModel getUserDetails = response.body().getBody();
                     DataStorage.UserDetails = getUserDetails;
                     Gson gson = new Gson();
                     String json = gson.toJson(getUserDetails);
+                    Log.e(TAG, "json ==> "+json);
                     SharedPreferenceUtils.setValue(getApplicationContext(),SharedPreferenceUtils.LoginuserDetailsPreference,json);
                     Toast.makeText(getApplicationContext(), "Registration Successful please login now.", Toast.LENGTH_LONG).show();
                     startActivity(new Intent(Login.this, HomeActivity.class));
                     finish();
                 } else {
-                    Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
-                    Log.e(TAG, "Success but null response");
+                    if (response != null && response.body() != null  && response.body().getMessage() != null){
+                        Log.e(TAG, "response.body().getMessage() ==> "+response.body().toString());
+                        Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Success but null response");
+                    }
                 }
                 dialog.dismiss();
             }

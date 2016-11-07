@@ -62,13 +62,13 @@ public interface ApiInterface {
                                  @Field("country_code") String country_code,  @Field("password") String password);
 
 
+    @FormUrlEncoded
     @POST("tickles")
     Call<CustomModel> callAddSentenceService(@Field("message") String message, @Field("requester") String requester);
 
     @FormUrlEncoded
     @PUT("users/{userid}/status")
     Call<CustomModel> callupdateStatusService(@Path("userid") int userid, @Field("status") String status);
-
 
     @FormUrlEncoded
     @POST("messages")

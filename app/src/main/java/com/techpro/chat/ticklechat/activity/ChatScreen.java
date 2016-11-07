@@ -58,15 +58,19 @@ public class ChatScreen extends Activity {
             sentID = userid;
             movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.
                     getColleactionObject(getApplicationContext(), userid);
-            movieList.get(movieList.size()-1).setRead("0");
-            SharedPreferenceUtils.setColleactionObject(getApplicationContext(), userid, movieList);
+            if (movieList!= null && movieList.size()!= 0) {
+                movieList.get(movieList.size() - 1).setRead("0");
+                SharedPreferenceUtils.setColleactionObject(getApplicationContext(), userid, movieList);
+            }
         } else {
             isgroup = 1;
             sentID = groupid;
             movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.
                     getColleactionObject(getApplicationContext(), groupid);
-            movieList.get(movieList.size()-1).setRead("0");
-            SharedPreferenceUtils.setColleactionObject(getApplicationContext(), groupid, movieList);
+            if (movieList!= null &&  movieList.size()!= 0) {
+                movieList.get(movieList.size() - 1).setRead("0");
+                SharedPreferenceUtils.setColleactionObject(getApplicationContext(), groupid, movieList);
+            }
         }
         if (movieList == null)
             movieList = new ArrayList<>();
@@ -81,9 +85,13 @@ public class ChatScreen extends Activity {
         message_list.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                int heightDiff = message_list.getRootView().getHeight() - message_list.getHeight();
-                if (heightDiff > 100) {
-                    message_list.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                try {
+                    int heightDiff = message_list.getRootView().getHeight() - message_list.getHeight();
+                    if (heightDiff > 100) {
+                        message_list.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                    }
+                } catch (Exception e) {
+
                 }
             }
         });
