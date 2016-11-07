@@ -203,6 +203,7 @@ public class NewGroupFragment extends Fragment {
                     Log.e("SendMessage", "response.message(: "+response.message());
                     Log.e("SendMessage", "response.code(: "+response.code());
                     Log.e("SendMessage", "response.code(: "+response.body());
+
 //                    if (response.body() != null && response.body().getStatus().equals("success")) {
 //                        grp.setMembers(members.toString().replace("[","").replace("]",""));
 //                        DataStorage.mygrouplist.add(grp);
