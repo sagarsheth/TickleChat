@@ -6,26 +6,28 @@
 
     <include layout="@layout/layout_toolbar"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
+        android:layout_height="match_parent"
         android:background="@color/bg_color"
-        android:orientation="vertical">
+        >
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/message_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@+id/ll_tickle_msg_container"
+            android:layout_alignParentTop="true"
+            />
+
 
         <LinearLayout
+            android:id="@+id/ll_tickle_msg_container"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:orientation="vertical">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/message_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-        </LinearLayout>
-
         <ImageView
             android:id="@+id/iv_slide_up_down"
             android:layout_width="40dp"
@@ -38,6 +40,8 @@
             android:id="@+id/text_list"
             android:layout_width="match_parent"
             android:layout_height="200dp"
+
             />
-    </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>

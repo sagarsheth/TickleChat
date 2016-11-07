@@ -24,10 +24,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
 import com.techpro.chat.ticklechat.R;
-import com.techpro.chat.ticklechat.activity.registration.LoginActivity;
 import com.techpro.chat.ticklechat.adapters.AddGroupMembersAdapter;
-import com.techpro.chat.ticklechat.models.CustomModel;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.Group;
 import com.techpro.chat.ticklechat.models.TickleFriend;
@@ -35,7 +34,6 @@ import com.techpro.chat.ticklechat.models.message.CreateGroup;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
-import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 import com.techpro.chat.ticklechat.utils.UtilityImage;
 
 import java.io.ByteArrayOutputStream;
@@ -181,7 +179,7 @@ public class NewGroupFragment extends Fragment {
 
     }
 
-
+// TODO: 06/11/16 API NOT WORKING
 
 
     /*
@@ -195,21 +193,22 @@ public class NewGroupFragment extends Fragment {
         Log.e("===============>","groupId ==> "+groupId);
         Log.e("===============>","csv.toString() ==> "+csv);
 //        csv = "{\"members\"}:\""+csv+"\"";
-        Call<CustomModel> callForUserDetailsFromID = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).
+        Call<JsonObject> callForUserDetailsFromID = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).
                 create(ApiInterface.class).postGroupMembers(groupId,csv);
         //Calling Webservice by enqueue
-        callForUserDetailsFromID.enqueue(new Callback<CustomModel>() {
+        callForUserDetailsFromID.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<CustomModel> call, Response<CustomModel> response) {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response != null) {
                     Log.e("SendMessage", "response.message(: "+response.message());
                     Log.e("SendMessage", "response.code(: "+response.code());
-                    if (response.body() != null && response.body().getStatus().equals("success")) {
-                        grp.setMembers(members.toString().replace("[","").replace("]",""));
-                        DataStorage.mygrouplist.add(grp);
-                        SharedPreferenceUtils.setColleactionObject(mActivity.getApplicationContext(),
-                                SharedPreferenceUtils.mygrouplist,DataStorage.mygrouplist);
-                    }
+                    Log.e("SendMessage", "response.code(: "+response.body());
+//                    if (response.body() != null && response.body().getStatus().equals("success")) {
+//                        grp.setMembers(members.toString().replace("[","").replace("]",""));
+//                        DataStorage.mygrouplist.add(grp);
+//                        SharedPreferenceUtils.setColleactionObject(mActivity.getApplicationContext(),
+//                                SharedPreferenceUtils.mygrouplist,DataStorage.mygrouplist);
+//                    }
                 } else {
                     Toast.makeText(NewGroupFragment.this.getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("SendMessage", "Success callMessage_ALL_Service but null response");
@@ -217,7 +216,7 @@ public class NewGroupFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<CustomModel> call, Throwable t) {
+            public void onFailure(Call<JsonObject> call, Throwable t) {
                 // Log error here since request failed
                 Toast.makeText(NewGroupFragment.this.getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                 Log.e("SendMessage", t.toString());

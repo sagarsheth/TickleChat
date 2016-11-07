@@ -23,12 +23,12 @@ import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.JsonObject;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.techpro.chat.ticklechat.AppConfigs;
 import com.techpro.chat.ticklechat.Constants;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.ChatScreen;
-import com.techpro.chat.ticklechat.activity.registration.Login;
 import com.techpro.chat.ticklechat.activity.registration.PersonalProfileActivity;
 import com.techpro.chat.ticklechat.database.DataBaseHelper;
 import com.techpro.chat.ticklechat.fragments.HomeScreenFragment;
@@ -49,7 +49,6 @@ import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
 import com.techpro.chat.ticklechat.models.user.GetUserDetailsBody;
 import com.techpro.chat.ticklechat.models.user.User;
-import com.techpro.chat.ticklechat.models.user.UserModel;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
@@ -626,8 +625,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // Get token
         FirebaseApp.initializeApp(HomeActivity.this);
         String token = FirebaseInstanceId.getInstance().getToken();
-
+        token = "dE2bYhbZs2s:APA91bG0ul-fch8yjSkXhLnKggC_7ZbA6Rx3KLUHQeXiyafrjg34Z_f-N986dhHflDQBjYWwu2cMMk6MP2Nz32C1yTx93zH1xfEaEyji2-Qxj-4TQGZ7mqZt6yR805SDEYgbYzqCFaSo";
         Log.e(TAG, token);
+
         if (!AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
             Toast.makeText(getApplicationContext(),
                     getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
@@ -654,18 +654,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 * */
     private synchronized void UpdateDeviceTockan(String userid) {
         //Getting webservice instance which we need to call
-        Call<CustomModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
-                .create(ApiInterface.class)).UpdateDeviceTockan(userid);
+        Call<JsonObject> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
+                                                              .create(ApiInterface.class)).UpdateDeviceTockan(userid);
         //Calling Webservice by enqueue
-        callForUserDetailsFromID.enqueue(new Callback<CustomModel>() {
+        callForUserDetailsFromID.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<CustomModel> call, Response<CustomModel> response) {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response != null) {
-                    if (response.body() != null && response.body().getStatus().equals("success")) {
-                        Log.e("UpdateDeviceTockan", "Success callTickles_Service done");
-
-                    }
-
+                    JsonObject jsonResponse = response.body();
+                        Log.e("UpdateDeviceTockan", "Success callTickles_Service done "+jsonResponse.toString());
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("UpdateDeviceTockan", "Success callTickles_Service but null response");
@@ -673,7 +670,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
 
             @Override
-            public void onFailure(Call<CustomModel> call, Throwable t) {
+            public void onFailure(Call<JsonObject> call, Throwable t) {
                 // Log error here since request failed
                 Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                 Log.e("profile", t.toString());

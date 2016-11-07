@@ -1,11 +1,13 @@
 package com.techpro.chat.ticklechat.models.user;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by aryans05 on 04/08/16.
  */
 
 public class GetUserDetails {
-
+    @SerializedName("message")
     private String message;
 
     private GetUserDetailsBody body;

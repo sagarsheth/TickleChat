@@ -1,7 +1,6 @@
 package com.techpro.chat.ticklechat.rest;
 
-import com.google.gson.JsonArray;
-import com.squareup.okhttp.RequestBody;
+import com.google.gson.JsonObject;
 import com.techpro.chat.ticklechat.models.CustomModel;
 import com.techpro.chat.ticklechat.models.GetGroupDetails;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
@@ -9,14 +8,9 @@ import com.techpro.chat.ticklechat.models.message.CreateGroup;
 import com.techpro.chat.ticklechat.models.message.SendMessage;
 import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
-import com.techpro.chat.ticklechat.models.user.User;
 import com.techpro.chat.ticklechat.models.user.UserModel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -86,7 +80,7 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST("groups/{groupId}/addmembers")
-    Call<CustomModel> postGroupMembers(@Path("groupId") int groupId, @Field("members") String members);
+    Call<JsonObject> postGroupMembers(@Path("groupId") int groupId, @Field("members") String members);
 
     @FormUrlEncoded
     @POST("users/login")
@@ -108,7 +102,7 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST("users/updateDT")
-    Call<CustomModel> UpdateDeviceTockan(@Field("devicetoken") String devicetoken);
+    Call<JsonObject> UpdateDeviceTockan (@Field("devicetoken") String devicetoken);
 
 
     /*//Get response in json string
