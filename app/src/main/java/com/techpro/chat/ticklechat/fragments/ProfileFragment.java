@@ -179,6 +179,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                     String json = gson.toJson(getUserDetails);
                     Log.e("ProfileFragment", "json ==> "+json);
                     SharedPreferenceUtils.setValue(getContext(),SharedPreferenceUtils.LoginuserDetailsPreference,json);
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    Toast.makeText(ProfileFragment.this.getContext(), "Profile Updated Successfully.", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(ProfileFragment.this.getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("profile", "Success callTickles_Service but null response");

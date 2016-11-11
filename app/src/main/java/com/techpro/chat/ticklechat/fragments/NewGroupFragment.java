@@ -2,6 +2,7 @@ package com.techpro.chat.ticklechat.fragments;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -26,14 +27,17 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.techpro.chat.ticklechat.R;
+import com.techpro.chat.ticklechat.activity.home.HomeActivity;
 import com.techpro.chat.ticklechat.adapters.AddGroupMembersAdapter;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.Group;
 import com.techpro.chat.ticklechat.models.TickleFriend;
+import com.techpro.chat.ticklechat.models.message.AllMessages;
 import com.techpro.chat.ticklechat.models.message.CreateGroup;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
+import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 import com.techpro.chat.ticklechat.utils.UtilityImage;
 
 import java.io.ByteArrayOutputStream;
@@ -56,7 +60,8 @@ public class NewGroupFragment extends Fragment {
     private List<TickleFriend> movieList = new ArrayList<>();
     private EditText groupname;
     private RecyclerView mRecyclerView;
-    Group grp = null;
+    private Group grp = null;
+    private ProgressDialog dialog;
     public static List<Integer> addedUser =  new ArrayList<Integer>();
 
     @Override
@@ -85,12 +90,13 @@ public class NewGroupFragment extends Fragment {
                 }
                 if (groupname.getText().toString().equals("")){
                     Toast.makeText(NewGroupFragment.this.getContext(),
-                            getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
+                            "Please enter Group Name", Toast.LENGTH_SHORT).show();
                 } else {
+                    dialog = ProgressDialog.show(NewGroupFragment.this.getActivity(), "Loading", "Please wait...", true);
                     String profileImage  = "";
                     if (selectedBitmap != null) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                         profileImage = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
                     }
                     callCreateGroupService(groupname.getText().toString(), profileImage, DataStorage.UserDetails.getId(), DataStorage.UserDetails.getId());
@@ -122,6 +128,7 @@ public class NewGroupFragment extends Fragment {
                         grp.setImage(response.body().getBody().getImage());
                         grp.setName(response.body().getBody().getName());
                         grp.setUpdated_at(response.body().getBody().getUpdated_at());
+                        dialog.dismiss();
 
                         final Dialog dialog = new Dialog(mActivity);
                         // Include dialog.xml file
@@ -141,11 +148,13 @@ public class NewGroupFragment extends Fragment {
                                             getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
                                     return;
                                 }
+                                dialog.dismiss();
+                                NewGroupFragment.this.dialog = ProgressDialog.show(NewGroupFragment.this.getActivity(), "Loading", "Please wait...", true);
                                 callAddMembersService(addedUser,Integer.parseInt(grp.getId()));
 
                             }
                         });
-
+                        NewGroupFragment.this.dialog.dismiss();
                         (dialog.findViewById(R.id.buttoncancle)).
                                 setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -160,7 +169,6 @@ public class NewGroupFragment extends Fragment {
                         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
                         mRecyclerView.setAdapter(mAdapter);
                         dialog.show();
-
                     }
                 } else {
                     Toast.makeText(NewGroupFragment.this.getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
@@ -173,7 +181,7 @@ public class NewGroupFragment extends Fragment {
                 // Log error here since request failed
                 Toast.makeText(NewGroupFragment.this.getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                 Log.e("SendMessage", t.toString());
-//                dialog.dismiss();
+                dialog.dismiss();
             }
         });
 
@@ -189,7 +197,7 @@ public class NewGroupFragment extends Fragment {
     private void callAddMembersService(final List<Integer> members, int groupId) {
         //Getting webservice instance which we need to call
         String idList = members.toString();
-        String csv = idList.substring(1, idList.length() - 1).replace(", ", ",");
+        final String csv = idList.substring(1, idList.length() - 1).replace(", ", ",");
         Log.e("===============>","groupId ==> "+groupId);
         Log.e("===============>","csv.toString() ==> "+csv);
 //        csv = "{\"members\"}:\""+csv+"\"";
@@ -203,7 +211,13 @@ public class NewGroupFragment extends Fragment {
                     Log.e("SendMessage", "response.message(: "+response.message());
                     Log.e("SendMessage", "response.code(: "+response.code());
                     Log.e("SendMessage", "response.code(: "+response.body());
-
+                    grp.setMembers(csv);
+                    DataStorage.mygrouplist.add(grp);
+                    SharedPreferenceUtils.setColleactionObject(getContext(),grp.getId(),new ArrayList<AllMessages.MessageList.ChatMessagesList>());
+                    SharedPreferenceUtils.setColleactionObject(getContext(),SharedPreferenceUtils.mygrouplist,
+                            DataStorage.mygrouplist);
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    Toast.makeText(NewGroupFragment.this.getContext(), "Group created Succesfully.", Toast.LENGTH_LONG).show();
 //                    if (response.body() != null && response.body().getStatus().equals("success")) {
 //                        grp.setMembers(members.toString().replace("[","").replace("]",""));
 //                        DataStorage.mygrouplist.add(grp);
@@ -214,6 +228,7 @@ public class NewGroupFragment extends Fragment {
                     Toast.makeText(NewGroupFragment.this.getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("SendMessage", "Success callMessage_ALL_Service but null response");
                 }
+                NewGroupFragment.this.dialog.dismiss();
             }
 
             @Override
@@ -221,7 +236,7 @@ public class NewGroupFragment extends Fragment {
                 // Log error here since request failed
                 Toast.makeText(NewGroupFragment.this.getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                 Log.e("SendMessage", t.toString());
-//                dialog.dismiss();
+                NewGroupFragment.this.dialog.dismiss();
             }
         });
 

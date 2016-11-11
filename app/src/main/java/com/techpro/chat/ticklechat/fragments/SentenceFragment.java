@@ -26,6 +26,8 @@ import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,17 +97,16 @@ public class SentenceFragment extends Fragment implements View.OnClickListener{
 * */
     private synchronized void callAddSentenceService(String userid, final String status) {
         //Getting webservice instance which we need to call
-        Call<CustomModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
+        Call<JSONObject> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
                 .create(ApiInterface.class)).callAddSentenceService(status,userid);
         //Calling Webservice by enqueue
-        callForUserDetailsFromID.enqueue(new Callback<CustomModel>() {
+        callForUserDetailsFromID.enqueue(new Callback<JSONObject>() {
             @Override
-            public void onResponse(Call<CustomModel> call, Response<CustomModel> response) {
+            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
                 if (response != null) {
-                    if (response.body() != null && response.body().getStatus().equals("success")) {
+                    if (response.body() != null && response.message().equals("OK")) {
                         mTvAddNewTickle.setText("");
                         mTempList.add(new TickleFriend("nnn",status,"0", null));
-                        mRvChangeStatus.notify();
                         mStatusAdapter.notifyDataSetChanged();
                     }
 
@@ -117,7 +118,7 @@ public class SentenceFragment extends Fragment implements View.OnClickListener{
             }
 
             @Override
-            public void onFailure(Call<CustomModel> call, Throwable t) {
+            public void onFailure(Call<JSONObject> call, Throwable t) {
                 Toast.makeText(getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                 // Log error here since request failed
                 Log.e("profile", t.toString());

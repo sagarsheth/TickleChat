@@ -206,7 +206,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         lst_menu_items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "CLICKED ON POSITION " + position, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "CLICKED ON POSITION " + position, Toast.LENGTH_SHORT).show();
 
                 if (!AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
                     Toast.makeText(getApplicationContext(),

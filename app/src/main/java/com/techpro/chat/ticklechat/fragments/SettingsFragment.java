@@ -23,6 +23,8 @@ import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 
+import org.json.JSONObject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -154,14 +156,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
 * */
     private synchronized void deletUserService(int userid) {
         //Getting webservice instance which we need to call
-        Call<UserModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
+        Call<JSONObject> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
                 .create(ApiInterface.class)).deleteUser(userid);
         //Calling Webservice by enqueue
-        callForUserDetailsFromID.enqueue(new Callback<UserModel>() {
+        callForUserDetailsFromID.enqueue(new Callback<JSONObject>() {
             @Override
-            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
                 if (response != null) {
-                    if (response.body() != null && response.body().getStatus().equals("success")) {
+                    if (response.body() != null && response.message().equals("OK")) {
                         SharedPreferenceUtils.setValue(getContext(),SharedPreferenceUtils.LoginuserDetailsPreference,"");
                         Toast.makeText(getContext(), "User Deleted.", Toast.LENGTH_LONG).show();
                     }
@@ -174,7 +176,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
             }
 
             @Override
-            public void onFailure(Call<UserModel> call, Throwable t) {
+            public void onFailure(Call<JSONObject> call, Throwable t) {
                 Toast.makeText(getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                 // Log error here since request failed
                 Log.e("profile", t.toString());

@@ -73,7 +73,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         switch (callerID) {
                             case R.id.tvPositive:
                                 if (AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
-                                    if (messages != null && !messages.equals("") && messages.contains("~")
+                                    Log.e(TAG,"login:==> "+messages);
+                                    if (messages != null && !messages.equals("") && messages.contains("~")&& !messages.trim().equals("~")
                                             && Login.SHA1(messages.split("~")[1]) != null) {
                                         mStatusUpdateDialog.cancel();
                                         dialog = ProgressDialog.show(Login.this, "Loading", "Please wait...", true);
