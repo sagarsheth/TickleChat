@@ -141,9 +141,8 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
         callForUserDetailsFromID.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                if (response != null) {
+                if (response != null && response.body() != null && response.message().equals("OK")) {
                     Log.e("callupdateStatusService", "Success  callLoginService : " + response.message());
-                    if (response.body() != null && response.message().equals("OK")) {
                         DataStorage.UserDetails.setUser_status(status);
                         Log.e("callupdateStatusService", "Success  callLoginService : " + DataStorage.UserDetails);
                         Log.e("callupdateStatusService", "Success  getUserDetails.getId() : " + DataStorage.UserDetails.getId());
@@ -153,7 +152,7 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
                         Log.e("onResponse", "getUserDetails ==> " + json);
                         Toast.makeText(getContext(), "Status updated Succesfully.", Toast.LENGTH_LONG).show();
                         mTvStatus.setText(status);
-                    }
+
                 } else {
                     Toast.makeText(getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("profile", "Success callTickles_Service but null response");

@@ -29,8 +29,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SettingsFragment extends Fragment implements View.OnClickListener
-{
+public class SettingsFragment extends Fragment implements View.OnClickListener {
     private View mView;
     private TextView mTvDeleteAccount;
     private LinearLayout mLlEnableNotifications;
@@ -40,18 +39,15 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
     private ProgressDialog dialog;
 
     @Override
-    public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
-        if (mView == null)
-        {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (mView == null) {
             mView = inflater.inflate(R.layout.fragment_setting, container, false);
         }
         initUi();
         return mView;
     }
 
-    private void initUi ()
-    {
+    private void initUi() {
         mLlEnableNotifications = (LinearLayout) mView.findViewById(R.id.ll_enable_notification);
         mTvDeleteAccount = (TextView) mView.findViewById(R.id.tv_delete_account);
         mViewBlackOverlay = mView.findViewById(R.id.blackout_view_for_snackbar);
@@ -64,10 +60,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
     }
 
     @Override
-    public void onClick (View v)
-    {
-        switch (v.getId())
-        {
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.tv_delete_account:
                 showSnackBar();
                 break;
@@ -75,8 +69,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
                 //TODO : add delete account event
                 break;
             case R.id.blackout_view_for_snackbar:
-                if (mSnackbar != null && mSnackbar.isShown())
-                {
+                if (mSnackbar != null && mSnackbar.isShown()) {
                     mSnackbar.dismiss();
                 }
                 mViewBlackOverlay.setVisibility(View.GONE);
@@ -85,8 +78,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    private void showSnackBar ()
-    {
+    private void showSnackBar() {
 
         mSnackbar = Snackbar.make(mViewBlackOverlay, "", Snackbar.LENGTH_INDEFINITE);
         Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) mSnackbar.getView();
@@ -101,14 +93,11 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
 //        final TextView mTvDeleteAccountInfo = (TextView) snackView.findViewById(R.id.tv_delete_account_info);
 //        mTvDeleteAccountInfo.setMovementMethod(new ScrollingMovementMethod());
 
-        View.OnClickListener snackbarViewClickListener = new View.OnClickListener()
-        {
+        View.OnClickListener snackbarViewClickListener = new View.OnClickListener() {
             @Override
-            public void onClick (View v)
-            {
+            public void onClick(View v) {
 
-                if (mSnackbar != null && mSnackbar.isShown())
-                {
+                if (mSnackbar != null && mSnackbar.isShown()) {
                     if (!AppUtils.isNetworkConnectionAvailable(getContext())) {
                         Toast.makeText(getContext(),
                                 getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
@@ -119,21 +108,16 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
                     deletUserService(Integer.parseInt(DataStorage.UserDetails.getId()));
                     mSnackbar.dismiss();
                 }
-                if (mViewBlackOverlay != null)
-                {
+                if (mViewBlackOverlay != null) {
                     mViewBlackOverlay.setVisibility(View.GONE);
                 }
-                switch (v.getId())
-                {
+                switch (v.getId()) {
                     case R.id.tv_delete_account:
                         // TODO: 29/10/16 add action
 
-                        if (mTvBtnDelete.isSelected())
-                        {
+                        if (mTvBtnDelete.isSelected()) {
                             mTvBtnDelete.setSelected(false);
-                        }
-                        else
-                        {
+                        } else {
                             mTvBtnDelete.setSelected(true);
                         }
                         break;
@@ -162,12 +146,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener
         callForUserDetailsFromID.enqueue(new Callback<JSONObject>() {
             @Override
             public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
-                if (response != null) {
-                    if (response.body() != null && response.message().equals("OK")) {
-                        SharedPreferenceUtils.setValue(getContext(),SharedPreferenceUtils.LoginuserDetailsPreference,"");
-                        Toast.makeText(getContext(), "User Deleted.", Toast.LENGTH_LONG).show();
-                    }
-
+                if (response != null && response.body() != null && response.message().equals("OK")) {
+                    SharedPreferenceUtils.setValue(getContext(), SharedPreferenceUtils.LoginuserDetailsPreference, "");
+                    Toast.makeText(getContext(), "User Deleted.", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("profile", "Success callTickles_Service but null response");

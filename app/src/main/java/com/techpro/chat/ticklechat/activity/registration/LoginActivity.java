@@ -170,7 +170,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         callForUserDetailsFromID.enqueue(new Callback<UserModel>() {
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
-                if (response != null) {
+                if (response != null && response.body() != null) {
                     UserDetailsModel getUserDetails = response.body().getBody();
                     Toast.makeText(getApplicationContext(), "Registration Successful please login now.", Toast.LENGTH_LONG).show();
                     DataStorage.UserDetails = getUserDetails;

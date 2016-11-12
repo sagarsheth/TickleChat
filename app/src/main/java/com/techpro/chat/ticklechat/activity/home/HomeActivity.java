@@ -448,7 +448,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         callForUserDetailsFromID.enqueue(new Callback<AllMessages>() {
             @Override
             public void onResponse(Call<AllMessages> call, Response<AllMessages> response) {
-                if (response != null) {
+                if (response != null && response.body()!=null) {
                     DataStorage.allMessages = response.body().getBody().getMessages();
                     userid = new ArrayList<String>();
                     grpid = new ArrayList<String>();
@@ -505,7 +505,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         callForUserDetailsFromID.enqueue(new Callback<GetGroupDetails>() {
             @Override
             public void onResponse(Call<GetGroupDetails> call, Response<GetGroupDetails> response) {
-                if (response != null) {
+                if (response != null && response.body() != null) {
                     Group grp = response.body().getBody().getGroup();
 
 //                    Log.e(TAG, "Success  ADDED grp: " + grp.getName());
@@ -669,7 +669,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         callForUserDetailsFromID.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                if (response != null) {
+                if (response != null && response.body()!=null) {
                     JsonObject jsonResponse = response.body();
                         Log.e("UpdateDeviceTockan", "Success callTickles_Service done "+jsonResponse.toString());
                 } else {

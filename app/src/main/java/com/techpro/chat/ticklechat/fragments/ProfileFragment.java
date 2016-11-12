@@ -172,7 +172,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         callForUserDetailsFromID.enqueue(new Callback<UserModel>() {
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
-                if (response != null) {
+                if (response != null&& response.body() != null) {
                     UserDetailsModel getUserDetails = response.body().getBody();
                     DataStorage.UserDetails = getUserDetails;
                     Gson gson = new Gson();
