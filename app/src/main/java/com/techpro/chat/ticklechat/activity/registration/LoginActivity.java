@@ -172,6 +172,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                 if (response != null) {
                     UserDetailsModel getUserDetails = response.body().getBody();
+                    Toast.makeText(getApplicationContext(), "Registration Successful please login now.", Toast.LENGTH_LONG).show();
                     DataStorage.UserDetails = getUserDetails;
                     finish();
                     Log.e("profile", "Success  callLoginService : " + getUserDetails);

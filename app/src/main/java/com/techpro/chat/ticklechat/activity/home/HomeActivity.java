@@ -131,8 +131,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 dialog = ProgressDialog.show(HomeActivity.this, "Loading", "Please wait...", true);
                 apiService = ApiClient.getClient().create(ApiInterface.class);
                 callGetUserDetailsService(Integer.parseInt(DataStorage.UserDetails.getId()), true, false);
-                apiAUTService = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class);
-                callMessage_ALL_Service();
             } else {
                 Fragment fragment = new HomeScreenFragment();
                 replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
@@ -141,6 +139,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(getApplicationContext(),
                     getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setTitle(getResources().getString(R.string.header_ticklers).toString());
+        mNavigation.invalidate();
     }
 
     ArrayList<MenuItems> objMenuItemsList = new ArrayList<>();
@@ -224,7 +229,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     case NEW_GROUP:
                         fragment = new NewGroupFragment();
                         replaceFragment(fragment, getResources().getString(R.string.menu_new_group), true);
-
                         return;
                     case SEARCH_TICKLER:
                         dialog = ProgressDialog.show(HomeActivity.this, "Loading", "Please wait...", true);
@@ -252,8 +256,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
-
-
             }
         });
     }
@@ -375,6 +377,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     if (iscurrentuser) {
                         allUserID = new ArrayList<String>();
                         DataStorage.currentUserDetailsBody = getUserDetails.getUser();
+                        apiAUTService = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class);
+                        callMessage_ALL_Service();
                     } else if (!isgroup) {
 
                         if (usr!=null && usr.getId()!= null  && usr.getName()!=null) {
@@ -389,6 +393,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             }
                             SharedPreferenceUtils.setColleactionObject(getApplicationContext(),usr.getId(),usermessages);
                         }
+                    }
+                    if (allUserID == null){
+                        allUserID = new ArrayList<String>();
                     }
                     if (!allUserID.contains(getUserDetails.getUser())) {
                         allUserID.add(getUserDetails.getUser().getId());
@@ -637,7 +644,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
 //        TODO vishal please check this.
         UpdateDeviceTockan(token);
-        Toast.makeText(HomeActivity.this, token, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(HomeActivity.this, token, Toast.LENGTH_SHORT).show();
 
 //        FirebaseApp.initializeApp(HomeActivity.this);
 //                // [START subscribe_topics]

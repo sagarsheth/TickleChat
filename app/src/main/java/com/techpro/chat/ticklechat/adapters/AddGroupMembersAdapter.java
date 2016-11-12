@@ -115,7 +115,7 @@ public class AddGroupMembersAdapter extends RecyclerView.Adapter<AddGroupMembers
                 public void onClick(View v) {
                     try {
                         if (v.getTag() != null && ((boolean) v.getTag()) == true) {
-                            NewGroupFragment.addedUser.remove(Integer.parseInt(moviesList.get(getPosition()).getId()));
+                            boolean b = NewGroupFragment.addedUser.remove((moviesList.get(getPosition()).getId()));
                             v.setTag(false);
                             v.setBackgroundColor(Color.WHITE);
                         } else {

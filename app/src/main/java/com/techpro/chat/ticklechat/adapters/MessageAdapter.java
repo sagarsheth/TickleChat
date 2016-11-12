@@ -163,7 +163,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
                         dataupdate.dataUpdated(isGroup,msg.getTo_id());
                     }
                 } else {
-                    Log.e("SendMessage", "Success callMessage_ALL_Service but null response");
+                    Log.e("SendMessage", "Success callMessage_ALL_Service but null response ==> "+response.body());
                 }
             }
 

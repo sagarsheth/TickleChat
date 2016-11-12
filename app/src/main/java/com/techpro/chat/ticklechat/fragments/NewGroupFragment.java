@@ -118,7 +118,7 @@ public class NewGroupFragment extends Fragment {
         callForUserDetailsFromID.enqueue(new Callback<CreateGroup>() {
             @Override
             public void onResponse(Call<CreateGroup> call, Response<CreateGroup> response) {
-                if (response != null) {
+                if (response != null && response.body()!= null) {
                     if (response.body().getStatus().equals("success")) {
                         grp.setId(response.body().getBody().getId());
                         grp.setAdmin(response.body().getBody().getId());
