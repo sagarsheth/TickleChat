@@ -131,7 +131,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
         callForUserDetailsFromID.enqueue(new Callback<SendMessage>() {
             @Override
             public void onResponse(Call<SendMessage> call, Response<SendMessage> response) {
-                if (response != null) {
+                if (response != null && response.body()!= null) {
                     if (response.body().getStatus().equals("success")) {
                         moviesList = new MessageController(mContext).getMessages();
                         notifyDataSetChanged();
@@ -163,7 +163,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
                         dataupdate.dataUpdated(isGroup,msg.getTo_id());
                     }
                 } else {
-                    Log.e("SendMessage", "Success callMessage_ALL_Service but null response");
+                    Log.e("SendMessage", "Success callMessage_ALL_Service but null response ==> "+response.body());
                 }
             }
 

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.StatusUpdateDialog;
 import com.techpro.chat.ticklechat.adapters.StatusAdapter;
@@ -134,14 +135,14 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
 * */
     private synchronized void callupdateStatusService(int userid, final String status) {
         //Getting webservice instance which we need to call
-        Call<CustomModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
+        Call<JsonObject> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
                 .create(ApiInterface.class)).callupdateStatusService(userid, status);
         //Calling Webservice by enqueue
-        callForUserDetailsFromID.enqueue(new Callback<CustomModel>() {
+        callForUserDetailsFromID.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<CustomModel> call, Response<CustomModel> response) {
-                if (response != null) {
-                    if (response.body() != null && response.body().getStatus().equals("success")) {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response != null && response.body() != null && response.message().equals("OK")) {
+                    Log.e("callupdateStatusService", "Success  callLoginService : " + response.message());
                         DataStorage.UserDetails.setUser_status(status);
                         Log.e("callupdateStatusService", "Success  callLoginService : " + DataStorage.UserDetails);
                         Log.e("callupdateStatusService", "Success  getUserDetails.getId() : " + DataStorage.UserDetails.getId());
@@ -151,7 +152,7 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
                         Log.e("onResponse", "getUserDetails ==> " + json);
                         Toast.makeText(getContext(), "Status updated Succesfully.", Toast.LENGTH_LONG).show();
                         mTvStatus.setText(status);
-                    }
+
                 } else {
                     Toast.makeText(getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("profile", "Success callTickles_Service but null response");
@@ -163,7 +164,7 @@ public class StatusUpdateFragment extends Fragment implements View.OnClickListen
             }
 
             @Override
-            public void onFailure(Call<CustomModel> call, Throwable t) {
+            public void onFailure(Call<JsonObject> call, Throwable t) {
                 // Log error here since request failed
                 Toast.makeText(getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                 Log.e("profile", t.toString());

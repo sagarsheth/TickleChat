@@ -146,8 +146,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 dialog = ProgressDialog.show(HomeActivity.this, "Loading", "Please wait...", true);
                 apiService = ApiClient.getClient().create(ApiInterface.class);
                 callGetUserDetailsService(Integer.parseInt(DataStorage.UserDetails.getId()), true, false);
-                apiAUTService = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class);
-                callMessage_ALL_Service();
             } else {
                 Fragment fragment = new HomeScreenFragment();
                 replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
@@ -156,6 +154,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(getApplicationContext(),
                     getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setTitle(getResources().getString(R.string.header_ticklers).toString());
+        mNavigation.invalidate();
     }
 
     ArrayList<MenuItems> objMenuItemsList = new ArrayList<>();
@@ -221,7 +226,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         lst_menu_items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "CLICKED ON POSITION " + position, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "CLICKED ON POSITION " + position, Toast.LENGTH_SHORT).show();
 
                 if (!AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
                     Toast.makeText(getApplicationContext(),
@@ -239,7 +244,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     case NEW_GROUP:
                         fragment = new NewGroupFragment();
                         replaceFragment(fragment, getResources().getString(R.string.menu_new_group), true);
-
                         return;
                     case SEARCH_TICKLER:
                         dialog = ProgressDialog.show(HomeActivity.this, "Loading", "Please wait...", true);
@@ -267,8 +271,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
-
-
             }
         });
     }
@@ -384,7 +386,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         callForUserDetailsFromID.enqueue(new Callback<GetUserDetails>() {
             @Override
             public void onResponse(Call<GetUserDetails> call, Response<GetUserDetails> response) {
-
                 try{
                     if (response != null && response.body()!=null) {
                         GetUserDetailsBody getUserDetails = response.body().getBody();
@@ -411,6 +412,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             allUserID.add(getUserDetails.getUser().getId());
                             DataStorage.myAllUserlist.add(getUserDetails.getUser());
                         }
+
 
                         if (isUserDataSetReady && isGroupDataSetReady) {
                             dialog.dismiss();
@@ -465,7 +467,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         callForUserDetailsFromID.enqueue(new Callback<AllMessages>() {
             @Override
             public void onResponse(Call<AllMessages> call, Response<AllMessages> response) {
-                if (response != null) {
+                if (response != null && response.body()!=null) {
                     DataStorage.allMessages = response.body().getBody().getMessages();
                     userid = new ArrayList<String>();
                     grpid = new ArrayList<String>();
@@ -522,7 +524,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         callForUserDetailsFromID.enqueue(new Callback<GetGroupDetails>() {
             @Override
             public void onResponse(Call<GetGroupDetails> call, Response<GetGroupDetails> response) {
-                if (response != null) {
+                if (response != null && response.body() != null) {
                     Group grp = response.body().getBody().getGroup();
 
 //                    Log.e(TAG, "Success  ADDED grp: " + grp.getName());
@@ -662,7 +664,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
 //        TODO vishal please check this.
         UpdateDeviceTockan(token);
-        Toast.makeText(HomeActivity.this, token, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(HomeActivity.this, token, Toast.LENGTH_SHORT).show();
 
 //        FirebaseApp.initializeApp(HomeActivity.this);
 //                // [START subscribe_topics]
@@ -687,7 +689,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         callForUserDetailsFromID.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                if (response != null) {
+                if (response != null && response.body()!=null) {
                     JsonObject jsonResponse = response.body();
                     if(jsonResponse !=null)
                         Log.e("UpdateDeviceTockan", "Success callTickles_Service done "+jsonResponse.toString());

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.support.v7.view.menu.ExpandedMenuView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
@@ -59,7 +60,8 @@ public class AddGroupMembersAdapter extends RecyclerView.Adapter<AddGroupMembers
         if (movie.getProfile_image() != null) {
             byte[] decodedString = Base64.decode(movie.getProfile_image().getBytes(), Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            holder.friendImage.setImageBitmap(decodedByte);
+            if (decodedByte!=null)
+                holder.friendImage.setImageBitmap(decodedByte);
         }
         if (showCheckbox) {
             holder.addfriends.setVisibility(View.VISIBLE);
@@ -74,9 +76,9 @@ public class AddGroupMembersAdapter extends RecyclerView.Adapter<AddGroupMembers
             holder.friendNumber.setVisibility(View.INVISIBLE);
         }
         Log.e("(position % 2) => "+position,"(position % 2)=>"+(position % 2));
-        if ((position % 2) == 0) {
-            holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
-        }
+//        if ((position % 2) == 0) {
+//            holder.backgroundlayout.setBackgroundColor(Color.parseColor("#f1f1f1"));
+//        }
     }
 
     @Override
@@ -111,14 +113,18 @@ public class AddGroupMembersAdapter extends RecyclerView.Adapter<AddGroupMembers
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (v.getTag() != null && ((boolean)v.getTag()) == true) {
-                        NewGroupFragment.addedUser.remove(Integer.parseInt(moviesList.get(getPosition()).getId()));
-                        v.setTag(false);
-                        v.setBackgroundColor(Color.WHITE);
-                    } else {
-                        NewGroupFragment.addedUser.add(Integer.parseInt(moviesList.get(getPosition()).getId()));
-                        v.setTag(true);
-                        v.setBackgroundColor(Color.BLUE);
+                    try {
+                        if (v.getTag() != null && ((boolean) v.getTag()) == true) {
+                            boolean b = NewGroupFragment.addedUser.remove((moviesList.get(getPosition()).getId()));
+                            v.setTag(false);
+                            v.setBackgroundColor(Color.WHITE);
+                        } else {
+                            NewGroupFragment.addedUser.add(Integer.parseInt(moviesList.get(getPosition()).getId()));
+                            v.setTag(true);
+                            v.setBackgroundColor(0Xff33b5e5);
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
 //                    Log.d("RecyclerView", "getPosition：" + getPosition());
 //                    Log.d("RecyclerView", "getAdapterPosition：" + getAdapterPosition());

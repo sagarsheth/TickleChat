@@ -31,7 +31,7 @@
             android:ems="10"
             android:layout_height="wrap_content"
             android:id="@+id/groupname"
-            android:hint="Enter group Name" />
+            android:hint="Enter Group Name" />
 
         <TextView
             android:layout_width="wrap_content"

@@ -73,16 +73,19 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         switch (callerID) {
                             case R.id.tvPositive:
                                 if (AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
-                                    if (messages != null && !messages.equals("") && messages.contains("~")
+                                    Log.e(TAG,"login:==> "+messages);
+                                    if (messages != null && !messages.equals("") && messages.contains("~")&& !messages.trim().equals("~")
                                             && Login.SHA1(messages.split("~")[1]) != null) {
                                         mStatusUpdateDialog.cancel();
                                         dialog = ProgressDialog.show(Login.this, "Loading", "Please wait...", true);
                                         callLoginService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
 //                                        callLoginService(messages.split("~")[0], SHA1(messages.split("~")[1]));
                                     } else {
+                                        Log.e(TAG,"login:==> "+messages);
                                         Toast.makeText(getApplicationContext(), "Please enter complete details.", Toast.LENGTH_LONG).show();
                                     }
                                 } else{
+                                    Log.e(TAG,"login:==> "+messages);
                                     Toast.makeText(getApplicationContext(),
                                             getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
                                 }
@@ -176,7 +179,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     String json = gson.toJson(getUserDetails);
                     Log.e(TAG, "json ==> "+json);
                     SharedPreferenceUtils.setValue(getApplicationContext(),SharedPreferenceUtils.LoginuserDetailsPreference,json);
-                    Toast.makeText(getApplicationContext(), "Registration Successful please login now.", Toast.LENGTH_LONG).show();
                     startActivity(new Intent(Login.this, HomeActivity.class));
                     finish();
                 } else {

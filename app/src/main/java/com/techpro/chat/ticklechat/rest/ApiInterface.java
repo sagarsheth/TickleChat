@@ -10,6 +10,8 @@ import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
 import com.techpro.chat.ticklechat.models.user.UserModel;
 
+import org.json.JSONObject;
+
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
@@ -64,11 +66,11 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST("tickles")
-    Call<CustomModel> callAddSentenceService(@Field("message") String message, @Field("requester") String requester);
+    Call<JSONObject> callAddSentenceService(@Field("message") String message, @Field("requester") String requester);
 
     @FormUrlEncoded
     @PUT("users/{userid}/status")
-    Call<CustomModel> callupdateStatusService(@Path("userid") int userid, @Field("status") String status);
+    Call<JsonObject> callupdateStatusService(@Path("userid") int userid, @Field("status") String status);
 
     @FormUrlEncoded
     @POST("messages")
@@ -98,7 +100,7 @@ public interface ApiInterface {
                                       @Field("profile_image") String profile_image);
 
     @DELETE("users/{userid}")
-    Call<UserModel> deleteUser(@Path("userid") int userId);
+    Call<JSONObject> deleteUser(@Path("userid") int userId);
 
     @FormUrlEncoded
     @POST("users/updateDT")

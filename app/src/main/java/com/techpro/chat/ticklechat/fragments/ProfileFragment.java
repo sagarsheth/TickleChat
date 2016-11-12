@@ -172,13 +172,15 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         callForUserDetailsFromID.enqueue(new Callback<UserModel>() {
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
-                if (response != null) {
+                if (response != null&& response.body() != null) {
                     UserDetailsModel getUserDetails = response.body().getBody();
                     DataStorage.UserDetails = getUserDetails;
                     Gson gson = new Gson();
                     String json = gson.toJson(getUserDetails);
                     Log.e("ProfileFragment", "json ==> "+json);
                     SharedPreferenceUtils.setValue(getContext(),SharedPreferenceUtils.LoginuserDetailsPreference,json);
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    Toast.makeText(ProfileFragment.this.getContext(), "Profile Updated Successfully.", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(ProfileFragment.this.getContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("profile", "Success callTickles_Service but null response");

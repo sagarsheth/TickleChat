@@ -58,7 +58,9 @@ public class TickleFriendAdapter extends RecyclerView.Adapter<TickleFriendAdapte
         if (movie.getProfile_image() != null) {
             byte[] decodedString = Base64.decode(movie.getProfile_image().getBytes(), Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            holder.friendImage.setImageBitmap(decodedByte);
+            if (decodedByte!=null) {
+                holder.friendImage.setImageBitmap(decodedByte);
+            }
         }
         if (showCheckbox) {
             holder.addfriends.setVisibility(View.VISIBLE);
