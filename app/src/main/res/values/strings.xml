@@ -9,6 +9,8 @@
     <string name="send_mail">Send Email</string>
 
 
+    <string name="fb_login_protocol_scheme">fb1592527504392182</string>
+
 
     <string name="font_icon">icon-fonts.ttf</string>
     <string name="font_type_opensans_bold">OpenSans-Bold.ttf</string>
@@ -57,6 +59,8 @@
 
     <string name ="terms_policies">Terms and Policies</string>
 
+    <!-- Sign-in status messages -->
+    <string name="signed_in_fmt">Signed in as: %s</string>
 
     <!--HEADERS ITMES-->
     <string name ="header_ticklers">TickleChat</string>
@@ -72,4 +76,38 @@
     <string name="delete">Delete</string>
 
     <string name="failmessage"> Unable to perform operation at this moment. Please try again."</string>
+
+
+    <string name="slide_1_title">Tickle-ing</string>
+    <string name="slide_1_desc">Take a small tour of app before you start Tickle-ing</string>
+
+    <string name="slide_2_title">Tickle menu</string>
+    <string name="slide_2_desc">Start with clicking on Tickle logo on the left top corner for menu button</string>
+
+    <string name="slide_3_title">Explore menu</string>
+    <string name="slide_3_desc">Menu has lots to explore.</string>
+
+    <string name="slide_4_title">Tap and enjoy</string>
+    <string name="slide_4_desc">Tickle your friends already available on Tickle</string>
+
+    <string name="slide_5_title">Create Tickler groups</string>
+    <string name="slide_5_desc">Create Tickler groups and enjoy the laughter riots</string>
+
+    <string name="slide_6_title">Search Tickler feature</string>
+    <string name="slide_6_desc">Get crackling along random ticklers with search Ticklers features</string>
+
+    <string name="slide_7_title">The name itself says</string>
+    <string name="slide_7_desc">Add sentence to Tickle list and Boast amongst your friend</string>
+
+    <string name="slide_0_title">Hello Tickler!</string>
+    <string name="slide_0_desc">Welcome to Tickle Chat</string>
+
+    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
+    <string name="play_again">Play Again</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+    <string name="start">Start</string>
+    <string name="signed_out">google signout</string>
+    <string name="sign_out">google signout</string>
+    <string name="disconnect">disconnect</string>
 </resources>

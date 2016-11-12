@@ -16,8 +16,9 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/message_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignTop="@+id/ll_tickle_msg_container"
+            android:layout_above="@+id/ll_tickle_msg_container"
             android:layout_alignParentTop="true"
             />
 

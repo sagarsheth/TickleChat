@@ -16,10 +16,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    dataBinding{
+        enabled = true
+    }
 }
 
 repositories {
     maven { url 'http://repo1.maven.org/maven2' }
+    mavenCentral()
+
 }
 
 dependencies {
@@ -50,7 +55,7 @@ dependencies {
     // google login
     compile 'com.google.android.gms:play-services-auth:9.8.0'
     //fb login
-    compile 'com.facebook.android:facebook-android-sdk:4.+'
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     //vie pager indicators
     compile 'fr.avianey.com.viewpagerindicator:library:2.4.1@aar'
 
@@ -58,6 +63,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+
 }
 
 // ADD THIS AT THE BOTTOM

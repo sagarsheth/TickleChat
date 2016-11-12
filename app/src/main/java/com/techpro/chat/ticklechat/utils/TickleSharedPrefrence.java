@@ -9,6 +9,9 @@ public class TickleSharedPrefrence {
     private String MY_PREFS_NAME = "TickleSharedPrefrence";
     private static TickleSharedPrefrence mTickleSharedPrefrence;
 
+    private SharedPreferences.Editor editor;
+    private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
+
     private TickleSharedPrefrence(Context context){
         prefs = context.getSharedPreferences(MY_PREFS_NAME, Context.MODE_PRIVATE);
     }
@@ -28,6 +31,15 @@ public class TickleSharedPrefrence {
 
     public String getFromSharedPreference(String Key){
         return prefs.getString(Key, "");
+    }
+
+    public void setFirstTimeLaunch(boolean isFirstTime) {
+        editor = prefs.edit();
+        editor.putBoolean(IS_FIRST_TIME_LAUNCH, isFirstTime);
+        editor.commit();
+    }
+    public boolean isFirstTimeLaunch() {
+        return prefs.getBoolean(IS_FIRST_TIME_LAUNCH, true);
     }
 
 }

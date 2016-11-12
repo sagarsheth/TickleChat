@@ -1,6 +1,9 @@
 package com.techpro.chat.ticklechat.activity.home;
 
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -83,7 +86,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private List<String> grpid = null;
     private boolean isUserDataSetReady = false;
     private boolean isGroupDataSetReady = false;
-
+    private TextView tvgcm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +95,18 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         AppConfigs.SCREEN_HEIGHT = display.getHeight();
         AppConfigs.SCREEN_WIDTH = display.getWidth();
+
+        tvgcm =(TextView)findViewById(R.id.tvgcm);
+
+        tvgcm.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick (View v)
+            {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("token ", tvgcm.getText().toString());
+                clipboard.setPrimaryClip(clip);            }
+        });
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -369,54 +384,63 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         callForUserDetailsFromID.enqueue(new Callback<GetUserDetails>() {
             @Override
             public void onResponse(Call<GetUserDetails> call, Response<GetUserDetails> response) {
-                if (response != null && response.body()!=null) {
-                    GetUserDetailsBody getUserDetails = response.body().getBody();
-                    User usr = getUserDetails.getUser();
-                    if (iscurrentuser) {
-                        allUserID = new ArrayList<String>();
-                        DataStorage.currentUserDetailsBody = getUserDetails.getUser();
-                    } else if (!isgroup) {
 
-                        if (usr!=null && usr.getId()!= null  && usr.getName()!=null) {
-                            DataStorage.chatUserList.add(usr);
-                            List<AllMessages.MessageList.ChatMessagesList> usermessages = new ArrayList<>();
-                            for (int i = 0; i < DataStorage.allMessages.size(); i++) {
-                                AllMessages.MessageList.ChatMessagesList msg = DataStorage.allMessages.get(i);
-                                if ((msg.getFrom_id().equals(usr.getId()) || (msg.getTo_id().equals(usr.getId())))
-                                        && msg.getIsgroup().equals("0")) {
-                                    usermessages.add(msg);
+                try{
+                    if (response != null && response.body()!=null) {
+                        GetUserDetailsBody getUserDetails = response.body().getBody();
+                        User usr = getUserDetails.getUser();
+                        if (iscurrentuser) {
+                            allUserID = new ArrayList<String>();
+                            DataStorage.currentUserDetailsBody = getUserDetails.getUser();
+                        } else if (!isgroup) {
+
+                            if (usr!=null && usr.getId()!= null  && usr.getName()!=null) {
+                                DataStorage.chatUserList.add(usr);
+                                List<AllMessages.MessageList.ChatMessagesList> usermessages = new ArrayList<>();
+                                for (int i = 0; i < DataStorage.allMessages.size(); i++) {
+                                    AllMessages.MessageList.ChatMessagesList msg = DataStorage.allMessages.get(i);
+                                    if ((msg.getFrom_id().equals(usr.getId()) || (msg.getTo_id().equals(usr.getId())))
+                                            && msg.getIsgroup().equals("0")) {
+                                        usermessages.add(msg);
+                                    }
                                 }
+                                SharedPreferenceUtils.setColleactionObject(getApplicationContext(),usr.getId(),usermessages);
                             }
-                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),usr.getId(),usermessages);
                         }
-                    }
-                    if (!allUserID.contains(getUserDetails.getUser())) {
-                        allUserID.add(getUserDetails.getUser().getId());
-                        DataStorage.myAllUserlist.add(getUserDetails.getUser());
-                    }
+                        if (!allUserID.contains(getUserDetails.getUser())) {
+                            allUserID.add(getUserDetails.getUser().getId());
+                            DataStorage.myAllUserlist.add(getUserDetails.getUser());
+                        }
 
-                    if (isUserDataSetReady && isGroupDataSetReady) {
-                        dialog.dismiss();
+                        if (isUserDataSetReady && isGroupDataSetReady) {
+                            dialog.dismiss();
 
-                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,
-                                DataStorage.myAllUserlist);
-                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist,
-                                DataStorage.mygrouplist);
-                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.chatUserID,
-                                DataStorage.chatUserList);
-                        getTicklesService();
-                        Fragment fragment = new HomeScreenFragment();
-                        replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
-                    }
+                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,
+                                                                       DataStorage.myAllUserlist);
+                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist,
+                                                                       DataStorage.mygrouplist);
+                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.chatUserID,
+                                                                       DataStorage.chatUserList);
+                            getTicklesService();
+                            Fragment fragment = new HomeScreenFragment();
+                            replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
+                        }
 
 ////                                Calendar cl = Calendar.getInstance();
 ////                                cl.setTimeInMillis(Long.parseLong(msg.getRequested_at()));  //here your time in miliseconds
 ////                                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
 ////                                String datenew = format.format(cl.getTime());
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
-                    Log.e(TAG, "Success but null response");
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Success but null response");
+                    }
+
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
                 }
+
+
             }
 
             @Override
@@ -627,8 +651,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // Get token
         FirebaseApp.initializeApp(HomeActivity.this);
         String token = FirebaseInstanceId.getInstance().getToken();
-        token = "dE2bYhbZs2s:APA91bG0ul-fch8yjSkXhLnKggC_7ZbA6Rx3KLUHQeXiyafrjg34Z_f-N986dhHflDQBjYWwu2cMMk6MP2Nz32C1yTx93zH1xfEaEyji2-Qxj-4TQGZ7mqZt6yR805SDEYgbYzqCFaSo";
-        Log.e(TAG, token);
+        tvgcm.setText(""+token);
+//        token = "dE2bYhbZs2s:APA91bG0ul-fch8yjSkXhLnKggC_7ZbA6Rx3KLUHQeXiyafrjg34Z_f-N986dhHflDQBjYWwu2cMMk6MP2Nz32C1yTx93zH1xfEaEyji2-Qxj-4TQGZ7mqZt6yR805SDEYgbYzqCFaSo";
+        Log.e(TAG, "msg");
 
         if (!AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
             Toast.makeText(getApplicationContext(),
@@ -664,6 +689,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response != null) {
                     JsonObject jsonResponse = response.body();
+                    if(jsonResponse !=null)
                         Log.e("UpdateDeviceTockan", "Success callTickles_Service done "+jsonResponse.toString());
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();

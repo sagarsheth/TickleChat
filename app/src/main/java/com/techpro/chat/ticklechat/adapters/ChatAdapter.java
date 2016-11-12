@@ -6,13 +6,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
 import com.techpro.chat.ticklechat.R;
-import com.techpro.chat.ticklechat.controller.MessageController;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
 import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
@@ -80,6 +80,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
                 String messages  = mChatMessageList.getMessage().replaceAll("%(?![0-9a-fA-F]{2})", "%25");
                 messages = URLDecoder.decode(messages, "UTF-8");
                 holder.tvMessageRight.setText(messages);
+                Picasso.with(mContext).load(DataStorage.UserDetails.getProfile_image()).placeholder(R.drawable.tickle_logo).into(holder.ivProfile);
             } catch (Exception e) {
                 holder.tvMessageRight.setText(mChatMessageList.getMessage());
             }
@@ -93,6 +94,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
                 String messages  = mChatMessageList.getMessage().replaceAll("%(?![0-9a-fA-F]{2})", "%25");
                 messages = URLDecoder.decode(messages, "UTF-8");
                 holder.tvMessage.setText(messages);
+                Picasso.with(mContext).load("").placeholder(R.drawable.tickle_logo).into(holder.ivProfileRight);
             } catch (Exception e) {
                 holder.tvMessage.setText(mChatMessageList.getMessage());
             }
@@ -110,9 +112,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     public class MyViewHolder extends RecyclerView.ViewHolder
     {
         public TextView tvMessage;
-        public ImageView ivProfile;
+        public CircularImageView ivProfile;
         public TextView tvMessageRight;
-        public ImageView ivProfileRight;
+        public CircularImageView ivProfileRight;
 
         public LinearLayout llLeftRow;
         public LinearLayout llRightRow;
@@ -122,9 +124,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         {
             super(view);
             tvMessage = (TextView) view.findViewById(R.id.tv_message);
-            ivProfile = (ImageView) view.findViewById(R.id.iv_profile);
+            ivProfile = (CircularImageView) view.findViewById(R.id.iv_profile);
             tvMessageRight = (TextView) view.findViewById(R.id.tv_message_right);
-            ivProfileRight = (ImageView) view.findViewById(R.id.iv_profile_right);
+            ivProfileRight = (CircularImageView) view.findViewById(R.id.iv_profile_right);
 
             llLeftRow = (LinearLayout) view.findViewById(R.id.ll_left_row);
             llRightRow = (LinearLayout) view.findViewById(R.id.ll_right_row);
