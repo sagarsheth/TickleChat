@@ -1,10 +1,9 @@
 package com.techpro.chat.ticklechat.activity.home;
 
 import android.app.ProgressDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -13,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
@@ -86,7 +86,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private List<String> grpid = null;
     private boolean isUserDataSetReady = false;
     private boolean isGroupDataSetReady = false;
-    private TextView tvgcm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,18 +95,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         AppConfigs.SCREEN_HEIGHT = display.getHeight();
         AppConfigs.SCREEN_WIDTH = display.getWidth();
-
-        tvgcm =(TextView)findViewById(R.id.tvgcm);
-
-        tvgcm.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick (View v)
-            {
-                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("token ", tvgcm.getText().toString());
-                clipboard.setPrimaryClip(clip);            }
-        });
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -205,7 +193,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 R.drawable.ic_launcher
 
         };
-
 
         for (int i = 0; i < menuItmesArray.length; i++) {
             MenuItems objMenuItems = new MenuItems();
@@ -333,7 +320,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         tvUserName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showEditProfileView();
+                mDrawerLayout.closeDrawers();
+                replaceFragment(new ProfileFragment(), getResources().getString(R.string.menu_profile), true);
             }
         });
 
@@ -344,7 +332,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showEditProfileView();
+                mDrawerLayout.closeDrawers();
+                replaceFragment(new ProfileFragment(), getResources().getString(R.string.menu_profile), true);
             }
         });
 
@@ -354,31 +343,19 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         ivEditIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showEditProfileView();
+                mDrawerLayout.closeDrawers();
+                replaceFragment(new ProfileFragment(), getResources().getString(R.string.menu_profile), true);
             }
         });
 
-
         CircularImageView objCircularImageView = (CircularImageView) findViewById(R.id.ivProfileImg);
-
+        byte[] decodedString = Base64.decode(DataStorage.UserDetails.getProfile_image(), Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        if (decodedByte != null)
+            objCircularImageView.setImageBitmap(decodedByte);
 
     }
 
-    //
-    private void showEditProfileView() {
-        if (AppConfigs.isVerified()) {
-            Intent intent = new Intent(HomeActivity.this, PersonalProfileActivity.class);
-            startActivityForResult(intent, Constants.REQUEST_CODE_1003);
-        } else {
-            ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawer(GravityCompat.START);
-        }
-    }
-
-
-    /*
-        * Get - User details by user chatUserList
-        * @param userId - user chatUserList
-        * */
     private synchronized void callGetUserDetailsService(int userId, final boolean iscurrentuser, final boolean isgroup) {
         //Getting webservice instance which we need to call
         Call<GetUserDetails> callForUserDetailsFromID = apiService.getUserDetailsFromID(userId);
@@ -386,63 +363,59 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         callForUserDetailsFromID.enqueue(new Callback<GetUserDetails>() {
             @Override
             public void onResponse(Call<GetUserDetails> call, Response<GetUserDetails> response) {
-                try{
-                    if (response != null && response.body()!=null) {
-                        GetUserDetailsBody getUserDetails = response.body().getBody();
-                        User usr = getUserDetails.getUser();
-                        if (iscurrentuser) {
-                            allUserID = new ArrayList<String>();
-                            DataStorage.currentUserDetailsBody = getUserDetails.getUser();
-                        } else if (!isgroup) {
+                if (response != null && response.body()!=null) {
+                    GetUserDetailsBody getUserDetails = response.body().getBody();
+                    User usr = getUserDetails.getUser();
+                    if (iscurrentuser) {
+                        allUserID = new ArrayList<String>();
+                        DataStorage.currentUserDetailsBody = getUserDetails.getUser();
+                        apiAUTService = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class);
+                        callMessage_ALL_Service();
+                    } else if (!isgroup) {
 
-                            if (usr!=null && usr.getId()!= null  && usr.getName()!=null) {
-                                DataStorage.chatUserList.add(usr);
-                                List<AllMessages.MessageList.ChatMessagesList> usermessages = new ArrayList<>();
-                                for (int i = 0; i < DataStorage.allMessages.size(); i++) {
-                                    AllMessages.MessageList.ChatMessagesList msg = DataStorage.allMessages.get(i);
-                                    if ((msg.getFrom_id().equals(usr.getId()) || (msg.getTo_id().equals(usr.getId())))
-                                            && msg.getIsgroup().equals("0")) {
-                                        usermessages.add(msg);
-                                    }
+                        if (usr!=null && usr.getId()!= null  && usr.getName()!=null) {
+                            DataStorage.chatUserList.add(usr);
+                            List<AllMessages.MessageList.ChatMessagesList> usermessages = new ArrayList<>();
+                            for (int i = 0; i < DataStorage.allMessages.size(); i++) {
+                                AllMessages.MessageList.ChatMessagesList msg = DataStorage.allMessages.get(i);
+                                if ((msg.getFrom_id().equals(usr.getId()) || (msg.getTo_id().equals(usr.getId())))
+                                        && msg.getIsgroup().equals("0")) {
+                                    usermessages.add(msg);
                                 }
-                                SharedPreferenceUtils.setColleactionObject(getApplicationContext(),usr.getId(),usermessages);
                             }
+                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(), usr.getId(), usermessages);
                         }
-                        if (!allUserID.contains(getUserDetails.getUser())) {
-                            allUserID.add(getUserDetails.getUser().getId());
-                            DataStorage.myAllUserlist.add(getUserDetails.getUser());
-                        }
+                    }
+                    if (allUserID == null) {
+                        allUserID = new ArrayList<String>();
+                    }
+                    if (!allUserID.contains(getUserDetails.getUser())) {
+                        allUserID.add(getUserDetails.getUser().getId());
+                        DataStorage.myAllUserlist.add(getUserDetails.getUser());
+                    }
 
+                    if (isUserDataSetReady && isGroupDataSetReady) {
+                        dialog.dismiss();
 
-                        if (isUserDataSetReady && isGroupDataSetReady) {
-                            dialog.dismiss();
-
-                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.myuserlist,
-                                                                       DataStorage.myAllUserlist);
-                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.mygrouplist,
-                                                                       DataStorage.mygrouplist);
-                            SharedPreferenceUtils.setColleactionObject(getApplicationContext(),SharedPreferenceUtils.chatUserID,
-                                                                       DataStorage.chatUserList);
-                            getTicklesService();
-                            Fragment fragment = new HomeScreenFragment();
-                            replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
-                        }
+                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.myuserlist,
+                                DataStorage.myAllUserlist);
+                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.mygrouplist,
+                                DataStorage.mygrouplist);
+                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.chatUserID,
+                                DataStorage.chatUserList);
+                        getTicklesService();
+                        Fragment fragment = new HomeScreenFragment();
+                        replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
+                    }
 
 ////                                Calendar cl = Calendar.getInstance();
 ////                                cl.setTimeInMillis(Long.parseLong(msg.getRequested_at()));  //here your time in miliseconds
 ////                                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddhhmmss");
 ////                                String datenew = format.format(cl.getTime());
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
-                        Log.e(TAG, "Success but null response");
-                    }
-
-                }catch (Exception e)
-                {
-                    e.printStackTrace();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Success but null response");
                 }
-
-
             }
 
             @Override
@@ -456,10 +429,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    /*
-* Get - User details by user chatUserList
-* @param userId - user chatUserList
-* */
     private void callMessage_ALL_Service() {
         //Getting webservice instance which we need to call
         Call<AllMessages> callForUserDetailsFromID = apiAUTService.getAllMessageList();
@@ -467,14 +436,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         callForUserDetailsFromID.enqueue(new Callback<AllMessages>() {
             @Override
             public void onResponse(Call<AllMessages> call, Response<AllMessages> response) {
-                if (response != null && response.body()!=null) {
+                if (response != null && response.body() != null) {
                     DataStorage.allMessages = response.body().getBody().getMessages();
                     userid = new ArrayList<String>();
                     grpid = new ArrayList<String>();
                     userid.clear();
                     grpid.clear();
                     for (int i = 0; i < DataStorage.allMessages.size(); i++) {
-                        if (i == DataStorage.allMessages.size()-1){
+                        if (i == DataStorage.allMessages.size() - 1) {
                             isUserDataSetReady = true;
                         }
                         AllMessages.MessageList.ChatMessagesList msg = DataStorage.allMessages.get(i);
@@ -490,7 +459,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             String messageFromUserID = msg.getFrom_id();
                             if (!userid.contains(messageFromUserID)) {
                                 userid.add(messageFromUserID);
-                                callGetUserDetailsService(Integer.parseInt(messageFromUserID), false ,false);
+                                callGetUserDetailsService(Integer.parseInt(messageFromUserID), false, false);
                             }
                         }
 
@@ -509,14 +478,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 //                dialog.dismiss();
             }
         });
-
     }
 
-
-    /*
-* Get - User details by user chatUserList
-* @param userId - user chatUserList
-* */
     private synchronized void callGetGroupDetailsService(int groupid) {
         //Getting webservice instance which we need to call
         Call<GetGroupDetails> callForUserDetailsFromID = apiAUTService.getGroupDetials(groupid);
@@ -528,7 +491,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     Group grp = response.body().getBody().getGroup();
 
 //                    Log.e(TAG, "Success  ADDED grp: " + grp.getName());
-                    if (grp!=null && grp.getId()!= null  && grp.getName()!=null) {
+                    if (grp != null && grp.getId() != null && grp.getName() != null) {
                         DataStorage.mygrouplist.add(grp);
 //                        Log.e(TAG, "Success  ADDED GROUP: " + grp.getName());
 //                        Log.e(TAG, "Success  ADDED GROUP: " + grp.getId());
@@ -541,19 +504,18 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                                 groupmessages.add(msg);
                             }
                         }
-                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(),grp.getId(),groupmessages);
+                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(), grp.getId(), groupmessages);
 
 
                         if (grp.getId() != null && grp.getMembers().contains(",")) {
                             String[] ids = grp.getMembers().split(",");
                             for (int i = 0; i < ids.length; i++) {
-                                if (i == ids.length-1 && isUserDataSetReady){
+                                if (i == ids.length - 1 && isUserDataSetReady) {
                                     isGroupDataSetReady = true;
                                 }
                                 callGetUserDetailsService(Integer.parseInt(ids[i]), false, true);
                             }
                         }
-
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
@@ -566,10 +528,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 // Log error here since request failed
                 Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                 Log.e(TAG, t.toString());
-//                dialog.dismiss();
             }
         });
-
     }
 
     private void replaceFragment(Fragment fragment, CharSequence title, boolean addToBackstack) {
@@ -607,14 +567,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         return false;
     }
 
-    /*
-* Get - User details by user chatUserList
-* @param userId - user chatUserList
-* */
     private synchronized void getTicklesService() {
         //Getting webservice instance which we need to call
         Call<Tickles> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
-                                                           .create(ApiInterface.class)).getTickles();
+                .create(ApiInterface.class)).getTickles();
         //Calling Webservice by enqueue
         callForUserDetailsFromID.enqueue(new Callback<Tickles>() {
             @Override
@@ -635,11 +591,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 Log.e("profile", t.toString());
             }
         });
-
     }
 
-    void gcmRegistration()
-    {
+    void gcmRegistration() {
         // Handle possible data accompanying notification message.
         // [START handle_data_extras]
         if (getIntent().getExtras() != null) {
@@ -653,9 +607,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // Get token
         FirebaseApp.initializeApp(HomeActivity.this);
         String token = FirebaseInstanceId.getInstance().getToken();
-        tvgcm.setText(""+token);
-//        token = "dE2bYhbZs2s:APA91bG0ul-fch8yjSkXhLnKggC_7ZbA6Rx3KLUHQeXiyafrjg34Z_f-N986dhHflDQBjYWwu2cMMk6MP2Nz32C1yTx93zH1xfEaEyji2-Qxj-4TQGZ7mqZt6yR805SDEYgbYzqCFaSo";
-        Log.e(TAG, "msg");
+        token = "dE2bYhbZs2s:APA91bG0ul-fch8yjSkXhLnKggC_7ZbA6Rx3KLUHQeXiyafrjg34Z_f-N986dhHflDQBjYWwu2cMMk6MP2Nz32C1yTx93zH1xfEaEyji2-Qxj-4TQGZ7mqZt6yR805SDEYgbYzqCFaSo";
+        Log.e(TAG, token);
 
         if (!AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
             Toast.makeText(getApplicationContext(),
@@ -675,24 +628,19 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 //                String msg = getString(R.string.app_name);
 //                Log.d(TAG, msg);
 //                Toast.makeText(HomeActivity.this, msg, Toast.LENGTH_SHORT).show();
-        }
+    }
 
-    /*
-* Get - User details by user chatUserList
-* @param userId - user chatUserList
-* */
     private synchronized void UpdateDeviceTockan(String userid) {
         //Getting webservice instance which we need to call
         Call<JsonObject> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
-                                                              .create(ApiInterface.class)).UpdateDeviceTockan(userid);
+                .create(ApiInterface.class)).UpdateDeviceTockan(userid);
         //Calling Webservice by enqueue
         callForUserDetailsFromID.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                if (response != null && response.body()!=null) {
+                if (response != null && response.body() != null) {
                     JsonObject jsonResponse = response.body();
-                    if(jsonResponse !=null)
-                        Log.e("UpdateDeviceTockan", "Success callTickles_Service done "+jsonResponse.toString());
+                    Log.e("UpdateDeviceTockan", "Success callTickles_Service done " + jsonResponse.toString());
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e("UpdateDeviceTockan", "Success callTickles_Service but null response");
@@ -709,10 +657,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    /*
-* Get - User details by user chatUserList
-* @param userId - user chatUserList
-* */
     private synchronized void getBot() {
         //Getting webservice instance which we need to call
         Call<CustomModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
@@ -741,10 +685,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    /*
-* Get - User details by user chatUserList
-* @param userId - user chatUserList
-* */
     private synchronized void deleteBot(int botid) {
         //Getting webservice instance which we need to call
         Call<CustomModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
@@ -758,7 +698,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         Log.e("UpdateDeviceTockan", "Success callTickles_Service done");
 
                     }
-
                 } else {
                     Log.e("UpdateDeviceTockan", "Success callTickles_Service but null response");
                 }
@@ -773,14 +712,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    /*
-* Get - User details by user chatUserList
-* @param userId - user chatUserList
-* */
     private synchronized void createBot(String name, String Image) {
         //Getting webservice instance which we need to call
         Call<CustomModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
-                .create(ApiInterface.class)).createBot(name,Image);
+                .create(ApiInterface.class)).createBot(name, Image);
         //Calling Webservice by enqueue
         callForUserDetailsFromID.enqueue(new Callback<CustomModel>() {
             @Override
@@ -804,5 +739,4 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         });
 
     }
-
 }

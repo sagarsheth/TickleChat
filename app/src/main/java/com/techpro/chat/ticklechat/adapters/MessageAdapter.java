@@ -2,7 +2,6 @@ package com.techpro.chat.ticklechat.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -93,6 +92,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
 
         public MyViewHolder(View view) {
             super(view);
+            Log.e("RecyclerView", "ssssssssssgetPosition：" + getPosition());
 //            backgroundlayout = (LinearLayout) view.findViewById(R.id.backgroundlayout);
             tvChatMessage = (TextView) view.findViewById(R.id.tv_chat_message);
 //            friendNumber = (TextView) view.findViewById(R.id.friendNumber);
@@ -101,16 +101,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("RecyclerView", "getPosition：" + getPosition());
-                    Log.d("RecyclerView", "getAdapterPosition：" + getAdapterPosition());
-                    Log.d("RecyclerView", "getLayoutPosition：" + getLayoutPosition());
+                    Log.e("RecyclerView", "getPosition：" + getPosition());
+                    Log.e("RecyclerView", "getAdapterPosition：" + getAdapterPosition());
+                    Log.e("RecyclerView", "getLayoutPosition：" + getLayoutPosition());
                     if (!AppUtils.isNetworkConnectionAvailable(mContext)) {
                         Toast.makeText(mContext,
                                 mContext.getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
                         return;
                     }
-
-                    callSendMessageService(String.valueOf(moviesList.get(getPosition()).getID()),sentID,moviesList.get(getPosition()).getMessage());
+                    dataupdate.dataUpdated(isGroup,sentID,String.valueOf(moviesList.get(getPosition()).getID()),moviesList.get(getPosition()).getMessage());
+                    moviesList = new MessageController(mContext).getMessages();
+                    notifyDataSetChanged();
+//                    callSendMessageService(String.valueOf(moviesList.get(getPosition()).getID()),sentID,moviesList.get(getPosition()).getMessage());
 //                    if (mContext != null){
 //                        Intent intent = new Intent(mContext, ChatScreen.class);
 //                        mContext.startActivity(intent);
@@ -120,65 +122,65 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
         }
     }
 
-    /*
-* Get - User details by user chatUserList
-* @param userId - user chatUserList
-* */
-    private void callSendMessageService(String tickleId, String toID, String message) {
-        //Getting webservice instance which we need to call
-        Call<SendMessage> callForUserDetailsFromID = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class).postChatMessage(tickleId,toID,message);
-        //Calling Webservice by enqueue
-        callForUserDetailsFromID.enqueue(new Callback<SendMessage>() {
-            @Override
-            public void onResponse(Call<SendMessage> call, Response<SendMessage> response) {
-                if (response != null && response.body()!= null) {
-                    if (response.body().getStatus().equals("success")) {
-                        moviesList = new MessageController(mContext).getMessages();
-                        notifyDataSetChanged();
-                        AllMessages.MessageList.ChatMessagesList msg= new AllMessages().new MessageList().new ChatMessagesList();
-                        msg.setFrom_id(response.body().getBody().getFrom_id());
-                        msg.setId(response.body().getBody().getId());
-                        msg.setIsgroup(String.valueOf(isGroup));
-                        msg.setMessage(response.body().getBody().getMessage());
-                        msg.setRead("0");
-                        msg.setSentat(response.body().getBody().getSent());
-                        msg.setTickle_id(response.body().getBody().getTickle_id());
-                        msg.setTo_id(response.body().getBody().getTo_id());
-                        List<AllMessages.MessageList.ChatMessagesList> usermessages  = (List<AllMessages.MessageList.
-                                ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(mContext,msg.getTo_id());
-                        if (usermessages == null)
-                            usermessages =  new ArrayList<AllMessages.MessageList.ChatMessagesList>();
-                        usermessages.add(msg);
-                        if (DataStorage.randomUser != null) {
-                            DataStorage.chatUserList.add(DataStorage.randomUser);
-                            DataStorage.myAllUserlist.add(DataStorage.randomUser);
-
-                            SharedPreferenceUtils.setColleactionObject(mContext, SharedPreferenceUtils.myuserlist,
-                                    DataStorage.myAllUserlist);
-                            SharedPreferenceUtils.setColleactionObject(mContext, SharedPreferenceUtils.chatUserID,
-                                    DataStorage.chatUserList);
-                            DataStorage.randomUser = null;
-                        }
-                        SharedPreferenceUtils.setColleactionObject(mContext,msg.getTo_id(),usermessages);
-                        dataupdate.dataUpdated(isGroup,msg.getTo_id());
-                    }
-                } else {
-                    Log.e("SendMessage", "Success callMessage_ALL_Service but null response ==> "+response.body());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<SendMessage> call, Throwable t) {
-                // Log error here since request failed
-                Log.e("SendMessage", t.toString());
-//                dialog.dismiss();
-            }
-        });
-
-    }
+//    /*
+//* Get - User details by user chatUserList
+//* @param userId - user chatUserList
+//* */
+//    private void callSendMessageService(String tickleId, String toID, String message) {
+//        //Getting webservice instance which we need to call
+//        Call<SendMessage> callForUserDetailsFromID = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class).postChatMessage(tickleId,toID,message);
+//        //Calling Webservice by enqueue
+//        callForUserDetailsFromID.enqueue(new Callback<SendMessage>() {
+//            @Override
+//            public void onResponse(Call<SendMessage> call, Response<SendMessage> response) {
+//                if (response != null && response.body()!= null) {
+//                    if (response.body().getStatus().equals("success")) {
+//                        moviesList = new MessageController(mContext).getMessages();
+//                        notifyDataSetChanged();
+//                        AllMessages.MessageList.ChatMessagesList msg= new AllMessages().new MessageList().new ChatMessagesList();
+//                        msg.setFrom_id(response.body().getBody().getFrom_id());
+//                        msg.setId(response.body().getBody().getId());
+//                        msg.setIsgroup(String.valueOf(isGroup));
+//                        msg.setMessage(response.body().getBody().getMessage());
+//                        msg.setRead("0");
+//                        msg.setSentat(response.body().getBody().getSent());
+//                        msg.setTickle_id(response.body().getBody().getTickle_id());
+//                        msg.setTo_id(response.body().getBody().getTo_id());
+//                        List<AllMessages.MessageList.ChatMessagesList> usermessages  = (List<AllMessages.MessageList.
+//                                ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(mContext,msg.getTo_id());
+//                        if (usermessages == null)
+//                            usermessages =  new ArrayList<AllMessages.MessageList.ChatMessagesList>();
+//                        usermessages.add(msg);
+//                        if (DataStorage.randomUser != null) {
+//                            DataStorage.chatUserList.add(DataStorage.randomUser);
+//                            DataStorage.myAllUserlist.add(DataStorage.randomUser);
+//
+//                            SharedPreferenceUtils.setColleactionObject(mContext, SharedPreferenceUtils.myuserlist,
+//                                    DataStorage.myAllUserlist);
+//                            SharedPreferenceUtils.setColleactionObject(mContext, SharedPreferenceUtils.chatUserID,
+//                                    DataStorage.chatUserList);
+//                            DataStorage.randomUser = null;
+//                        }
+//                        SharedPreferenceUtils.setColleactionObject(mContext,msg.getTo_id(),usermessages);
+//                        dataupdate.dataUpdated(isGroup,msg.getTo_id());
+//                    }
+//                } else {
+//                    Log.e("SendMessage", "Success callMessage_ALL_Service but null response ==> "+response.body());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<SendMessage> call, Throwable t) {
+//                // Log error here since request failed
+//                Log.e("SendMessage", t.toString());
+////                dialog.dismiss();
+//            }
+//        });
+//
+//    }
 
     public interface DataUpdated {
-        void dataUpdated(int isgroup, String id);
+        void dataUpdated(int isgroup, String id, String tickleId, String message);
     }
 
     public void setDataUpdateListener(DataUpdated dataupdate){
