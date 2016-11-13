@@ -2,12 +2,15 @@ package com.techpro.chat.ticklechat.activity.registration;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -175,6 +178,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 if (response != null && response.body() != null  && response.body().getBody() != null && response.body().getMessage().equals("")) {
                     UserDetailsModel getUserDetails = response.body().getBody();
                     DataStorage.UserDetails = getUserDetails;
+//                    if (DataStorage.UserDetails.getProfile_image()!=null) {
+//                        byte[] decodedString = Base64.decode(DataStorage.UserDetails.getProfile_image(), Base64.DEFAULT);
+//                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//                        if (decodedByte != null) {
+//                            DataStorage.UserDetails.setProfile_image_bitmap(decodedByte);
+//                        }
+//                    }
                     Gson gson = new Gson();
                     String json = gson.toJson(getUserDetails);
                     Log.e(TAG, "json ==> "+json);

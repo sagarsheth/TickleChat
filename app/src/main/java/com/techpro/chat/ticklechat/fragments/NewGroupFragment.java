@@ -241,7 +241,6 @@ public class NewGroupFragment extends Fragment {
 
     }
 
-
     private Bitmap selectedBitmap = null;
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
     private String userChoosenTask;

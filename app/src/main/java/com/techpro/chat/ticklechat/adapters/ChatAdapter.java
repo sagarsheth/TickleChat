@@ -39,6 +39,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     private List<AllMessages.MessageList.ChatMessagesList> moviesList;
     private boolean showCheckbox = false;
     private boolean showBelowDesc = false;
+    private Bitmap leftbitmap = null;
+    private Bitmap rightbitmap = null;
+
     private Context mContext = null;
     private MessageAdapter mAdapter1 = null;
 
@@ -56,7 +59,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         this.mAdapter1 = mAdapter1;
         mAdapter1.setDataUpdateListener(new MessageAdapter.DataUpdated() {
             @Override
-            public void dataUpdated(final int isgroup, final String id, final String tickleId, final String message) {
+            public void dataUpdated(boolean setRefresh, final int isgroup, final String id, final String tickleId, final String message) {
+//                if (setRefresh) {
+//                    ChatAdapter.this.moviesList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.
+//                            getColleactionObject(mContext, id);
+//                    notifyDataSetChanged();
+//                    return;
+//                }
+
                 AllMessages.MessageList.ChatMessagesList msg = new AllMessages().new MessageList().new ChatMessagesList();
                 msg.setFrom_id(DataStorage.UserDetails.getId());
                 msg.setId(tickleId);
@@ -67,12 +77,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
                 msg.setTo_id(id);
                 ChatAdapter.this.moviesList.add(msg);
                 notifyDataSetChanged();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
                         callSendMessageService(isgroup, tickleId, id, message);
-                    }
-                });
+//                    }
+//                });
             }
         });
     }
@@ -87,18 +97,16 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Log.e("onCreate", "user ==> ");
         AllMessages.MessageList.ChatMessagesList mChatMessageList = moviesList.get(position);
-
-        String json = SharedPreferenceUtils.getValue(mContext, SharedPreferenceUtils.LoginuserDetailsPreference, "");
-        Log.e("onCreate", "user ==> " + json);
-        if (json.equals("")) {
-        } else {
-            Gson gson = new Gson();
-            UserDetailsModel obj = gson.fromJson(json, UserDetailsModel.class);
-            DataStorage.UserDetails = obj;
+        if (DataStorage.UserDetails == null && DataStorage.UserDetails.getId() == null) {
+            String json = SharedPreferenceUtils.getValue(mContext, SharedPreferenceUtils.LoginuserDetailsPreference, "");
+            if (json.equals("")) {
+            } else {
+                Gson gson = new Gson();
+                UserDetailsModel obj = gson.fromJson(json, UserDetailsModel.class);
+                DataStorage.UserDetails = obj;
+            }
         }
-        Log.e("onCreate", "user ==> ");
 
         if (DataStorage.UserDetails.getId().equalsIgnoreCase(mChatMessageList.getFrom_id())) {
             holder.llRightRow.setVisibility(View.VISIBLE);
@@ -112,18 +120,20 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
                 holder.tvMessageRight.setText(mChatMessageList.getMessage());
             }
             try {
-                byte[] decodedString = Base64.decode(DataStorage.UserDetails.getProfile_image(), Base64.DEFAULT);
-                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                if (decodedByte != null) {
-                    holder.ivProfile.setImageBitmap(decodedByte);
-                    holder.ivProfileRight.setImageBitmap(decodedByte);
-                } else {
-                    holder.ivProfile.setImageResource(R.drawable.tickle_logo);
+                if (leftbitmap == null) {
+                    byte[] decodedString = Base64.decode(DataStorage.UserDetails.getProfile_image(), Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    if (decodedByte != null) {
+                        leftbitmap = decodedByte;
+                    } else {
+                        leftbitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.tickle_logo);
+                    }
                 }
             } catch (Exception e) {
-                holder.ivProfile.setImageResource(R.drawable.tickle_logo);
                 e.printStackTrace();
             }
+
+            holder.ivProfileRight.setImageBitmap(leftbitmap);
         } else {
             holder.llRightRow.setVisibility(View.GONE);
             holder.llLeftRow.setVisibility(View.VISIBLE);
@@ -146,21 +156,21 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
                 }
 
                 if (user != null) {
-                    byte[] decodedString = Base64.decode(user.getProfile_image(), Base64.DEFAULT);
-                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    if (decodedByte != null) {
-                        holder.ivProfile.setImageBitmap(decodedByte);
-                        holder.ivProfileRight.setImageBitmap(decodedByte);
-                    } else {
-                        holder.ivProfileRight.setImageResource(R.drawable.tickle_logo);
+                    if (rightbitmap == null) {
+                        byte[] decodedString = Base64.decode(user.getProfile_image(), Base64.DEFAULT);
+                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                        if (decodedByte != null) {
+                            rightbitmap = decodedByte;
+                        } else {
+                            rightbitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.tickle_logo);
+                        }
                     }
-                } else {
-                    holder.ivProfileRight.setImageResource(R.drawable.tickle_logo);
                 }
             } catch (Exception e) {
-                holder.ivProfileRight.setImageResource(R.drawable.tickle_logo);
                 e.printStackTrace();
             }
+
+            holder.ivProfile.setImageBitmap(rightbitmap);
         }
     }
 

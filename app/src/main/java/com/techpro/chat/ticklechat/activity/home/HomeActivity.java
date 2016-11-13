@@ -29,10 +29,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.JsonObject;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.techpro.chat.ticklechat.AppConfigs;
-import com.techpro.chat.ticklechat.Constants;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.ChatScreen;
-import com.techpro.chat.ticklechat.activity.registration.PersonalProfileActivity;
 import com.techpro.chat.ticklechat.database.DataBaseHelper;
 import com.techpro.chat.ticklechat.fragments.HomeScreenFragment;
 import com.techpro.chat.ticklechat.fragments.NewGroupFragment;
@@ -71,6 +69,7 @@ import retrofit2.Response;
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         FragmentChangeCallback {
 
+    private Fragment homeFragments;
     private NavigationView mNavigation;
     protected Toolbar mToolbar;
     protected DrawerLayout mDrawerLayout;
@@ -86,6 +85,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private List<String> grpid = null;
     private boolean isUserDataSetReady = false;
     private boolean isGroupDataSetReady = false;
+
+    Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +117,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         gcmRegistration();
 
 
-        DataStorage.mygrouplist  = new ArrayList<Group>();
+        DataStorage.mygrouplist = new ArrayList<Group>();
         DataStorage.myAllUserlist = new ArrayList<User>();
         DataStorage.chatUserList = new ArrayList<User>();
         DataStorage.chatUserList = (List<User>) SharedPreferenceUtils.getColleactionObject(getApplicationContext(),
@@ -135,8 +136,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 apiService = ApiClient.getClient().create(ApiInterface.class);
                 callGetUserDetailsService(Integer.parseInt(DataStorage.UserDetails.getId()), true, false);
             } else {
-                Fragment fragment = new HomeScreenFragment();
-                replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
+                homeFragments = new HomeScreenFragment();
+                replaceFragment(homeFragments, getResources().getString(R.string.header_ticklers), false);
             }
         } else {
             Toast.makeText(getApplicationContext(),
@@ -222,7 +223,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 }
 
                 mDrawerLayout.closeDrawers();
-                Fragment fragment;
+                try {
+                    if (!FragmentUtils.getCurrentVisibleFragment(HomeActivity.this).equals(homeFragments)) {
+                        onBackPressed();
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 switch (position) {
                     case TICKLE_A_FRIEND:
                         fragment = new TickleFriendFragment();
@@ -262,10 +270,19 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    /*
-  * Get - User details by user chatUserList
-  * @param userId - user chatUserList
-  * */
+    @Override
+    public void onBackPressed() {
+        try {
+            if (!FragmentUtils.getCurrentVisibleFragment(HomeActivity.this).equals(homeFragments)) {
+                setTitle(getResources().getString(R.string.header_ticklers).toString());
+                mNavigation.invalidate();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.onBackPressed();
+    }
+
     private void getRandomUser() {
         //Getting webservice instance which we need to call
         Call<GetUserDetails> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.
@@ -277,6 +294,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 if (response != null || response.body().getBody() != null) {
                     User usr = response.body().getBody().getUser();
                     if (usr != null) {
+//                        if (usr.getProfile_image() != null) {
+//                            byte[] decodedString = Base64.decode(usr.getProfile_image(), Base64.DEFAULT);
+//                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//                            if (decodedByte != null) {
+//                                usr.setProfile_image_Bitmap(decodedByte);
+//                            }
+//                        }
                         DataStorage.randomUser = usr;
                         Intent intent = new Intent(getApplicationContext(), ChatScreen.class);
                         intent.putExtra("userid", usr.getId());
@@ -363,17 +387,30 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         callForUserDetailsFromID.enqueue(new Callback<GetUserDetails>() {
             @Override
             public void onResponse(Call<GetUserDetails> call, Response<GetUserDetails> response) {
-                if (response != null && response.body()!=null) {
+                if (response != null && response.body() != null) {
                     GetUserDetailsBody getUserDetails = response.body().getBody();
                     User usr = getUserDetails.getUser();
                     if (iscurrentuser) {
-                        allUserID = new ArrayList<String>();
+                        allUserID = new ArrayList<>();
                         DataStorage.currentUserDetailsBody = getUserDetails.getUser();
+//                        if (DataStorage.currentUserDetailsBody.getProfile_image() != null) {
+//                            byte[] decodedString = Base64.decode(DataStorage.currentUserDetailsBody.getProfile_image(), Base64.DEFAULT);
+//                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//                            if (decodedByte != null) {
+//                                DataStorage.currentUserDetailsBody.setProfile_image_Bitmap(decodedByte);
+//                            }
+//                        }
                         apiAUTService = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class);
                         callMessage_ALL_Service();
                     } else if (!isgroup) {
-
-                        if (usr!=null && usr.getId()!= null  && usr.getName()!=null) {
+                        if (usr != null && usr.getId() != null && usr.getName() != null) {
+//                            if (usr.getProfile_image() != null) {
+//                                byte[] decodedString = Base64.decode(usr.getProfile_image(), Base64.DEFAULT);
+//                                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//                                if (decodedByte != null) {
+//                                    usr.setProfile_image_Bitmap(decodedByte);
+//                                }
+//                            }
                             DataStorage.chatUserList.add(usr);
                             List<AllMessages.MessageList.ChatMessagesList> usermessages = new ArrayList<>();
                             for (int i = 0; i < DataStorage.allMessages.size(); i++) {
@@ -387,7 +424,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         }
                     }
                     if (allUserID == null) {
-                        allUserID = new ArrayList<String>();
+                        allUserID = new ArrayList<>();
                     }
                     if (!allUserID.contains(getUserDetails.getUser())) {
                         allUserID.add(getUserDetails.getUser().getId());
@@ -404,8 +441,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.chatUserID,
                                 DataStorage.chatUserList);
                         getTicklesService();
-                        Fragment fragment = new HomeScreenFragment();
-                        replaceFragment(fragment, getResources().getString(R.string.header_ticklers), false);
+
+                        homeFragments = new HomeScreenFragment();
+                        replaceFragment(homeFragments, getResources().getString(R.string.header_ticklers), false);
                     }
 
 ////                                Calendar cl = Calendar.getInstance();
@@ -492,9 +530,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 //                    Log.e(TAG, "Success  ADDED grp: " + grp.getName());
                     if (grp != null && grp.getId() != null && grp.getName() != null) {
+
+//                        if (grp.getImage_bitmap() != null) {
+//                            byte[] decodedString = Base64.decode(grp.getImage(), Base64.DEFAULT);
+//                            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//                            if (decodedByte != null) {
+//                                grp.setImage_bitmap(decodedByte);
+//                            }
+//                        }
                         DataStorage.mygrouplist.add(grp);
-//                        Log.e(TAG, "Success  ADDED GROUP: " + grp.getName());
-//                        Log.e(TAG, "Success  ADDED GROUP: " + grp.getId());
 
                         List<AllMessages.MessageList.ChatMessagesList> groupmessages = new ArrayList<>();
                         for (int i = 0; i < DataStorage.allMessages.size(); i++) {
@@ -533,13 +577,17 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void replaceFragment(Fragment fragment, CharSequence title, boolean addToBackstack) {
-        Bundle bundle = new Bundle();
-        bundle.putString(KEY_TITLE, title.toString());
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString(KEY_TITLE, title.toString());
 
-        fragment.setArguments(bundle);
-        FragmentUtils.replaceFragment(this, fragment, R.id.container, addToBackstack);
+            fragment.setArguments(bundle);
+            FragmentUtils.replaceFragment(this, fragment, R.id.container, addToBackstack);
 
-        setTitle(title.toString());
+            setTitle(title.toString());
+        } catch (Exception e) {
+
+        }
     }
 
     @Override
