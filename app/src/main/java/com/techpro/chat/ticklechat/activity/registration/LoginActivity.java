@@ -1,12 +1,12 @@
 package com.techpro.chat.ticklechat.activity.registration;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -15,12 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.internal.Utility;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
@@ -36,6 +36,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,14 +47,14 @@ import retrofit2.Response;
 /**
  * Created by vishalrandive on 11/04/16.
  */
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageView ivProfileIcon;
     private EditText password;
     private EditText confirm_password;
     private EditText profilename;
     private EditText profileemail;
-    private EditText profilephone,countrycode;
+    private EditText profilephone, countrycode;
     private EditText profile_date;
     private TextView tvBtnMale;
     private TextView tvBtnFemale;
@@ -59,17 +62,52 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private ProgressDialog dialog;
     private String gender = "m";
     private Bitmap selectedBitmap = null;
+    Calendar myCalendar = Calendar.getInstance();
+    DatePickerDialog.OnDateSetListener date;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         initUi();
+
+        date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabel();
+            }
+
+        };
+
+        profile_date.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(LoginActivity.this, date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
     }
 
-    private void initUi()
-    {
-        confirm_password =  (EditText) findViewById(R.id.confirm_password);
-        password =  (EditText) findViewById(R.id.password);
+    private void updateLabel() {
+
+        String myFormat = "MM/dd/yy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        profile_date.setText(sdf.format(myCalendar.getTime()));
+    }
+
+    private void initUi() {
+        confirm_password = (EditText) findViewById(R.id.confirm_password);
+        password = (EditText) findViewById(R.id.password);
         ivProfileIcon = (ImageView) findViewById(R.id.iv_profile_icon);
         profilename = (EditText) findViewById(R.id.profilename);
         profileemail = (EditText) findViewById(R.id.profileemail);
@@ -79,60 +117,39 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         tvBtnMale = (TextView) findViewById(R.id.tv_btn_male);
         tvBtnFemale = (TextView) findViewById(R.id.tv_btn_female);
         submit = (TextView) findViewById(R.id.submit);
-
+        submit.setText("Submit");
         tvBtnMale.setSelected(true);
         tvBtnMale.setOnClickListener(this);
         tvBtnFemale.setOnClickListener(this);
         submit.setOnClickListener(this);
         ivProfileIcon.setOnClickListener(this);
-        if (DataStorage.UserDetails != null) {
-            if (DataStorage.UserDetails.getProfile_image() != null) {
-                byte[] decodedString = Base64.decode(DataStorage.UserDetails.getProfile_image().getBytes(), Base64.DEFAULT);
-                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                ivProfileIcon.setImageBitmap(decodedByte);
-            }
-            profilename.setText(DataStorage.UserDetails.getName());
-            profileemail.setText(DataStorage.UserDetails.getEmail());
-            profilephone.setText(DataStorage.UserDetails.getPhone());
-            profile_date.setText(DataStorage.UserDetails.getBirthday());
-            if (DataStorage.UserDetails.getGender().equals("m")) {
-                tvBtnFemale.setSelected(false);
-                tvBtnMale.setSelected(true);
-            } else {
-
-                tvBtnMale.setSelected(false);
-                tvBtnFemale.setSelected(true);
-            }
-        }
     }
 
     @Override
-    public void onClick (View v)
-    {
-        switch (v.getId())
-        {
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.submit:
                 if (profilename.getText().toString().equals("") || profile_date.getText().toString().equals("") ||
                         profilephone.getText().toString().equals("") || profileemail.getText().toString().equals("") ||
-                        confirm_password.getText().toString().equals("") || password.getText().toString().equals("") || countrycode.getText().toString().equals("") ) {
-                    Toast.makeText(getApplicationContext(),"Please enter complete details.", Toast.LENGTH_LONG).show();
+                        confirm_password.getText().toString().equals("") || password.getText().toString().equals("") || countrycode.getText().toString().equals("")) {
+                    Toast.makeText(getApplicationContext(), "Please enter complete details.", Toast.LENGTH_LONG).show();
                 } else if (!confirm_password.getText().toString().equals(password.getText().toString())) {
-                    Toast.makeText(getApplicationContext(),"Invalid Password.", Toast.LENGTH_LONG).show();
-                 } else if (!AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
+                    Toast.makeText(getApplicationContext(), "Invalid Password.", Toast.LENGTH_LONG).show();
+                } else if (!AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
                 } else {
-                    String profileImage  = "";
+                    dialog = ProgressDialog.show(LoginActivity.this, "Loading", "Please wait...", true);
+                    String profileImage = "";
                     if (selectedBitmap != null) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                         profileImage = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
                     }
-                    dialog = ProgressDialog.show(LoginActivity.this, "Loading", "Please wait...", true);
 
                     callUpdateUserDataService(profilename.getText().toString(),
-                            gender,profile_date.getText().toString(), profilephone.getText().toString(),
-                            profileemail.getText().toString(), profileImage,countrycode.getText().toString(),SHA1(password.getText().toString()));
+                            gender, String.valueOf(myCalendar.getTimeInMillis()), profilephone.getText().toString(),
+                            profileemail.getText().toString(), profileImage, countrycode.getText().toString(), SHA1(password.getText().toString()));
                 }
                 break;
 
@@ -162,10 +179,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 * Get - User details by user chatUserList
 * @param userId - user chatUserList
 * */
-    private synchronized void callUpdateUserDataService(String name,String gender,String dob,String phone,String email,String profile_image,String code,String pass) {
+    private synchronized void callUpdateUserDataService(String name, String gender, String dob, String phone, String email, String profile_image, String code, String pass) {
         //Getting webservice instance which we need to call
         Call<UserModel> callForUserDetailsFromID = (ApiClient.getClient()
-                .create(ApiInterface.class)).registeruser(name,gender,dob,phone,email,profile_image,code,pass);
+                .create(ApiInterface.class)).registeruser(name, gender, dob, phone, email, profile_image, code, pass);
         //Calling Webservice by enqueue
         callForUserDetailsFromID.enqueue(new Callback<UserModel>() {
             @Override
@@ -179,8 +196,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Log.e("profile", "Success  getUserDetails.getId() : " + getUserDetails.getId());
 
                 } else {
-                    Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
-                    Log.e("profile", "Success callTickles_Service but null response");
+                    if (response != null && response.body() != null && response.body().getMessage() != null) {
+                        Log.e("profile", "response.body().getMessage() ==> " + response.body().toString());
+                        Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
+                    } else if (response != null && response.message() != null) {
+                        Toast.makeText(getApplicationContext(), response.message(), Toast.LENGTH_LONG).show();
+                        Log.e("profile", "response.body().response() ==> " + response.toString());
+                        Log.e("profile", "response.body().code() ==> " + response.code());
+                        Log.e("profile", "response.body().raw() ==> " + response.raw().message());
+                        Log.e("profile", "response.body().body() ==> " + response.raw().body());
+                        Log.e("profile", "response.body().errorBody() ==> " + response.errorBody().toString());
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
+                        Log.e("profile", "Success callTickles_Service but null response");
+                    }
                 }
                 dialog.dismiss();
             }
@@ -203,9 +232,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (requestCode) {
             case UtilityImage.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if(userChoosenTask.equals("Take Photo"))
+                    if (userChoosenTask.equals("Take Photo"))
                         cameraIntent();
-                    else if(userChoosenTask.equals("Choose from Library"))
+                    else if (userChoosenTask.equals("Choose from Library"))
                         galleryIntent();
                 } else {
                     //code for deny
@@ -215,24 +244,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void selectImage() {
-        final CharSequence[] items = { "Take Photo", "Choose from Library",
-                "Cancel" };
+        final CharSequence[] items = {"Take Photo", "Choose from Library",
+                "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
         builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                boolean result= UtilityImage.checkPermission(LoginActivity.this);
+                boolean result = UtilityImage.checkPermission(LoginActivity.this);
 
                 if (items[item].equals("Take Photo")) {
-                    userChoosenTask ="Take Photo";
-                    if(result)
+                    userChoosenTask = "Take Photo";
+                    if (result)
                         cameraIntent();
 
                 } else if (items[item].equals("Choose from Library")) {
-                    userChoosenTask ="Choose from Library";
-                    if(result)
+                    userChoosenTask = "Choose from Library";
+                    if (result)
                         galleryIntent();
 
                 } else if (items[item].equals("Cancel")) {
@@ -243,16 +272,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         builder.show();
     }
 
-    private void galleryIntent()
-    {
+    private void galleryIntent() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);//
-        startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
+        startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
     }
 
-    private void cameraIntent()
-    {
+    private void cameraIntent() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, REQUEST_CAMERA);
     }
@@ -295,7 +322,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @SuppressWarnings("deprecation")
     private void onSelectFromGalleryResult(Intent data) {
 
-        Bitmap bm=null;
+        Bitmap bm = null;
         if (data != null) {
             try {
                 bm = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
@@ -307,6 +334,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         selectedBitmap = bm;
         ivProfileIcon.setImageBitmap(bm);
     }
+
     // For Password
     public static String SHA1(String text) {
         try {
@@ -323,7 +351,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 } while (two_halfs++ < 1);
             }
             return buf.toString();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

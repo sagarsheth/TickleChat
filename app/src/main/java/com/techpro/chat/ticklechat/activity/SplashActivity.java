@@ -30,7 +30,9 @@ import com.techpro.chat.ticklechat.utils.TickleSharedPrefrence;
 
 public class SplashActivity extends AppCompatActivity {
 
-    /** Duration of wait **/
+    /**
+     * Duration of wait
+     **/
     private final int SPLASH_DISPLAY_LENGTH = 3000;
 
     private ViewPager viewPager;
@@ -51,7 +53,7 @@ public class SplashActivity extends AppCompatActivity {
         AppEventsLogger.activateApp(this);
 
         // Checking for first time launch - before calling setContentView()
-        sharedPrefrence= TickleSharedPrefrence.getInstance(SplashActivity.this);
+        sharedPrefrence = TickleSharedPrefrence.getInstance(SplashActivity.this);
         if (!sharedPrefrence.isFirstTimeLaunch()) {
             launchHomeScreen();
             finish();
@@ -147,15 +149,15 @@ public class SplashActivity extends AppCompatActivity {
         sharedPrefrence.setFirstTimeLaunch(false);
         /* Create an Intent that will start the Menu-Activity. */
         String json = SharedPreferenceUtils.getValue(getApplicationContext(), SharedPreferenceUtils.LoginuserDetailsPreference, "");
-        if (json.equals("")) {
-            Intent mainIntent = new Intent(SplashActivity.this, Login.class);
-            SplashActivity.this.startActivity(mainIntent);
-            SplashActivity.this.finish();
-        } else {
+        if (!json.equals("") && (new Gson().fromJson(json, UserDetailsModel.class) != null)) {
             Gson gson = new Gson();
             UserDetailsModel obj = gson.fromJson(json, UserDetailsModel.class);
             DataStorage.UserDetails = obj;
-            Intent mainIntent = new Intent(SplashActivity.this,HomeActivity.class);
+            Intent mainIntent = new Intent(SplashActivity.this, HomeActivity.class);
+            SplashActivity.this.startActivity(mainIntent);
+            SplashActivity.this.finish();
+        } else {
+            Intent mainIntent = new Intent(SplashActivity.this, Login.class);
             SplashActivity.this.startActivity(mainIntent);
             SplashActivity.this.finish();
         }
@@ -205,8 +207,7 @@ public class SplashActivity extends AppCompatActivity {
     /**
      * View pager adapter
      */
-    public class MyViewPagerAdapter extends PagerAdapter
-    {
+    public class MyViewPagerAdapter extends PagerAdapter {
         private LayoutInflater layoutInflater;
 
         public MyViewPagerAdapter() {
@@ -234,7 +235,7 @@ public class SplashActivity extends AppCompatActivity {
 
 
         @Override
-        public void destroyItem (ViewGroup container, int position, Object object) {
+        public void destroyItem(ViewGroup container, int position, Object object) {
             View view = (View) object;
             container.removeView(view);
         }

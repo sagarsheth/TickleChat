@@ -206,7 +206,7 @@ public class NewGroupFragment extends Fragment {
         callForUserDetailsFromID.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                if (response != null && response.body()!= null) {
+                if (response != null && response.body() != null) {
                     Log.e("SendMessage", "response.message(: " + response.message());
                     Log.e("SendMessage", "response.code(: " + response.code());
                     Log.e("SendMessage", "response.code(: " + response.body());
