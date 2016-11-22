@@ -58,6 +58,7 @@
             android:id="@+id/profile_date"
             style= "@style/style_et"
             android:hint="DOB"
+            android:editable="false"
             android:inputType="date" />
 
         <LinearLayout

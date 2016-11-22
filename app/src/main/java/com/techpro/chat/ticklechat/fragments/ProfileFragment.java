@@ -1,6 +1,7 @@
 package com.techpro.chat.ticklechat.fragments;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.techpro.chat.ticklechat.R;
+import com.techpro.chat.ticklechat.activity.registration.LoginActivity;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.GetGroupDetails;
 import com.techpro.chat.ticklechat.models.Group;
@@ -42,14 +45,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ProfileFragment extends Fragment implements View.OnClickListener{
+public class ProfileFragment extends Fragment implements View.OnClickListener {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -65,18 +71,52 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private ProgressDialog dialog;
     private View view;
     private String gender = "m";
+    Calendar myCalendar = Calendar.getInstance();
+    DatePickerDialog.OnDateSetListener date;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(view == null)
-        {
+        if (view == null) {
             view = inflater.inflate(R.layout.activity_profile, container, false);
         }
         initUi();
+
+        date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabel();
+            }
+
+        };
+
+        profile_date.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(ProfileFragment.this.getActivity(), date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
         return view;
     }
-    private void initUi()
-    {
+
+    private void updateLabel() {
+
+        String myFormat = "MM/dd/yy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        profile_date.setText(sdf.format(myCalendar.getTime()));
+    }
+
+    private void initUi() {
         ivProfileIcon = (ImageView) view.findViewById(R.id.iv_profile_icon);
         profilename = (EditText) view.findViewById(R.id.profilename);
         profileemail = (EditText) view.findViewById(R.id.profileemail);
@@ -102,21 +142,24 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         profilephone.setText(DataStorage.UserDetails.getPhone());
         profile_date.setText(DataStorage.UserDetails.getBirthday());
         gender = DataStorage.UserDetails.getGender();
-        if (DataStorage.UserDetails.getGender().equals("m")) {
+        try {
+            if (DataStorage.UserDetails.getGender().equals("m")) {
+                tvBtnFemale.setSelected(false);
+                tvBtnMale.setSelected(true);
+            } else {
+                tvBtnMale.setSelected(false);
+                tvBtnFemale.setSelected(true);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
             tvBtnFemale.setSelected(false);
             tvBtnMale.setSelected(true);
-        } else {
-
-            tvBtnMale.setSelected(false);
-            tvBtnFemale.setSelected(true);
         }
     }
 
     @Override
-    public void onClick (View v)
-    {
-        switch (v.getId())
-        {
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.submit:
                 if (!AppUtils.isNetworkConnectionAvailable(ProfileFragment.this.getContext())) {
                     Toast.makeText(ProfileFragment.this.getContext(),
@@ -126,10 +169,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
                 if (profilename.getText().toString().equals("") || profile_date.getText().toString().equals("") ||
                         profilephone.getText().toString().equals("") || profileemail.getText().toString().equals("")) {
-                    Toast.makeText(ProfileFragment.this.getActivity(),"Please enter complete details.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ProfileFragment.this.getActivity(), "Please enter complete details.", Toast.LENGTH_LONG).show();
                 } else {
                     dialog = ProgressDialog.show(ProfileFragment.this.getActivity(), "Loading", "Please wait...", true);
-                    String profileImage  = "";
+                    String profileImage = "";
                     if (selectedBitmap != null) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -164,21 +207,21 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 * Get - User details by user chatUserList
 * @param userId - user chatUserList
 * */
-    private synchronized void callUpdateUserDataService(int userid, String name,String gender,String dob,String phone,String email,String profile_image) {
+    private synchronized void callUpdateUserDataService(int userid, String name, String gender, String dob, String phone, String email, String profile_image) {
         //Getting webservice instance which we need to call
         Call<UserModel> callForUserDetailsFromID = (ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId())
-                .create(ApiInterface.class)).callUpdateUserDataService(userid,name,gender,dob,phone,email,profile_image);
+                .create(ApiInterface.class)).callUpdateUserDataService(userid, name, gender, dob, phone, email, profile_image);
         //Calling Webservice by enqueue
         callForUserDetailsFromID.enqueue(new Callback<UserModel>() {
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
-                if (response != null&& response.body() != null) {
+                if (response != null && response.body() != null) {
                     UserDetailsModel getUserDetails = response.body().getBody();
                     DataStorage.UserDetails = getUserDetails;
                     Gson gson = new Gson();
                     String json = gson.toJson(getUserDetails);
-                    Log.e("ProfileFragment", "json ==> "+json);
-                    SharedPreferenceUtils.setValue(getContext(),SharedPreferenceUtils.LoginuserDetailsPreference,json);
+                    Log.e("ProfileFragment", "json ==> " + json);
+                    SharedPreferenceUtils.setValue(getContext(), SharedPreferenceUtils.LoginuserDetailsPreference, json);
                     getActivity().getSupportFragmentManager().popBackStack();
                     Toast.makeText(ProfileFragment.this.getContext(), "Profile Updated Successfully.", Toast.LENGTH_LONG).show();
                 } else {
@@ -200,7 +243,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     }
 
 
-
     private Bitmap selectedBitmap = null;
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
     private String userChoosenTask;
@@ -210,9 +252,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         switch (requestCode) {
             case UtilityImage.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if(userChoosenTask.equals("Take Photo"))
+                    if (userChoosenTask.equals("Take Photo"))
                         cameraIntent();
-                    else if(userChoosenTask.equals("Choose from Library"))
+                    else if (userChoosenTask.equals("Choose from Library"))
                         galleryIntent();
                 } else {
                     //code for deny
@@ -222,24 +264,24 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     }
 
     private void selectImage() {
-        final CharSequence[] items = { "Take Photo", "Choose from Library",
-                "Cancel" };
+        final CharSequence[] items = {"Take Photo", "Choose from Library",
+                "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ProfileFragment.this.getActivity());
         builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                boolean result= UtilityImage.checkPermission(ProfileFragment.this.getActivity());
+                boolean result = UtilityImage.checkPermission(ProfileFragment.this.getActivity());
 
                 if (items[item].equals("Take Photo")) {
-                    userChoosenTask ="Take Photo";
-                    if(result)
+                    userChoosenTask = "Take Photo";
+                    if (result)
                         cameraIntent();
 
                 } else if (items[item].equals("Choose from Library")) {
-                    userChoosenTask ="Choose from Library";
-                    if(result)
+                    userChoosenTask = "Choose from Library";
+                    if (result)
                         galleryIntent();
 
                 } else if (items[item].equals("Cancel")) {
@@ -250,16 +292,14 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         builder.show();
     }
 
-    private void galleryIntent()
-    {
+    private void galleryIntent() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);//
-        startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
+        startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
     }
 
-    private void cameraIntent()
-    {
+    private void cameraIntent() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent, REQUEST_CAMERA);
     }
@@ -302,7 +342,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     @SuppressWarnings("deprecation")
     private void onSelectFromGalleryResult(Intent data) {
 
-        Bitmap bm=null;
+        Bitmap bm = null;
         if (data != null) {
             try {
                 bm = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), data.getData());

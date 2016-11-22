@@ -2,6 +2,7 @@ package com.techpro.chat.ticklechat.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.techpro.chat.ticklechat.models.DataStorage;
@@ -46,6 +47,7 @@ public class SharedPreferenceUtils {
         }catch (Exception e) {
             e.printStackTrace();
         }
+        Log.e("getColleactionObject=>"+obj,"getColleactionName> "+name);
         return obj;
     }
 

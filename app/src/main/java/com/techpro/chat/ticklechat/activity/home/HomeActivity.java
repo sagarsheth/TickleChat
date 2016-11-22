@@ -129,9 +129,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         if (AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
             if (DataStorage.myAllUserlist == null || DataStorage.mygrouplist == null || DataStorage.chatUserList == null) {
-                DataStorage.mygrouplist = new ArrayList<Group>();
-                DataStorage.myAllUserlist = new ArrayList<User>();
-                DataStorage.chatUserList = new ArrayList<User>();
+                if (DataStorage.mygrouplist == null)
+                    DataStorage.mygrouplist = new ArrayList<Group>();
+                if (DataStorage.myAllUserlist == null)
+                    DataStorage.myAllUserlist = new ArrayList<User>();
+                if (DataStorage.chatUserList == null)
+                    DataStorage.chatUserList = new ArrayList<User>();
+                Log.e(TAG, "LoadingPlease wait... ==> ");
                 dialog = ProgressDialog.show(HomeActivity.this, "Loading", "Please wait...", true);
                 apiService = ApiClient.getClient().create(ApiInterface.class);
                 callGetUserDetailsService(Integer.parseInt(DataStorage.UserDetails.getId()), true, false);
@@ -381,6 +385,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private synchronized void callGetUserDetailsService(int userId, final boolean iscurrentuser, final boolean isgroup) {
+        Log.e(TAG, "callGetUserDetailsService ==> " + iscurrentuser);
         //Getting webservice instance which we need to call
         Call<GetUserDetails> callForUserDetailsFromID = apiService.getUserDetailsFromID(userId);
         //Calling Webservice by enqueue
@@ -400,6 +405,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 //                                DataStorage.currentUserDetailsBody.setProfile_image_Bitmap(decodedByte);
 //                            }
 //                        }
+                        Log.e(TAG, "callMessage_ALL_Service ==> " + DataStorage.currentUserDetailsBody.toString());
                         apiAUTService = ApiClient.createServiceWithAuth(DataStorage.UserDetails.getId()).create(ApiInterface.class);
                         callMessage_ALL_Service();
                     } else if (!isgroup) {
@@ -422,6 +428,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             }
                             SharedPreferenceUtils.setColleactionObject(getApplicationContext(), usr.getId(), usermessages);
                         }
+
+                        Log.e(TAG, "callGetGroupDetailsService ==>========================================================================== ");
                     }
                     if (allUserID == null) {
                         allUserID = new ArrayList<>();
@@ -431,6 +439,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         DataStorage.myAllUserlist.add(getUserDetails.getUser());
                     }
 
+                    Log.e(TAG, "isUserDataSetReady ==> " + isUserDataSetReady);
+                    Log.e(TAG, "isGroupDataSetReady ==> " + isGroupDataSetReady);
                     if (isUserDataSetReady && isGroupDataSetReady) {
                         dialog.dismiss();
 
@@ -468,6 +478,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void callMessage_ALL_Service() {
+        Log.e(TAG, "callMessage_ALL_Service ==> ");
         //Getting webservice instance which we need to call
         Call<AllMessages> callForUserDetailsFromID = apiAUTService.getAllMessageList();
         //Calling Webservice by enqueue
@@ -475,11 +486,26 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onResponse(Call<AllMessages> call, Response<AllMessages> response) {
                 if (response != null && response.body() != null) {
+                    Log.e(TAG, "callMessage_ALL_Service ==> " + response.body());
                     DataStorage.allMessages = response.body().getBody().getMessages();
                     userid = new ArrayList<String>();
                     grpid = new ArrayList<String>();
                     userid.clear();
                     grpid.clear();
+                    if (DataStorage.allMessages.size() == 0) {
+                        dialog.dismiss();
+
+//                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.myuserlist,
+//                                DataStorage.myAllUserlist);
+//                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.mygrouplist,
+//                                DataStorage.mygrouplist);
+//                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.chatUserID,
+//                                DataStorage.chatUserList);
+//                        getTicklesService();
+
+                        homeFragments = new HomeScreenFragment();
+                        replaceFragment(homeFragments, getResources().getString(R.string.header_ticklers), false);
+                    }
                     for (int i = 0; i < DataStorage.allMessages.size(); i++) {
                         if (i == DataStorage.allMessages.size() - 1) {
                             isUserDataSetReady = true;
@@ -519,6 +545,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private synchronized void callGetGroupDetailsService(int groupid) {
+        Log.e(TAG, "callGetGroupDetailsService ==> " + groupid);
         //Getting webservice instance which we need to call
         Call<GetGroupDetails> callForUserDetailsFromID = apiAUTService.getGroupDetials(groupid);
         //Calling Webservice by enqueue
@@ -550,9 +577,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         }
                         SharedPreferenceUtils.setColleactionObject(getApplicationContext(), grp.getId(), groupmessages);
 
-
                         if (grp.getId() != null && grp.getMembers().contains(",")) {
                             String[] ids = grp.getMembers().split(",");
+                            if (ids.length == 0 && isUserDataSetReady) {
+                                isGroupDataSetReady = true;
+                            }
                             for (int i = 0; i < ids.length; i++) {
                                 if (i == ids.length - 1 && isUserDataSetReady) {
                                     isGroupDataSetReady = true;

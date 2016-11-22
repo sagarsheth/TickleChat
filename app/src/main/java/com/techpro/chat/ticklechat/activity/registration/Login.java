@@ -76,19 +76,19 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         switch (callerID) {
                             case R.id.tvPositive:
                                 if (AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
-                                    Log.e(TAG,"login:==> "+messages);
-                                    if (messages != null && !messages.equals("") && messages.contains("~")&& !messages.trim().equals("~")
+                                    Log.e(TAG, "login:==> " + messages);
+                                    if (messages != null && !messages.equals("") && messages.contains("~") && !messages.trim().equals("~")
                                             && Login.SHA1(messages.split("~")[1]) != null) {
                                         mStatusUpdateDialog.cancel();
                                         dialog = ProgressDialog.show(Login.this, "Loading", "Please wait...", true);
                                         callLoginService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
 //                                        callLoginService(messages.split("~")[0], SHA1(messages.split("~")[1]));
                                     } else {
-                                        Log.e(TAG,"login:==> "+messages);
+                                        Log.e(TAG, "login:==> " + messages);
                                         Toast.makeText(getApplicationContext(), "Please enter complete details.", Toast.LENGTH_LONG).show();
                                     }
-                                } else{
-                                    Log.e(TAG,"login:==> "+messages);
+                                } else {
+                                    Log.e(TAG, "login:==> " + messages);
                                     Toast.makeText(getApplicationContext(),
                                             getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
                                 }
@@ -108,7 +108,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 mStatusUpdateDialog.show();
                 break;
             case R.id.btnSignup:
-                Intent mainIntent = new Intent(Login.this,LoginActivity.class);
+                Intent mainIntent = new Intent(Login.this, LoginActivity.class);
                 Login.this.startActivity(mainIntent);
                 break;
 
@@ -169,13 +169,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     private void callLoginService(String username, String pass) {
         //Getting webservice instance which we need to call
-        Call<UserModel> callForUserDetailsFromID = apiService.loginUser(username,pass);
+        Call<UserModel> callForUserDetailsFromID = apiService.loginUser(username, pass);
         //Calling Webservice by enqueue
         callForUserDetailsFromID.enqueue(new Callback<UserModel>() {
 
             @Override
             public void onResponse(Call<UserModel> call, Response<UserModel> response) {
-                if (response != null && response.body() != null  && response.body().getBody() != null && response.body().getMessage().equals("")) {
+                if (response != null && response.body() != null && response.body().getBody() != null && response.body().getMessage().equals("")) {
                     UserDetailsModel getUserDetails = response.body().getBody();
                     DataStorage.UserDetails = getUserDetails;
 //                    if (DataStorage.UserDetails.getProfile_image()!=null) {
@@ -187,14 +187,23 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 //                    }
                     Gson gson = new Gson();
                     String json = gson.toJson(getUserDetails);
-                    Log.e(TAG, "json ==> "+json);
-                    SharedPreferenceUtils.setValue(getApplicationContext(),SharedPreferenceUtils.LoginuserDetailsPreference,json);
+                    Log.e(TAG, "json ==> " + json);
+                    SharedPreferenceUtils.setValue(getApplicationContext(), SharedPreferenceUtils.LoginuserDetailsPreference, json);
+                    SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.myuserlist,
+                            DataStorage.myAllUserlist);
+                    SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.mygrouplist,
+                            DataStorage.mygrouplist);
+                    SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.chatUserID,
+                            DataStorage.chatUserList);
                     startActivity(new Intent(Login.this, HomeActivity.class));
                     finish();
                 } else {
-                    if (response != null && response.body() != null  && response.body().getMessage() != null){
-                        Log.e(TAG, "response.body().getMessage() ==> "+response.body().toString());
+                    if (response != null && response.body() != null && response.body().getMessage() != null) {
+                        Log.e(TAG, "response.body().getMessage() ==> " + response.body().toString());
                         Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
+                    } else if (response != null && response.message() != null) {
+                        Log.e(TAG, "response.body().getMessage() ==> " + response.message());
+                        Toast.makeText(getApplicationContext(), response.message(), Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                         Log.e(TAG, "Success but null response");
@@ -214,7 +223,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     }
 
 
-// For Password
+    // For Password
     public static String SHA1(String text) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
@@ -230,7 +239,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 } while (two_halfs++ < 1);
             }
             return buf.toString();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
