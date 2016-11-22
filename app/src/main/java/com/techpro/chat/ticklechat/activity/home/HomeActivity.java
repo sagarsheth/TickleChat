@@ -655,8 +655,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // Get token
         FirebaseApp.initializeApp(HomeActivity.this);
         String token = FirebaseInstanceId.getInstance().getToken();
-        token = "dE2bYhbZs2s:APA91bG0ul-fch8yjSkXhLnKggC_7ZbA6Rx3KLUHQeXiyafrjg34Z_f-N986dhHflDQBjYWwu2cMMk6MP2Nz32C1yTx93zH1xfEaEyji2-Qxj-4TQGZ7mqZt6yR805SDEYgbYzqCFaSo";
-        Log.e(TAG, token);
+//        token = "dE2bYhbZs2s:APA91bG0ul-fch8yjSkXhLnKggC_7ZbA6Rx3KLUHQeXiyafrjg34Z_f-N986dhHflDQBjYWwu2cMMk6MP2Nz32C1yTx93zH1xfEaEyji2-Qxj-4TQGZ7mqZt6yR805SDEYgbYzqCFaSo";
+//        Log.e(TAG, token);
 
         if (!AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
             Toast.makeText(getApplicationContext(),

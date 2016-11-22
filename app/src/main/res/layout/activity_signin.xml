@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-    >
+>
 
     <data>
 
@@ -10,28 +10,70 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/dimen_10"
-        android:orientation="vertical">
-
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/dimen_10">
 
         <com.facebook.login.widget.LoginButton
-            android:id="@+id/login_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/fb_login"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
             android:layout_above="@+id/sign_in_button"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="30dp" />
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/textColorPrimary"
+            android:background="@drawable/selector_button"
+            android:layout_marginTop="10dp"/>
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:textColor="@color/textColorPrimary"
             android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+        />
 
-            />
 
+        <Button android:id="@+id/btn_google_signin"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_above="@+id/btn_fb_signin"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/dimen_10"
+                android:textColor="@color/textColorPrimary"
+                android:background="@drawable/selector_button"
+                android:text="Google signIn"/>
+
+        <Button android:id="@+id/btn_fb_signin"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_above="@+id/btn_signup"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/dimen_10"
+                android:textColor="@color/textColorPrimary"
+                android:background="@drawable/selector_button"
+                android:text="FB signIn"/>
+
+        <Button android:id="@+id/btn_signin"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_above="@+id/fb_login"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:textColor="@color/textColorPrimary"
+                android:background="@drawable/selector_button"
+                android:text="@string/login"/>
+
+
+        <Button android:id="@+id/btn_signup"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+
+                android:textColor="@color/textColorPrimary"
+                android:layout_above="@+id/btn_signin"
+                android:background="@drawable/selector_button"
+                android:text="@string/signup"/>
 
 
     </RelativeLayout>

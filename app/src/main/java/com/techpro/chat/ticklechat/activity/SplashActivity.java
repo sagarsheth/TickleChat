@@ -22,7 +22,7 @@ import com.facebook.appevents.AppEventsLogger;
 import com.google.gson.Gson;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.home.HomeActivity;
-import com.techpro.chat.ticklechat.activity.registration.Login;
+import com.techpro.chat.ticklechat.activity.registration.SignInActivity;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
 import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
@@ -144,11 +144,12 @@ public class SplashActivity extends AppCompatActivity {
 
 //        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
 
-        sharedPrefrence.setFirstTimeLaunch(false);
+
+//        sharedPrefrence.setFirstTimeLaunch(false);
         /* Create an Intent that will start the Menu-Activity. */
         String json = SharedPreferenceUtils.getValue(getApplicationContext(), SharedPreferenceUtils.LoginuserDetailsPreference, "");
         if (json.equals("")) {
-            Intent mainIntent = new Intent(SplashActivity.this, Login.class);
+            Intent mainIntent = new Intent(SplashActivity.this, SignInActivity.class);
             SplashActivity.this.startActivity(mainIntent);
             SplashActivity.this.finish();
         } else {

@@ -107,6 +107,12 @@ public interface ApiInterface {
     Call<JsonObject> UpdateDeviceTockan (@Field("devicetoken") String devicetoken);
 
 
+    @FormUrlEncoded
+    @POST("users/social_login")
+    Call<JsonObject> signInUsingSocialSdk(@Field("name") String name, @Field("gender") String gender, @Field("dob") String dob,
+                                          @Field("phone") String phone, @Field("email") String email, @Field("profile_image") String profileImage,
+                                          @Field("country_code") String countryCode, @Field("password") String password, @Field("sourceType") String sourceType);
+
     /*//Get response in json string
     @GET("users/{userid}")
     Call<ResponseBody> getUserDetails(@Path("userid") int chatUserList);*/

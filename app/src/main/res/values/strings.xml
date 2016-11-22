@@ -110,4 +110,6 @@
     <string name="signed_out">google signout</string>
     <string name="sign_out">google signout</string>
     <string name="disconnect">disconnect</string>
+    <string name="login">Login</string>
+    <string name="signup">Signup</string>
 </resources>
