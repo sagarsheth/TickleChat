@@ -147,6 +147,17 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(getApplicationContext(),
                     getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
         }
+
+
+        /*** TODO : Sagar handle notification here **/
+        if( getIntent() != null )
+        {
+            String message = getIntent().hasExtra("notification")? getIntent().getStringExtra("notification"):"";
+            AppUtils.showLog("message notification : "+ message);
+
+        }
+
+
     }
 
     @Override
