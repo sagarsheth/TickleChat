@@ -185,6 +185,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     Gson gson = new Gson();
                     String json = gson.toJson(getUserDetails);
                     Log.e(TAG, "json ==> " + json);
+                    DataStorage.myAllUserlist = null;
+                    DataStorage.chatUserList = null;
+                    DataStorage.mygrouplist = null;
+
                     SharedPreferenceUtils.setValue(getApplicationContext(), SharedPreferenceUtils.LoginuserDetailsPreference, json);
                     SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.myuserlist,
                             DataStorage.myAllUserlist);

@@ -63,7 +63,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     UserDetailsModel user = new UserDetailsModel();
 
     @Override
-    protected void onCreate (Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(SignInActivity.this, R.layout.activity_signin);
         // Button listeners
@@ -108,8 +108,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
     CallbackManager callbackManager;
 
-    void initFBLogin()
-    {
+    void initFBLogin() {
         mBinding.fbLogin.setReadPermissions("email");
         // If using in a fragmehnt
 //        mBinding.loginButton.setFragment(this);
@@ -117,8 +116,8 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         callbackManager = CallbackManager.Factory.create();
 
     }
-    void clickedOnFbSignIn()
-    {
+
+    void clickedOnFbSignIn() {
         // Callback registration
         mBinding.fbLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -133,15 +132,14 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             }
 
             @Override
-            public void onError (FacebookException exception) {
+            public void onError(FacebookException exception) {
                 // App code
             }
         });
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile", "user_birthday", "user_friends"));
     }
 
-    void clickedOnGoogleSignin()
-    {
+    void clickedOnGoogleSignin() {
 
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
         if (opr.isDone()) {
@@ -174,17 +172,15 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
     // [START onActivityResult]
     @Override
-    public void onActivityResult (int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
             showSignIn();
-        }
-        else
-        {
+        } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
             showSignIn();
         }
@@ -199,7 +195,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
             GoogleSignInAccount acct = result.getSignInAccount();
             user.setName(acct.getDisplayName());
             user.setEmail(acct.getEmail());
-            user.setProfile_image((acct.getPhotoUrl()!=null)? acct.getPhotoUrl().getPath():"");
+            user.setProfile_image((acct.getPhotoUrl() != null) ? acct.getPhotoUrl().getPath() : "");
 
             //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             updateUI(true);
@@ -246,7 +242,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     // [END revokeAccess]
 
     @Override
-    public void onConnectionFailed (ConnectionResult connectionResult) {
+    public void onConnectionFailed(ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
@@ -284,7 +280,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 showSignIn();
                 break;
             case R.id.btn_signup:
-                Intent mainIntent = new Intent(SignInActivity.this,RegistrationActivity.class);
+                Intent mainIntent = new Intent(SignInActivity.this, RegistrationActivity.class);
                 startActivity(mainIntent);
                 break;
             case R.id.btn_fb_signin:
@@ -297,8 +293,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     }
 
 
-    void showSignIn()
-    {
+    void showSignIn() {
         mLoginDialog = new LoginDialog(SignInActivity.this, new GenericListener<String>() {
             @Override
             public void onResponse(int callerID, String messages) {
@@ -306,23 +301,23 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 switch (callerID) {
                     case R.id.tvPositive:
                         if (AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
-                            Log.e(TAG,"login:==> "+messages);
-                            if (messages != null && !messages.equals("") && messages.contains("~")&& !messages.trim().equals("~")
+                            Log.e(TAG, "login:==> " + messages);
+                            if (messages != null && !messages.equals("") && messages.contains("~") && !messages.trim().equals("~")
                                     && Login.SHA1(messages.split("~")[1]) != null) {
                                 mLoginDialog.cancel();
                                 mProgressDialog = ProgressDialog.show(SignInActivity.this, "Loading", "Please wait...", true);
-                                callLoginService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
+//                                callLoginService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
                                 AppUtils.showLog("2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
-                                AppUtils.showLog(""+ Login.SHA1(messages.split("~")[1]));
-//                                callLoginService(messages.split("~")[0], messages.split("~")[1]);
+                                AppUtils.showLog("" + Login.SHA1(messages.split("~")[1]));
+                                callLoginService(messages.split("~")[0], Login.SHA1(messages.split("~")[1]));
                             } else {
-                                Log.e(TAG,"login:==> "+messages);
+                                Log.e(TAG, "login:==> " + messages);
                                 Toast.makeText(getApplicationContext(), "Please enter complete details.", Toast.LENGTH_LONG).show();
                             }
-                        } else{
-                            Log.e(TAG,"login:==> "+messages);
+                        } else {
+                            Log.e(TAG, "login:==> " + messages);
                             Toast.makeText(getApplicationContext(),
-                                           getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
+                                    getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
                         }
                         break;
 
@@ -361,13 +356,17 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                     Gson gson = new Gson();
                     String json = gson.toJson(getUserDetails);
                     Log.e(TAG, "json ==> " + json);
+
+                    DataStorage.myAllUserlist = null;
+                    DataStorage.chatUserList = null;
+                    DataStorage.mygrouplist = null;
                     SharedPreferenceUtils.setValue(getApplicationContext(), SharedPreferenceUtils.LoginuserDetailsPreference, json);
                     SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.myuserlist,
-                                                               DataStorage.myAllUserlist);
+                            DataStorage.myAllUserlist);
                     SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.mygrouplist,
-                                                               DataStorage.mygrouplist);
+                            DataStorage.mygrouplist);
                     SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.chatUserID,
-                                                               DataStorage.chatUserList);
+                            DataStorage.chatUserList);
                     startActivity(new Intent(SignInActivity.this, HomeActivity.class));
                     finish();
                 } else {
@@ -397,19 +396,18 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
 
     // TODO: 14/11/16 SAGAR PLZ add
-    private void callSignupService(String username, String pass)
-    {
+    private void callSignupService(String username, String pass) {
         //Getting webservice instance which we need to call
-        Call<JsonObject> callForUserDetailsFromID = ApiClient.getClient().create(ApiInterface.class).signInUsingSocialSdk(user.getName(), user.getGender(), user.getDob(), user.getPhone(), user.getEmail(), user.getProfile_image(),user.getCountry_code(), user.getPassword(), "usertype");
+        Call<JsonObject> callForUserDetailsFromID = ApiClient.getClient().create(ApiInterface.class).signInUsingSocialSdk(user.getName(), user.getGender(), user.getDob(), user.getPhone(), user.getEmail(), user.getProfile_image(), user.getCountry_code(), user.getPassword(), "usertype");
         //Calling Webservice by enqueue
         callForUserDetailsFromID.enqueue(new Callback<JsonObject>() {
 
             @Override
-            public void onResponse (Call<JsonObject> call, Response<JsonObject> response) {
-                if (response != null && response.body() != null  && response.body()!= null) {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response != null && response.body() != null && response.body() != null) {
 
                     JsonObject jsonObject = response.body();
-                    Log.e(TAG, "json ==> "+jsonObject);
+                    Log.e(TAG, "json ==> " + jsonObject);
 
                     Gson gson = new Gson();
                     UserDetailsModel model = gson.fromJson(jsonObject, UserDetailsModel.class);
@@ -424,7 +422,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 //                        Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
 //                    } else {
 //                        Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
-                        Log.e(TAG, "Success but null response");
+                    Log.e(TAG, "Success but null response");
 //                    }
                 }
                 mProgressDialog.dismiss();

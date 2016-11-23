@@ -54,7 +54,7 @@ public class ChatScreen extends Activity {
 //        boolean israndom = getIntent().getBooleanExtra("israndom",false);
         Log.e("RecyclerView", "userid：" + userid);
         Log.e("RecyclerView", "groupid：" + groupid);
-        if (groupid == null) {
+        if (groupid == null ) {
             sentID = userid;
             movieList = (List<AllMessages.MessageList.ChatMessagesList>) SharedPreferenceUtils.
                     getColleactionObject(getApplicationContext(), userid);

@@ -1,12 +1,18 @@
 package com.techpro.chat.ticklechat.activity.home;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -26,6 +32,7 @@ import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.techpro.chat.ticklechat.AppConfigs;
@@ -46,6 +53,7 @@ import com.techpro.chat.ticklechat.models.GetGroupDetails;
 import com.techpro.chat.ticklechat.models.Group;
 import com.techpro.chat.ticklechat.models.MenuItems;
 import com.techpro.chat.ticklechat.models.message.AllMessages;
+import com.techpro.chat.ticklechat.models.message.NotificationMessage;
 import com.techpro.chat.ticklechat.models.message.Tickles;
 import com.techpro.chat.ticklechat.models.user.GetUserDetails;
 import com.techpro.chat.ticklechat.models.user.GetUserDetailsBody;
@@ -116,7 +124,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         initSlidingDrawer();
         gcmRegistration();
 
-
         DataStorage.mygrouplist = new ArrayList<Group>();
         DataStorage.myAllUserlist = new ArrayList<User>();
         DataStorage.chatUserList = new ArrayList<User>();
@@ -150,14 +157,62 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
         /*** TODO : Sagar handle notification here **/
-        if( getIntent() != null )
-        {
-            String message = getIntent().hasExtra("notification")? getIntent().getStringExtra("notification"):"";
-            AppUtils.showLog("message notification : "+ message);
+        if (getIntent() != null) {
+            String message = getIntent().hasExtra("notification") ? getIntent().getStringExtra("notification") : "";
+
+            Gson gson = new Gson();
+            NotificationMessage obj = gson.fromJson(message, NotificationMessage.class);
+            AllMessages.MessageList.ChatMessagesList msg = new AllMessages().new MessageList().new ChatMessagesList();
+            msg.setFrom_id(obj.getFrom_id());
+            msg.setId(obj.getId());
+            msg.setIsgroup(obj.getIsgroup());
+            msg.setMessage(obj.getMessage());
+            msg.setRead(obj.getRead());
+            msg.setSentat(obj.getSentat());
+            msg.setTickle_id((obj.getTickle_id()));
+            msg.setTo_id((obj.getTo_id()));
+            List<AllMessages.MessageList.ChatMessagesList> usermessages = (List<AllMessages.MessageList.
+                    ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(getApplicationContext(), msg.getTo_id());
+            if (usermessages == null)
+                usermessages = new ArrayList<AllMessages.MessageList.ChatMessagesList>();
+            usermessages.add(msg);
+            SharedPreferenceUtils.setColleactionObject(getApplicationContext(), msg.getTo_id(), usermessages);
+            sendNotification(obj);
+            AppUtils.showLog("message notification : " + message);
 
         }
+    }
 
+    public void sendNotification(NotificationMessage obj) {
+        try {
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(this);
 
+//Create the intent that’ll fire when the user taps the notification//
+
+            Intent intent = new Intent(HomeActivity.this, ChatScreen.class);
+            if (obj.getIsgroup().equals("1")) {
+                intent.putExtra("groupid", obj.getFrom_id());
+            } else {
+                intent.putExtra("userid", obj.getFrom_id());
+            }
+            intent.putExtra("username", obj.getFrom_name());
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+            mBuilder.setContentIntent(pendingIntent);
+
+            mBuilder.setSmallIcon(R.drawable.tickle_logo);
+            mBuilder.setContentTitle(obj.getFrom_name());
+            mBuilder.setContentText(obj.getMessage());
+
+            NotificationManager mNotificationManager =
+
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            mNotificationManager.notify(001, mBuilder.build());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

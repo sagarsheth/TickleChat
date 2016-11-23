@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.activity.registration.Login;
 import com.techpro.chat.ticklechat.activity.registration.RegistrationActivity;
+import com.techpro.chat.ticklechat.activity.registration.SignInActivity;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
@@ -77,7 +78,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 SharedPreferenceUtils.setColleactionObject(this.getContext(), SharedPreferenceUtils.myuserlist, null);
                 SharedPreferenceUtils.setColleactionObject(this.getContext(), SharedPreferenceUtils.mygrouplist, null);
                 SharedPreferenceUtils.setColleactionObject(this.getContext(), SharedPreferenceUtils.chatUserID, null);
-                this.getActivity().startActivity(new Intent(this.getActivity(), Login.class));
+                this.getActivity().startActivity(new Intent(this.getActivity(), SignInActivity.class));
                 this.getActivity().finish();
                 break;
             case R.id.blackout_view_for_snackbar:
