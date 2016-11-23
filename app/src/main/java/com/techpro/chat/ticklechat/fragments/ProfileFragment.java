@@ -27,11 +27,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.techpro.chat.ticklechat.R;
-import com.techpro.chat.ticklechat.activity.registration.LoginActivity;
 import com.techpro.chat.ticklechat.models.DataStorage;
-import com.techpro.chat.ticklechat.models.GetGroupDetails;
-import com.techpro.chat.ticklechat.models.Group;
-import com.techpro.chat.ticklechat.models.message.AllMessages;
 import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
 import com.techpro.chat.ticklechat.models.user.UserModel;
 import com.techpro.chat.ticklechat.rest.ApiClient;
@@ -46,9 +42,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;

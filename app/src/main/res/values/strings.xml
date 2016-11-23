@@ -66,6 +66,7 @@
     <string name ="header_ticklers">TickleChat</string>
 
     <string name="setting_delete_account">Delete Account</string>
+    <string name="setting_logout_account">Logout</string>
     <string name="setting_enable_notifications">Enable Notifications</string>
     <string name="setting_delete_confirmation_statments">Delete your account will -\n
         \n- Delete your account from Tickle

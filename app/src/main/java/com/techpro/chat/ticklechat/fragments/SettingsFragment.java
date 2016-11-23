@@ -1,6 +1,7 @@
 package com.techpro.chat.ticklechat.fragments;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -15,9 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.techpro.chat.ticklechat.R;
+import com.techpro.chat.ticklechat.activity.registration.Login;
+import com.techpro.chat.ticklechat.activity.registration.RegistrationActivity;
 import com.techpro.chat.ticklechat.models.DataStorage;
-import com.techpro.chat.ticklechat.models.message.Tickles;
-import com.techpro.chat.ticklechat.models.user.UserModel;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
@@ -31,7 +32,7 @@ import retrofit2.Response;
 
 public class SettingsFragment extends Fragment implements View.OnClickListener {
     private View mView;
-    private TextView mTvDeleteAccount;
+    private TextView mTvDeleteAccount, tv_logout_account;
     private LinearLayout mLlEnableNotifications;
     private Snackbar mSnackbar;
     private View mViewBlackOverlay;
@@ -50,6 +51,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private void initUi() {
         mLlEnableNotifications = (LinearLayout) mView.findViewById(R.id.ll_enable_notification);
         mTvDeleteAccount = (TextView) mView.findViewById(R.id.tv_delete_account);
+        tv_logout_account = (TextView) mView.findViewById(R.id.tv_logout_account);
+
         mViewBlackOverlay = mView.findViewById(R.id.blackout_view_for_snackbar);
         mRlMainContainer = (RelativeLayout) mView.findViewById(R.id.rl_main_container);
 
@@ -57,6 +60,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         mTvDeleteAccount.setOnClickListener(this);
         mLlEnableNotifications.setOnClickListener(this);
         mViewBlackOverlay.setOnClickListener(this);
+        tv_logout_account.setOnClickListener(this);
     }
 
     @Override
@@ -67,6 +71,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.ll_enable_notification:
                 //TODO : add delete account event
+                break;
+            case R.id.tv_logout_account:
+                SharedPreferenceUtils.setValue(getContext(), SharedPreferenceUtils.LoginuserDetailsPreference, "");
+                SharedPreferenceUtils.setColleactionObject(this.getContext(), SharedPreferenceUtils.myuserlist, null);
+                SharedPreferenceUtils.setColleactionObject(this.getContext(), SharedPreferenceUtils.mygrouplist, null);
+                SharedPreferenceUtils.setColleactionObject(this.getContext(), SharedPreferenceUtils.chatUserID, null);
+                this.getActivity().startActivity(new Intent(this.getActivity(), Login.class));
+                this.getActivity().finish();
                 break;
             case R.id.blackout_view_for_snackbar:
                 if (mSnackbar != null && mSnackbar.isShown()) {

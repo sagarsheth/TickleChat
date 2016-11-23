@@ -47,7 +47,7 @@ import retrofit2.Response;
 /**
  * Created by vishalrandive on 11/04/16.
  */
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageView ivProfileIcon;
     private EditText password;
@@ -90,7 +90,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                new DatePickerDialog(LoginActivity.this, date, myCalendar
+                new DatePickerDialog(RegistrationActivity.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -139,7 +139,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.internet_connection_error), Toast.LENGTH_SHORT).show();
                 } else {
-                    dialog = ProgressDialog.show(LoginActivity.this, "Loading", "Please wait...", true);
+                    dialog = ProgressDialog.show(RegistrationActivity.this, "Loading", "Please wait...", true);
                     String profileImage = "";
                     if (selectedBitmap != null) {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -247,12 +247,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         final CharSequence[] items = {"Take Photo", "Choose from Library",
                 "Cancel"};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(RegistrationActivity.this);
         builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                boolean result = UtilityImage.checkPermission(LoginActivity.this);
+                boolean result = UtilityImage.checkPermission(RegistrationActivity.this);
 
                 if (items[item].equals("Take Photo")) {
                     userChoosenTask = "Take Photo";

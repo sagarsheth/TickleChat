@@ -282,7 +282,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 showSignIn();
                 break;
             case R.id.btn_signup:
-                Intent mainIntent = new Intent(SignInActivity.this,LoginActivity.class);
+                Intent mainIntent = new Intent(SignInActivity.this,RegistrationActivity.class);
                 startActivity(mainIntent);
                 break;
             case R.id.btn_fb_signin:

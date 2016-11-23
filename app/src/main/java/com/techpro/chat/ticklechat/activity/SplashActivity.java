@@ -146,7 +146,7 @@ public class SplashActivity extends AppCompatActivity {
     private void launchHomeScreen()
     {
 
-//        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+//        startActivity(new Intent(SplashActivity.this, RegistrationActivity.class));
 
 
 //        sharedPrefrence.setFirstTimeLaunch(false);

@@ -55,7 +55,7 @@
             android:name=".activity.ChatScreen"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".activity.registration.LoginActivity"
+            android:name=".activity.registration.RegistrationActivity"
             android:screenOrientation="portrait"></activity>
 
         <activity
