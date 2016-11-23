@@ -33,6 +33,7 @@ import com.techpro.chat.ticklechat.databinding.ActivitySigninBinding;
 import com.techpro.chat.ticklechat.listeners.GenericListener;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
+import com.techpro.chat.ticklechat.models.user.UserModel;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
@@ -136,11 +137,12 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 // App code
             }
         });
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile", "user_birthday", "user_friends"));
     }
 
     void clickedOnGoogleSignin()
     {
+
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
         if (opr.isDone()) {
             // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
@@ -177,7 +179,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
             showSignIn();
         }
@@ -310,7 +312,9 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                                 mLoginDialog.cancel();
                                 mProgressDialog = ProgressDialog.show(SignInActivity.this, "Loading", "Please wait...", true);
                                 callLoginService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
-//                                        callLoginService(messages.split("~")[0], SHA1(messages.split("~")[1]));
+                                AppUtils.showLog("2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
+                                AppUtils.showLog(""+ Login.SHA1(messages.split("~")[1]));
+//                                callLoginService(messages.split("~")[0], messages.split("~")[1]);
                             } else {
                                 Log.e(TAG,"login:==> "+messages);
                                 Toast.makeText(getApplicationContext(), "Please enter complete details.", Toast.LENGTH_LONG).show();
@@ -334,15 +338,69 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         mLoginDialog.setNegativeButtonText("CANCEL");
         mLoginDialog.setCancelable(false);
         mLoginDialog.show();
-
     }
 
+    private void callLoginService(String username, String pass) {
+        //Getting webservice instance which we need to call
+        Call<UserModel> callForUserDetailsFromID = ApiClient.getClient().create(ApiInterface.class).loginUser(username, pass);
+        //Calling Webservice by enqueue
+        callForUserDetailsFromID.enqueue(new Callback<UserModel>() {
+
+            @Override
+            public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                if (response != null && response.body() != null && response.body().getBody() != null && response.body().getMessage().equals("")) {
+                    UserDetailsModel getUserDetails = response.body().getBody();
+                    DataStorage.UserDetails = getUserDetails;
+//                    if (DataStorage.UserDetails.getProfile_image()!=null) {
+//                        byte[] decodedString = Base64.decode(DataStorage.UserDetails.getProfile_image(), Base64.DEFAULT);
+//                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+//                        if (decodedByte != null) {
+//                            DataStorage.UserDetails.setProfile_image_bitmap(decodedByte);
+//                        }
+//                    }
+                    Gson gson = new Gson();
+                    String json = gson.toJson(getUserDetails);
+                    Log.e(TAG, "json ==> " + json);
+                    SharedPreferenceUtils.setValue(getApplicationContext(), SharedPreferenceUtils.LoginuserDetailsPreference, json);
+                    SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.myuserlist,
+                                                               DataStorage.myAllUserlist);
+                    SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.mygrouplist,
+                                                               DataStorage.mygrouplist);
+                    SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.chatUserID,
+                                                               DataStorage.chatUserList);
+                    startActivity(new Intent(SignInActivity.this, HomeActivity.class));
+                    finish();
+                } else {
+                    if (response != null && response.body() != null && response.body().getMessage() != null) {
+                        Log.e(TAG, "response.body().getMessage() ==> " + response.body().toString());
+                        Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_LONG).show();
+                    } else if (response != null && response.message() != null) {
+                        Log.e(TAG, "response.body().getMessage() ==> " + response.message());
+                        Toast.makeText(getApplicationContext(), response.message(), Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Success but null response");
+                    }
+                }
+                mProgressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<UserModel> call, Throwable t) {
+                // Log error here since request failed
+                Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
+                Log.e(TAG, t.toString());
+                mProgressDialog.dismiss();
+            }
+        });
+    }
+
+
     // TODO: 14/11/16 SAGAR PLZ add
-    private void callLoginService(String username, String pass)
+    private void callSignupService(String username, String pass)
     {
         //Getting webservice instance which we need to call
-        Call<JsonObject> callForUserDetailsFromID = ApiClient.getClient().create(ApiInterface.class).signInUsingSocialSdk(user.getName(), user.getGender(), user.getDob(), user.getPhone(), user.getEmail(), user.getProfile_image(),
-                                                                                                                          user.getCountry_code(), user.getPassword(), "usertype");
+        Call<JsonObject> callForUserDetailsFromID = ApiClient.getClient().create(ApiInterface.class).signInUsingSocialSdk(user.getName(), user.getGender(), user.getDob(), user.getPhone(), user.getEmail(), user.getProfile_image(),user.getCountry_code(), user.getPassword(), "usertype");
         //Calling Webservice by enqueue
         callForUserDetailsFromID.enqueue(new Callback<JsonObject>() {
 
