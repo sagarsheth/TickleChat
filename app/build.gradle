@@ -4,6 +4,7 @@ android {
     buildToolsVersion '23.0.1'
 
     defaultConfig {
+        applicationId "com.techpro.chat.ticklechat"
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 1

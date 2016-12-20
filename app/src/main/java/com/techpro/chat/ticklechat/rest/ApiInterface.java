@@ -117,4 +117,8 @@ public interface ApiInterface {
     @GET("users/{userid}")
     Call<ResponseBody> getUserDetails(@Path("userid") int chatUserList);*/
 
+    @FormUrlEncoded
+    @POST("users/check_if_registered")
+    Call<JsonObject> getRegisteredUser(@Field("list") String list);
+
 }
