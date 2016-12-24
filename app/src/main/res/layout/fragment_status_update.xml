@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:padding="@dimen/dimen_15"
         android:layout_margin="@dimen/dimen_15"
-        android:background="@drawable/drawable_round_edit_view">
+        android:background="@drawable/drawable_round_4dp_gray">
 
         <TextView
             android:layout_width="wrap_content"
@@ -20,6 +20,7 @@
             android:textColor="@color/v2_text_Color_Secondary"
             android:text="Your current status"
             />
+
         <include layout="@layout/separator" />
 
         <LinearLayout
@@ -62,7 +63,7 @@
         android:padding="@dimen/dimen_15"
         android:layout_margin="@dimen/dimen_15"
         android:orientation="vertical"
-        android:background="@drawable/drawable_round_edit_view">
+        android:background="@drawable/drawable_round_4dp_gray">
 
         <TextView
             android:layout_width="wrap_content"

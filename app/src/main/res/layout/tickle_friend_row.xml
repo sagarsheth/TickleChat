@@ -9,6 +9,7 @@
   android:background="?android:attr/selectableItemBackground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="@dimen/dimen_10"
     android:orientation="horizontal">
 
     <com.mikhaellopez.circularimageview.CircularImageView
@@ -38,14 +39,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Name"
-                android:textColor="@color/black"
-                style="@style/Base.TextAppearance.AppCompat.Medium" />
+                android:textColor="@color/v2_text_Color_Secondary"
+                android:textSize="@dimen/txt_size_16" />
 
 
             <TextView
                 android:id="@+id/friendNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_5"
+                android:textColor="@color/v2_text_Color_Tertiary"
                 android:text="Number" />
 
         </LinearLayout>
@@ -61,6 +64,6 @@
 </LinearLayout>
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/grey_alto"/>
+        android:layout_height="0.6dp"
+        android:background="@color/colorDivider"/>
 </LinearLayout>
