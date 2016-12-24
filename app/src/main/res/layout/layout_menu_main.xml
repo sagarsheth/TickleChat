@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/txt_size_normal"
-        android:text="BabyChakra"
+        android:text=""
 
         android:id="@+id/tvMenuItemName"
         android:layout_gravity="center_vertical"
@@ -41,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/txt_size_tiny"
-        android:hint="BabyChakra"
+        android:hint=""
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
         android:id="@+id/tvMenuItemSubTitle"

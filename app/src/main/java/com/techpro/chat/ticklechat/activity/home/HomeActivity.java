@@ -155,29 +155,33 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
         /*** TODO : Sagar handle notification here **/
-        if (getIntent() != null && getIntent().hasExtra("notification")) {
-            String message = getIntent().hasExtra("notification") ? getIntent().getStringExtra("notification") : "";
 
-            Gson gson = new Gson();
-            NotificationMessage obj = gson.fromJson(message, NotificationMessage.class);
-            AllMessages.MessageList.ChatMessagesList msg = new AllMessages().new MessageList().new ChatMessagesList();
-            msg.setFrom_id(obj.getFrom_id());
-            msg.setId(obj.getId());
-            msg.setIsgroup(obj.getIsgroup());
-            msg.setMessage(obj.getMessage());
-            msg.setRead(obj.getRead());
-            msg.setSentat(obj.getSentat());
-            msg.setTickle_id((obj.getTickle_id()));
-            msg.setTo_id((obj.getTo_id()));
-            List<AllMessages.MessageList.ChatMessagesList> usermessages = (List<AllMessages.MessageList.
-                    ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(getApplicationContext(), msg.getTo_id());
-            if (usermessages == null)
-                usermessages = new ArrayList<AllMessages.MessageList.ChatMessagesList>();
-            usermessages.add(msg);
-            SharedPreferenceUtils.setColleactionObject(getApplicationContext(), msg.getTo_id(), usermessages);
-            sendNotification(obj);
-            AppUtils.showLog("message notification : " + message);
-
+        if (getIntent() != null) {
+            try {
+                String message = getIntent().hasExtra("notification") ? getIntent().getStringExtra("notification") : "";
+                Log.e("message", "message ==> " + message);
+                Gson gson = new Gson();
+                NotificationMessage obj = gson.fromJson(message, NotificationMessage.class);
+                AllMessages.MessageList.ChatMessagesList msg = new AllMessages().new MessageList().new ChatMessagesList();
+                msg.setFrom_id(obj.getFrom_id());
+                msg.setId(obj.getId());
+                msg.setIsgroup(obj.getIsgroup());
+                msg.setMessage(obj.getMessage());
+                msg.setRead(obj.getRead());
+                msg.setSentat(obj.getSentat());
+                msg.setTickle_id((obj.getTickle_id()));
+                msg.setTo_id((obj.getTo_id()));
+                List<AllMessages.MessageList.ChatMessagesList> usermessages = (List<AllMessages.MessageList.
+                        ChatMessagesList>) SharedPreferenceUtils.getColleactionObject(getApplicationContext(), msg.getTo_id());
+                if (usermessages == null)
+                    usermessages = new ArrayList<AllMessages.MessageList.ChatMessagesList>();
+                usermessages.add(msg);
+                SharedPreferenceUtils.setColleactionObject(getApplicationContext(), msg.getTo_id(), usermessages);
+                sendNotification(obj);
+                AppUtils.showLog("message notification : " + message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -249,7 +253,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 getResources().getString(R.string.menu_subtitle_4),
                 getResources().getString(R.string.menu_subtitle_5),
                 getResources().getString(R.string.menu_subtitle_6),
-                ""
+                "Account setting"
         };
 
         int menuItmesDrawableArray[] = {
@@ -595,7 +599,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                                 callGetUserDetailsService(Integer.parseInt(messageFromUserID), false, false);
                             }
                         }
-
+                    }
+                    if (grpid.size() == 0) {
+                        isGroupDataSetReady = true;
                     }
                 } else {
 

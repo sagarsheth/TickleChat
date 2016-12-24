@@ -78,8 +78,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                                             && Login.SHA1(messages.split("~")[1]) != null) {
                                         mStatusUpdateDialog.cancel();
                                         dialog = ProgressDialog.show(Login.this, "Loading", "Please wait...", true);
-                                        callLoginService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
-//                                        callLoginService(messages.split("~")[0], SHA1(messages.split("~")[1]));
+//                                        callLoginService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
+                                        callLoginService(messages.split("~")[0], SHA1(messages.split("~")[1]));
                                     } else {
                                         Log.e(TAG, "login:==> " + messages);
                                         Toast.makeText(getApplicationContext(), "Please enter complete details.", Toast.LENGTH_LONG).show();
