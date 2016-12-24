@@ -1,6 +1,5 @@
 package com.techpro.chat.ticklechat.activity.home;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -8,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -157,7 +155,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
 
         /*** TODO : Sagar handle notification here **/
-        if (getIntent() != null) {
+        if (getIntent() != null && getIntent().hasExtra("notification")) {
             String message = getIntent().hasExtra("notification") ? getIntent().getStringExtra("notification") : "";
 
             Gson gson = new Gson();
@@ -251,17 +249,17 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 getResources().getString(R.string.menu_subtitle_4),
                 getResources().getString(R.string.menu_subtitle_5),
                 getResources().getString(R.string.menu_subtitle_6),
-                getResources().getString(R.string.menu_subtitle_7)
+                ""
         };
 
         int menuItmesDrawableArray[] = {
-                R.drawable.ic_launcher,
-                R.drawable.ic_launcher,
-                R.drawable.ic_launcher,
-                R.drawable.ic_launcher,
-                R.drawable.ic_launcher,
-                R.drawable.ic_launcher,
-                R.drawable.ic_launcher
+                R.drawable.ic_mood_black_24dp,
+                R.drawable.ic_group_add_black_24dp,
+                R.drawable.ic_search_black_24dp,
+                R.drawable.ic_perm_identity_black_24dp,
+                R.drawable.ic_edit_black_24dp,
+                R.drawable.ic_mode_comment_black_24dp,
+                R.drawable.ic_settings_black_24dp
 
         };
 
@@ -543,6 +541,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    private void closeDialog(){
+        if(dialog !=null && dialog.isShowing())
+            dialog.dismiss();
+    }
+
     private void callMessage_ALL_Service() {
         Log.e(TAG, "callMessage_ALL_Service ==> ");
         //Getting webservice instance which we need to call
@@ -559,7 +562,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     userid.clear();
                     grpid.clear();
                     if (DataStorage.allMessages.size() == 0) {
-                        dialog.dismiss();
+                        closeDialog();
 
 //                        SharedPreferenceUtils.setColleactionObject(getApplicationContext(), SharedPreferenceUtils.myuserlist,
 //                                DataStorage.myAllUserlist);
@@ -595,6 +598,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
                     }
                 } else {
+
                     Toast.makeText(getApplicationContext(), R.string.failmessage, Toast.LENGTH_LONG).show();
                     Log.e(TAG, "Success callMessage_ALL_Service but null response");
                 }

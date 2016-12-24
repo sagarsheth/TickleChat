@@ -1,57 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_vertical|center_horizontal"
-    android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_margin="@dimen/dimen_15"
-        android:background="@drawable/drawable_round_edit_view"
-        android:orientation="vertical"
-        android:padding="@dimen/dimen_15">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rl_sentance_container">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/dimen_10"
-            android:text="Your Sentence status"
-            android:textColor="@color/v2_text_Color_Secondary" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <include layout="@layout/separator" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_margin="@dimen/dimen_15"
+                android:background="@drawable/drawable_round_4dp_gray"
+                android:orientation="vertical"
+                android:padding="@dimen/dimen_15">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_select_sentence"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dimen_10"
+                    android:text="Your Sentence status"
+                    android:textColor="@color/v2_text_Color_Secondary"/>
+
+                <include layout="@layout/separator"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_select_sentence"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/dimen_10" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/rl_sentance_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/dimen_10"
+        android:background="@drawable/drawable_round_edit_view">
+
+        <EditText
+            android:id="@+id/tv_add_new_tickle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dimen_10" />
-    </LinearLayout>
+            android:layout_toLeftOf="@+id/tv_btn_save"
+            android:gravity="left"
+            android:hint="Enter messages that you want to add."
+            android:inputType="textMultiLine"
+            android:padding="@dimen/dimen_15"
+            android:textSize="@dimen/txt_size_15"/>
+
+        <TextView
+            android:id="@+id/tv_btn_save"
+            android:layout_width="100dp"
+            android:layout_height="32dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/dimen_10"
+            android:layout_marginRight="@dimen/dimen_10"
+            android:background="@drawable/selector_button"
+            android:gravity="center"
+            android:text="Save"
+            android:textSize="@dimen/txt_size_15"/>
+
+    </RelativeLayout>
 
 
-    <EditText
-        android:id="@+id/tv_add_new_tickle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dimen_10"
-        android:background="@drawable/drawable_round_edit_view"
-        android:gravity="left"
-        android:hint="Enter Messages that you want to add."
-        android:inputType="textMultiLine"
-        android:minHeight="100dp"
-        android:minLines="3"
-        android:padding="@dimen/dimen_15" />
-
-
-    <TextView
-        android:id="@+id/tv_btn_save"
-        android:layout_width="100dp"
-        android:layout_height="32dp"
-        android:layout_marginRight="@dimen/dimen_5"
-        android:background="@drawable/selector_button"
-        android:gravity="center"
-        android:text="Save" />
-
-
-</LinearLayout>
+</RelativeLayout>

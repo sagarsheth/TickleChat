@@ -149,7 +149,6 @@ public class SplashActivity extends AppCompatActivity {
 //        startActivity(new Intent(SplashActivity.this, RegistrationActivity.class));
 
 
-//        sharedPrefrence.setFirstTimeLaunch(false);
         /* Create an Intent that will start the Menu-Activity. */
         String json = SharedPreferenceUtils.getValue(getApplicationContext(), SharedPreferenceUtils.LoginuserDetailsPreference, "");
 
@@ -164,6 +163,7 @@ public class SplashActivity extends AppCompatActivity {
 
             if (!json.equals("") && (new Gson().fromJson(json, UserDetailsModel.class) != null))
             {
+                sharedPrefrence.setFirstTimeLaunch(false);
                 Gson gson = new Gson();
                 UserDetailsModel obj = gson.fromJson(json, UserDetailsModel.class);
                 DataStorage.UserDetails = obj;
