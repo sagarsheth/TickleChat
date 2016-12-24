@@ -38,6 +38,7 @@
             android:ems="10"
             android:layout_height="wrap_content"
             android:padding="@dimen/dimen_10"
+            android:layout_marginTop="@dimen/dimen_30"
             android:gravity="left|center_vertical"
             android:background="@drawable/drawable_round_edit_view"
             android:id="@+id/groupname"

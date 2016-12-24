@@ -36,6 +36,11 @@ public class AddSentenseAdapter extends RecyclerView.Adapter<AddSentenseAdapter.
         holder.mTvTickleText.setText(movie.getName());
         if (movie.getNumber().equals("0"))
             holder.tv_tickle_status.setText("Pending");
+
+
+        if(position == getItemCount()-1)
+            holder.viewSeperator.setVisibility(View.GONE);
+        else holder.viewSeperator.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -46,13 +51,13 @@ public class AddSentenseAdapter extends RecyclerView.Adapter<AddSentenseAdapter.
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView mTvTickleText;
         public TextView tv_tickle_status;
-
+        public View viewSeperator;
 
         public MyViewHolder(View view) {
             super(view);
             mTvTickleText = (TextView) view.findViewById(R.id.tv_tickle_text);
             tv_tickle_status = (TextView) view.findViewById(R.id.tv_tickle_status);
-
+            viewSeperator= (View) view.findViewById(R.id.view_seperator);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

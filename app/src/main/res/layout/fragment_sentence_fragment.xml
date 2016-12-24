@@ -6,7 +6,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/rl_sentance_container">
+        android:layout_above="@+id/ll_sentance_container">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -30,11 +30,13 @@
 
                 <include layout="@layout/separator"/>
 
+
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_select_sentence"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/dimen_10" />
+
 
             </LinearLayout>
 
@@ -42,39 +44,46 @@
 
     </ScrollView>
 
-    <RelativeLayout
-        android:id="@+id/rl_sentance_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="@dimen/dimen_10"
-        android:background="@drawable/drawable_round_edit_view">
+    <LinearLayout android:layout_width="match_parent"
+                  android:id="@+id/ll_sentance_container"
+                  android:layout_alignParentBottom="true"
+                  android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/tv_add_new_tickle"
+        <RelativeLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/tv_btn_save"
-            android:gravity="left"
-            android:hint="Enter messages that you want to add."
-            android:inputType="textMultiLine"
-            android:padding="@dimen/dimen_15"
-            android:textSize="@dimen/txt_size_15"/>
+            android:layout_margin="@dimen/dimen_10"
+            android:background="@drawable/drawable_round_edit_view">
 
-        <TextView
-            android:id="@+id/tv_btn_save"
-            android:layout_width="100dp"
-            android:layout_height="32dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/dimen_10"
-            android:layout_marginRight="@dimen/dimen_10"
-            android:background="@drawable/selector_button"
-            android:gravity="center"
-            android:text="Save"
-            android:textSize="@dimen/txt_size_15"/>
+            <EditText
+                android:id="@+id/tv_add_new_tickle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:layout_toLeftOf="@+id/tv_btn_save"
+                android:hint="Enter messages that you want to add."
+                android:inputType="textMultiLine"
+                android:padding="@dimen/dimen_15"
+                android:textSize="@dimen/txt_size_15"/>
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/tv_btn_save"
+                android:layout_width="100dp"
+                android:layout_height="32dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_10"
+                android:background="@drawable/selector_button"
+                android:gravity="center"
+                android:text="Save"
+                android:textSize="@dimen/txt_size_15"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
 
 
 </RelativeLayout>

@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.techpro.chat.ticklechat.R;
@@ -64,8 +63,8 @@ public class TickleFriendFragment extends Fragment {
                         user.setNumber(phoneNo);
                         mynumbers.add(phoneNo);
                         myContacts.add(user);
-                        Toast.makeText(getContext(), "Name: " + name
-                                + ", Phone No: " + phoneNo, Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getContext(), "Name: " + name
+//                                + ", Phone No: " + phoneNo, Toast.LENGTH_SHORT).show();
                     }
                     pCur.close();
                 }
