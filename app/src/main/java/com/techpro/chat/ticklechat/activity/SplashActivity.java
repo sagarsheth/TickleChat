@@ -50,7 +50,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-
+        Log.i("SPLASH ACTIVITY","in onCreate");
         AppEventsLogger.activateApp(this);
 
         // Checking for first time launch - before calling setContentView()
@@ -66,7 +66,7 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_splash);
-
+        //Initialize widgets
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
         btnSkip = (Button) findViewById(R.id.btn_skip);
