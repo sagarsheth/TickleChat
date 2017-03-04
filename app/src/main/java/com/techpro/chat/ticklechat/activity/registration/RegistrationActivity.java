@@ -194,7 +194,6 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                     finish();
                     Log.e("profile", "Success  callLoginService : " + getUserDetails);
                     Log.e("profile", "Success  getUserDetails.getId() : " + getUserDetails.getId());
-
                 } else {
                     if (response != null && response.body() != null && response.body().getMessage() != null) {
                         Log.e("profile", "response.body().getMessage() ==> " + response.body().toString());
