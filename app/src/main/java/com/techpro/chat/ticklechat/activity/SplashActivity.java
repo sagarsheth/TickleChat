@@ -9,6 +9,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,7 @@ public class SplashActivity extends AppCompatActivity {
         sharedPrefrence = TickleSharedPrefrence.getInstance(SplashActivity.this);
         if (!sharedPrefrence.isFirstTimeLaunch()) {
             launchHomeScreen();
+            Log.i("SPLASH ACTIVITY","Launching home screen");
             finish();
         }
 
@@ -154,6 +156,7 @@ public class SplashActivity extends AppCompatActivity {
 
         if (json.equals(""))
         {
+            Log.i("HOME","USER NOT LOGGED IN");
             Intent mainIntent = new Intent(SplashActivity.this, SignInActivity.class);
             SplashActivity.this.startActivity(mainIntent);
             SplashActivity.this.finish();
