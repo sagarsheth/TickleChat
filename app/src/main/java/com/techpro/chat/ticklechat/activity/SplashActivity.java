@@ -209,7 +209,7 @@ public class SplashActivity extends AppCompatActivity {
 
         @Override
         public void onPageScrollStateChanged(int arg0) {
-
+            //do nothing
         }
     };
 
