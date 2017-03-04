@@ -16,9 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.techpro.chat.ticklechat.R;
-import com.techpro.chat.ticklechat.activity.registration.Login;
-import com.techpro.chat.ticklechat.activity.registration.RegistrationActivity;
-import com.techpro.chat.ticklechat.activity.registration.SignInActivity;
+import com.techpro.chat.ticklechat.login.SignInActivity;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;

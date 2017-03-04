@@ -1,4 +1,4 @@
-package com.techpro.chat.ticklechat.activity;
+package com.techpro.chat.ticklechat.login;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,74 +20,58 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.appevents.AppEventsLogger;
-import com.google.gson.Gson;
 import com.techpro.chat.ticklechat.R;
-import com.techpro.chat.ticklechat.activity.home.HomeActivity;
-import com.techpro.chat.ticklechat.activity.registration.Login;
-import com.techpro.chat.ticklechat.activity.registration.SignInActivity;
-import com.techpro.chat.ticklechat.models.DataStorage;
-import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
-import com.techpro.chat.ticklechat.utils.SharedPreferenceUtils;
 import com.techpro.chat.ticklechat.utils.TickleSharedPrefrence;
 
 public class SplashActivity extends AppCompatActivity {
 
-    /**
-     * Duration of wait
-     **/
-    private final int SPLASH_DISPLAY_LENGTH = 3000;
+    // layouts of all welcome sliders
+    private int[] layouts = new int[]{
+            R.layout.layout_welcome_1,
+            R.layout.layout_welcome_2,
+            R.layout.layout_welcome_3,
+            R.layout.layout_welcome_4,
+            R.layout.layout_welcome_5,
+            R.layout.layout_welcome_6,
+            R.layout.layout_welcome_7,
+            R.layout.layout_welcome_8
 
+    };
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
     private LinearLayout dotsLayout;
     private TextView[] dots;
-    private int[] layouts;
+
     private Button btnSkip, btnNext;
     TickleSharedPrefrence sharedPrefrence;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
-
-        Log.i("SPLASH ACTIVITY","in onCreate");
         AppEventsLogger.activateApp(this);
+        // Making notification bar transparent
+        if (Build.VERSION.SDK_INT >= 21) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        }
+        setContentView(R.layout.activity_splash);
+        initView();
+    }
 
+    private void initView() {
         // Checking for first time launch - before calling setContentView()
         sharedPrefrence = TickleSharedPrefrence.getInstance(SplashActivity.this);
         if (!sharedPrefrence.isFirstTimeLaunch()) {
             launchHomeScreen();
-            Log.i("SPLASH ACTIVITY","Launching home screen");
+            Log.i("SPLASH ACTIVITY", "Launching home screen");
             finish();
         }
 
-        // Making notification bar transparent
-        if (Build.VERSION.SDK_INT >= 21) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        }
-
-        setContentView(R.layout.activity_splash);
         //Initialize widgets
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         dotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
         btnSkip = (Button) findViewById(R.id.btn_skip);
         btnNext = (Button) findViewById(R.id.btn_next);
-
-
-        // layouts of all welcome sliders
-        // add few more layouts if you want
-        layouts = new int[]{
-                R.layout.layout_welcome_1,
-                R.layout.layout_welcome_2,
-                R.layout.layout_welcome_3,
-                R.layout.layout_welcome_4,
-                R.layout.layout_welcome_5,
-                R.layout.layout_welcome_6,
-                R.layout.layout_welcome_7,
-                R.layout.layout_welcome_8
-
-        };
 
         // adding bottom dots
         addBottomDots(0);
@@ -145,47 +129,39 @@ public class SplashActivity extends AppCompatActivity {
         return viewPager.getCurrentItem() + i;
     }
 
-    private void launchHomeScreen()
-    {
-
-//        startActivity(new Intent(SplashActivity.this, RegistrationActivity.class));
-
+    private void launchHomeScreen() {
 
         /* Create an Intent that will start the Menu-Activity. */
-        String json = SharedPreferenceUtils.getValue(getApplicationContext(), SharedPreferenceUtils.LoginuserDetailsPreference, "");
+//        String json = SharedPreferenceUtils.getValue(getApplicationContext(),
+//                SharedPreferenceUtils.LoginuserDetailsPreference, "");
 
-        if (json.equals(""))
-        {
-            Log.i("HOME","USER NOT LOGGED IN");
+//        if (json.equals("")) {
+            Log.i("HOME", "USER NOT LOGGED IN");
             Intent mainIntent = new Intent(SplashActivity.this, SignInActivity.class);
             SplashActivity.this.startActivity(mainIntent);
             SplashActivity.this.finish();
-        }
-        else
-        {
-
-            if (!json.equals("") && (new Gson().fromJson(json, UserDetailsModel.class) != null))
-            {
-                sharedPrefrence.setFirstTimeLaunch(false);
-                Gson gson = new Gson();
-                UserDetailsModel obj = gson.fromJson(json, UserDetailsModel.class);
-                DataStorage.UserDetails = obj;
-                Intent mainIntent = new Intent(SplashActivity.this, HomeActivity.class);
-                SplashActivity.this.startActivity(mainIntent);
-                SplashActivity.this.finish();
-            }
-            else
-            {
-                Intent mainIntent = new Intent(SplashActivity.this, Login.class);
-                SplashActivity.this.startActivity(mainIntent);
-                SplashActivity.this.finish();
-            }
-        }
+//        } else {
+//
+//            if (!json.equals("") && (new Gson().fromJson(json, UserDetailsModel.class) != null)) {
+//                sharedPrefrence.setFirstTimeLaunch(false);
+//                Gson gson = new Gson();
+//                UserDetailsModel obj = gson.fromJson(json, UserDetailsModel.class);
+//                DataStorage.UserDetails = obj;
+//                Intent mainIntent = new Intent(SplashActivity.this, HomeActivity.class);
+//                SplashActivity.this.startActivity(mainIntent);
+//                SplashActivity.this.finish();
+//            } else {
+//                Intent mainIntent = new Intent(SplashActivity.this, LoginActivity.class);
+//                SplashActivity.this.startActivity(mainIntent);
+//                SplashActivity.this.finish();
+//            }
+//        }
 
     }
-    //  viewpager change listener
-    ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
 
+    //  viewpager change listener
+    ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.
+            OnPageChangeListener() {
         @Override
         public void onPageSelected(int position) {
             addBottomDots(position);

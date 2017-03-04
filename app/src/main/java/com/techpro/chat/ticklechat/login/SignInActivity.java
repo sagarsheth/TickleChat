@@ -1,4 +1,4 @@
-package com.techpro.chat.ticklechat.activity.registration;
+package com.techpro.chat.ticklechat.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -28,12 +28,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.techpro.chat.ticklechat.LoginDialog;
 import com.techpro.chat.ticklechat.R;
+import com.techpro.chat.ticklechat.Utils;
 import com.techpro.chat.ticklechat.activity.home.HomeActivity;
 import com.techpro.chat.ticklechat.databinding.ActivitySigninBinding;
 import com.techpro.chat.ticklechat.listeners.GenericListener;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
 import com.techpro.chat.ticklechat.models.user.UserModel;
+import com.techpro.chat.ticklechat.registration.RegistrationActivity;
 import com.techpro.chat.ticklechat.rest.ApiClient;
 import com.techpro.chat.ticklechat.rest.ApiInterface;
 import com.techpro.chat.ticklechat.utils.AppUtils;
@@ -67,7 +69,6 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(SignInActivity.this, R.layout.activity_signin);
         // Button listeners
-//        mBinding.fbLogin.setOnClickListener(this);
         mBinding.btnFbSignin.setOnClickListener(this);
         mBinding.signInButton.setOnClickListener(this);
         mBinding.btnSignin.setOnClickListener(this);
@@ -277,7 +278,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 clickedOnGoogleSignIn();
                 break;
             case R.id.btn_signin:
-                showSignIn();
+                startActivity(new Intent(SignInActivity.this, LoginActivity.class));
                 break;
             case R.id.btn_signup:
                 Intent mainIntent = new Intent(SignInActivity.this, RegistrationActivity.class);
@@ -293,6 +294,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     }
 
 
+    //TODO: Aparna need to remove dialog and replace it with LoginActivity under "com.techpro.chat.ticklechat.login" package.
     void showSignIn() {
         mLoginDialog = new LoginDialog(SignInActivity.this, new GenericListener<String>() {
             @Override
@@ -303,13 +305,13 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                         if (AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
                             Log.e(TAG, "login:==> " + messages);
                             if (messages != null && !messages.equals("") && messages.contains("~") && !messages.trim().equals("~")
-                                    && Login.SHA1(messages.split("~")[1]) != null) {
+                                    && Utils.SHA1(messages.split("~")[1]) != null) {
                                 mLoginDialog.cancel();
                                 mProgressDialog = ProgressDialog.show(SignInActivity.this, "Loading", "Please wait...", true);
 //                                callLoginService("8652355351", "2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
                                 AppUtils.showLog("2233c15a7f3371fc6e6a8afeb5089b5411db19a1");
-                                AppUtils.showLog("" + Login.SHA1(messages.split("~")[1]));
-                                callLoginService(messages.split("~")[0], Login.SHA1(messages.split("~")[1]));
+                                AppUtils.showLog("" + Utils.SHA1(messages.split("~")[1]));
+                                callLoginService(messages.split("~")[0], Utils.SHA1(messages.split("~")[1]));
                             } else {
                                 Log.e(TAG, "login:==> " + messages);
                                 Toast.makeText(getApplicationContext(), "Please enter complete details.", Toast.LENGTH_LONG).show();
@@ -335,6 +337,8 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         mLoginDialog.show();
     }
 
+
+    //TODO: Aparna need to move this login service call to LoginActivity.
     private void callLoginService(String username, String pass) {
         //Getting webservice instance which we need to call
         Call<UserModel> callForUserDetailsFromID = ApiClient.getClient().create(ApiInterface.class).loginUser(username, pass);

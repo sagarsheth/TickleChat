@@ -24,7 +24,7 @@ public class Constants {
     public static final int REQUEST_CODE_1004 = 1004;
 
 //    SharedPref KEY
-    public static final String SHAREDPREF_LOGIN_SUCCESS = "Login";
+    public static final String SHAREDPREF_LOGIN_SUCCESS = "LoginActivity";
 
 
 }

@@ -16,7 +16,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.techpro.chat.ticklechat.R;
-import com.techpro.chat.ticklechat.activity.SplashActivity;
+import com.techpro.chat.ticklechat.login.SplashActivity;
 
 import java.net.URL;
 

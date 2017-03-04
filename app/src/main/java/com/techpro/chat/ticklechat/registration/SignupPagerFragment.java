@@ -1,6 +1,5 @@
-package com.techpro.chat.ticklechat.activity.registration;
+package com.techpro.chat.ticklechat.registration;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,11 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.techpro.chat.ticklechat.R;
 import com.techpro.chat.ticklechat.listeners.GenericListener;
-import com.techpro.chat.ticklechat.views.GenericTextView;
 
 
 /**

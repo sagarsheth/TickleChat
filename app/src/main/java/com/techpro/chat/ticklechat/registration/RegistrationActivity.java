@@ -1,4 +1,4 @@
-package com.techpro.chat.ticklechat.activity.registration;
+package com.techpro.chat.ticklechat.registration;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
