@@ -68,19 +68,6 @@
         <!--android:layout_marginBottom="@dimen/dimen_10" />-->
 
 
-
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="265dp"
-        android:layout_height="37.5dp"
-        android:alpha=".7"
-        android:layout_above="@+id/tvTermsAndConditions"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/group_tickling"
-        android:textColor="@color/bg_color"
-        android:text="Login" />
-
-
     <TextView
         android:id="@+id/tvTermsAndConditions"
         android:layout_width="wrap_content"
@@ -110,5 +97,16 @@
         android:text="Signup"
         android:layout_above="@+id/btnLogin"
         android:layout_alignStart="@+id/btnLogin" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="265dp"
+        android:layout_height="37.5dp"
+        android:alpha=".7"
+        android:background="@drawable/group_tickling"
+        android:textColor="@color/bg_color"
+        android:text="Login"
+        android:layout_above="@+id/tvTermsAndConditions"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

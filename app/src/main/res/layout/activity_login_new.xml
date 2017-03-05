@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,7 +8,34 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
+    <ImageView
+        android:id="@+id/img_login_user"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/img_user"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        />
+    <EditText
+        android:id="@+id/et_username"
+        style="@style/style_et"
+        android:layout_marginTop="@dimen/dimen_15"
+        android:layout_below="@+id/img_login_user"
+        android:hint="Phone Number"
 
+        android:inputType="phone"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
+
+    <EditText
+        android:id="@+id/et_pass"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/et_username"
+        style="@style/style_et"
+        android:layout_marginTop="@dimen/dimen_15"
+        android:hint="Password"
+        android:inputType="textPassword" />
 
     <!--<com.facebook.login.widget.LoginButton
         android:chatUserList="@+chatUserList/login_button"
@@ -27,17 +53,56 @@
          android:layout_above="@+chatUserList/btnSignup"
          android:layout_centerHorizontal="true"
          android:layout_marginBottom="@dimen/dimen_10" />-->
-
-
     <Button
-        android:id="@+id/btnSignup"
+        android:id="@+id/btnLogin"
+        android:layout_width="290dp"
+        android:layout_height="40dp"
+        android:background="@drawable/selector_button"
+        android:textColor="@color/textColorPrimary"
+        android:text="Login"
+        android:layout_below="@+id/et_pass"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:layout_centerHorizontal="true" />
+    <TextView
+        android:id="@+id/tv_separator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/btnLogin"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/dimen_10"
+        android:layout_marginTop="@dimen/dimen_10"
+        android:text="Not a member yet? SignUp now."
+        android:textColor="@color/textColorTertiary"/>
 
+    <Button
+        android:id="@+id/btn_signup"
+        android:layout_width="290dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="@dimen/dimen_5"
+        android:layout_below="@+id/tv_separator"
+        android:background="@drawable/selector_button"
+        android:gravity="center"
+        android:text="@string/signup"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/textColorPrimary"/>
+
+    <TextView
+        android:id="@+id/tvTermsAndConditions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="middle"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:visibility="visible"
+        android:shadowColor="@color/textColorSecondary"
+        android:shadowDx="1"
+        android:layout_centerHorizontal="true"
+        android:shadowDy="1"
+        android:shadowRadius="2"
         android:layout_marginBottom="@dimen/dimen_20"
-        android:text="Signup" />
-
+        android:text="@string/terms_policies"
+        android:textColor="@color/textColorSecondary"
+        android:textSize="@dimen/txt_size_15"/>
 
 </RelativeLayout>
