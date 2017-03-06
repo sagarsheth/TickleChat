@@ -137,7 +137,7 @@ public class SplashActivity extends AppCompatActivity {
 
 //        if (json.equals("")) {
             Log.i("HOME", "USER NOT LOGGED IN");
-            Intent mainIntent = new Intent(SplashActivity.this, SignInActivity.class);
+            Intent mainIntent = new Intent(SplashActivity.this, LoginActivity.class);
             SplashActivity.this.startActivity(mainIntent);
             SplashActivity.this.finish();
 //        } else {

@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/theme2">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,44 +23,51 @@
             android:id="@+id/profilename"
             style= "@style/style_et"
             android:hint="User name"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:background="@drawable/selector_button"/>
 
         <EditText
             android:id="@+id/password"
             style= "@style/style_et"
             android:hint="password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:background="@drawable/selector_button"/>
 
         <EditText
             android:id="@+id/confirm_password"
             style= "@style/style_et"
             android:hint="confirm password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:background="@drawable/selector_button"/>
 
         <EditText
             android:id="@+id/profileemail"
             style= "@style/style_et"
             android:hint="Email"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:background="@drawable/selector_button"/>
 
         <EditText
             android:id="@+id/profilephone"
             style= "@style/style_et"
             android:hint="Phone"
-            android:inputType="phone" />
+            android:inputType="phone"
+            android:background="@drawable/selector_button"/>
 
         <EditText
             android:id="@+id/countrycode"
             style= "@style/style_et"
             android:hint="countrycode"
-            android:inputType="phone" />
+            android:inputType="phone"
+            android:background="@drawable/selector_button"/>
 
         <EditText
             android:id="@+id/profile_date"
             style= "@style/style_et"
             android:hint="DOB"
             android:editable="false"
-            android:inputType="date" />
+            android:inputType="date"
+            android:background="@drawable/selector_button"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
