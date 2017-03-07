@@ -53,12 +53,12 @@ import retrofit2.Response;
 /**
  * Created by Sagar on 06/04/16.
  */
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
 
-    EditText et_phone,et_pass;
-    Button btnLogin,btnSignup;
-
+    private EditText et_phone,et_pass;
+    private Button btnLogin,btnSignup;
+    LinearLayout btn_google_signin,btn_fb_signin;
     private static final String TAG = "LoginActivity";
     private GoogleApiClient mGoogleApiClient;
 
@@ -69,23 +69,41 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login_new);
 
         et_pass= (EditText) findViewById(R.id.et_username);
-        et_phone= (EditText) findViewById(R.id.et_username);
+        et_phone= (EditText) findViewById(R.id.et_pass);
         btnLogin= (Button) findViewById(R.id.btnLogin);
         btnSignup= (Button) findViewById(R.id.btn_signup);
+        btn_google_signin= (LinearLayout) findViewById(R.id.btn_google_signin);
+        btn_fb_signin= (LinearLayout) findViewById(R.id.btn_fb_signin);
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnLogin.setOnClickListener(this);
+        btnSignup.setOnClickListener(this);
+        btn_google_signin.setOnClickListener(this);
+        btn_fb_signin.setOnClickListener(this);
 
-            }
-        });
 
-        btnSignup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(LoginActivity.this,RegistrationActivity.class);
-                startActivity(intent);
-            }
-        });
+    }
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnLogin:
+
+                break;
+
+            case R.id.btn_signin:
+                startActivity(new Intent(LoginActivity.this,RegistrationActivity.class));
+                break;
+
+            case R.id.btn_google_signin:
+
+                break;
+
+            case R.id.btn_fb_signin:
+                break;
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 }
