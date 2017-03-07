@@ -89,7 +89,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
                 break;
 
-            case R.id.btn_signin:
+            case R.id.btn_signup:
                 startActivity(new Intent(LoginActivity.this,RegistrationActivity.class));
                 break;
 
