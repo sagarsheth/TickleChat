@@ -179,7 +179,9 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 * Get - User details by user chatUserList
 * @param userId - user chatUserList
 * */
-    private synchronized void callUpdateUserDataService(String name, String gender, String dob, String phone, String email, String profile_image, String code, String pass) {
+    private synchronized void callUpdateUserDataService(String name, String gender, String dob,
+                                                        String phone, String email,
+                                                        String profile_image, String code, String pass) {
         //Getting webservice instance which we need to call
         Call<UserModel> callForUserDetailsFromID = (ApiClient.getClient()
                 .create(ApiInterface.class)).registeruser(name, gender, dob, phone, email, profile_image, code, pass);

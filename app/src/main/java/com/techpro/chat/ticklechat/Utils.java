@@ -10,6 +10,8 @@ public class Utils {
 
     // For Password
     public static String SHA1(String text) {
+        if (text == null)
+            return text;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
             md.update(text.getBytes("iso-8859-1"), 0, text.length());
