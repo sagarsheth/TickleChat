@@ -42,7 +42,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">13sp</item>
-        <item name="android:textColor">#bdbdbd</item>
+        <item name="android:textColor">#dcd8d8</item>
     </style>
 
     <style name="style_et">
@@ -54,7 +54,7 @@
         <item name="android:layout_marginBottom">@dimen/dimen_5</item>
         <item name="android:padding">@dimen/dimen_10</item>
         <item name="android:textSize">13sp</item>
-        <item name="android:textColorHint">#bdbdbd</item>
+        <item name="android:textColorHint">#dfd9d9</item>
         <item name="android:background">@drawable/drawable_round_edit_view</item>
     </style>
 

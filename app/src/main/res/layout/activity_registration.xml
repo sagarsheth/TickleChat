@@ -10,14 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="1">
 
         <ImageView
             android:id="@+id/iv_profile_icon"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="25dp"
             android:src="@drawable/camera_icon" />
 
         <EditText
@@ -88,6 +89,7 @@
                 android:layout_height="32dp"
                 android:gravity="center"
                 android:layout_marginRight="@dimen/dimen_5"
+                android:textColor="@color/white"
                 android:background="@drawable/selector_button"
                 android:text="MALE" />
 
@@ -96,7 +98,7 @@
                 android:layout_width="100dp"
                 android:layout_height="32dp"
                 android:layout_marginLeft="@dimen/dimen_5"
-
+                android:textColor="@color/white"
                 android:gravity="center"
                 android:background="@drawable/selector_button"
                 android:text="FEMALE" />
@@ -104,12 +106,14 @@
 
         <TextView
             android:id="@+id/submit"
-            android:layout_width="100dp"
-            android:layout_height="32dp"
+            android:layout_width="107dp"
+            android:layout_height="37dp"
             android:layout_marginTop="@dimen/dimen_10"
             android:layout_gravity="center_horizontal"
+            android:textColor="#fdfdfd"
             android:background="@drawable/selector_button"
             android:gravity="center"
-            android:text="Update" />
+            android:text="Sign Up Now!"
+            android:layout_weight="0.09" />
     </LinearLayout>
 </ScrollView>

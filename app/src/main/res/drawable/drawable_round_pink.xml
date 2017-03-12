@@ -5,7 +5,7 @@
         >
         <shape>
             <corners android:radius="18dp"/>
-            <solid android:color="@color/v2_light_pink" />
+            <solid android:color="@color/white_trans_50" />
         </shape>
     </item>
     <item
@@ -13,7 +13,7 @@
         >
         <shape>
             <corners android:radius="18dp"/>
-            <solid android:color="@color/v2_dark_pink" />
+            <solid android:color="@color/white_trans_50" />
         </shape>
     </item>
 </selector>

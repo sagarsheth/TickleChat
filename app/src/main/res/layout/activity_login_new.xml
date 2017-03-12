@@ -31,7 +31,7 @@
         android:hint="Phone Number"
         android:inputType="phone"
         android:maxLength="25"
-        android:textColor="@color/textColorPrimary" />
+         />
 
     <EditText
         android:id="@+id/et_pass"
@@ -43,7 +43,7 @@
         android:background="@drawable/selector_button"
         android:hint="Password"
         android:inputType="textPassword"
-        android:textColor="@color/textColorPrimary" />
+         />
 
     <!--<com.facebook.login.widget.LoginButton
         android:chatUserList="@+chatUserList/login_button"
@@ -61,17 +61,6 @@
          android:layout_above="@+chatUserList/btnSignup"
          android:layout_centerHorizontal="true"
          android:layout_marginBottom="@dimen/dimen_10" />-->
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="290dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/et_pass"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/selector_button"
-        android:gravity="center"
-        android:text="Login"
-        android:textColor="#fdfdfd" />
 
     <TextView
         android:id="@+id/tv_separator"
@@ -93,7 +82,8 @@
         android:background="@drawable/selector_button"
         android:gravity="center"
         android:text="@string/signup"
-        android:textColor="#fdfdfd" />
+        android:textColor="#fdfdfd"
+      />
 
     <TextView
         android:id="@+id/tv_separator2"
@@ -172,7 +162,8 @@
                 android:background="@color/transparent"
                 android:gravity="left|center_vertical"
                 android:text="Facebook"
-                android:textColor="#fdfdfd" />
+                android:textColor="#fdfdfd"
+                android:id="@+id/textView" />
 
         </LinearLayout>
     </LinearLayout>
@@ -191,8 +182,21 @@
         android:shadowDy="1"
         android:shadowRadius="2"
         android:text="@string/terms_policies"
-        android:textColor="@color/textColorPrimary"
+        android:textColor="#fdfdfd"
         android:textSize="@dimen/txt_size_15"
         android:visibility="visible" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="290dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="21dp"
+        android:background="@drawable/selector_button"
+        android:gravity="center"
+        android:text="Login"
+        android:textColor="#fdfdfd"
+        android:layout_below="@+id/et_pass"
+        android:layout_alignStart="@+id/btn_signup"
+        />
 
 </RelativeLayout>

@@ -7,14 +7,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,6 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.techpro.chat.ticklechat.R;
+import com.techpro.chat.ticklechat.login.LoginActivity;
+import com.techpro.chat.ticklechat.login.SplashActivity;
 import com.techpro.chat.ticklechat.models.DataStorage;
 import com.techpro.chat.ticklechat.models.user.UserDetailsModel;
 import com.techpro.chat.ticklechat.models.user.UserModel;
@@ -95,6 +103,8 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+
+        changeStatusBarColor();
     }
 
     private void updateLabel() {
@@ -174,7 +184,34 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
                 break;
         }
     }
+    public void changeStatusBarColor() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+        }
+    }
 
+         /* View pager adapter*/
+
+
+    public class MyViewPagerAdapter extends PagerAdapter {
+        private LayoutInflater layoutInflater;
+
+        public MyViewPagerAdapter() {
+        }
+
+        @Override
+        public int getCount() {
+            return 0;
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return false;
+        }
+
+    }
     /*
 * Get - User details by user chatUserList
 * @param userId - user chatUserList

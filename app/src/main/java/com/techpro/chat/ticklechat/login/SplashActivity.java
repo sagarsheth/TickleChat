@@ -26,7 +26,7 @@ import com.techpro.chat.ticklechat.utils.TickleSharedPrefrence;
 public class SplashActivity extends AppCompatActivity {
 
     // layouts of all welcome sliders
-    private int[] layouts = new int[]{
+    private int[]  layouts = new int[]{
             R.layout.layout_welcome_1,
             R.layout.layout_welcome_2,
             R.layout.layout_welcome_3,
@@ -192,10 +192,10 @@ public class SplashActivity extends AppCompatActivity {
     /**
      * Making notification bar transparent
      */
-    private void changeStatusBarColor() {
+    public void changeStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(Color.TRANSPARENT);
         }
     }
@@ -209,13 +209,13 @@ public class SplashActivity extends AppCompatActivity {
         public MyViewPagerAdapter() {
         }
 
+
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             View view = layoutInflater.inflate(layouts[position], container, false);
             container.addView(view);
-
             return view;
         }
 
