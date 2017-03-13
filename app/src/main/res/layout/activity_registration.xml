@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
     android:orientation="vertical"
-    android:background="@drawable/theme2">
+    android:background="@drawable/theme4">
 
     <LinearLayout
         android:layout_width="match_parent"

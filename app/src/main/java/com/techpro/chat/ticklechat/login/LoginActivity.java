@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -62,7 +63,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private static final String TAG = "LoginActivity";
 
-    private EditText et_phone, et_pass;
+    private TextInputEditText et_username, et_pass;
     private Button btnLogin, btnSignup;
     LinearLayout btn_google_signin, btn_fb_signin;
 
@@ -81,8 +82,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_new);
 
-        et_pass = (EditText) findViewById(R.id.et_username);
-        et_phone = (EditText) findViewById(R.id.et_pass);
+        et_username = (TextInputEditText) findViewById(R.id.et_username);
+        et_pass = (TextInputEditText) findViewById(R.id.et_pass);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnSignup = (Button) findViewById(R.id.btn_signup);
         btn_google_signin = (LinearLayout) findViewById(R.id.btn_google_signin);
@@ -115,12 +116,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.btnLogin:
                 if (AppUtils.isNetworkConnectionAvailable(getApplicationContext())) {
-                    String phone = et_phone.getText().toString();
+                    String phone = et_username.getText().toString();
                     String pass = Utils.SHA1(et_pass.getText().toString());
                     if (phone != null && !phone.equals("") && pass != null && !pass.equals("")) {
                         showProgressDialog();
                         callLoginService(phone, Utils.SHA1(pass));
                     } else {
+                        if(phone.equals(""))
+                         et_username.setError("Enter Username");
+                        if(pass.equals(""))
+                         et_pass.setError("Enter Password");
                         Toast.makeText(getApplicationContext(),
                                 "Please enter complete details.", Toast.LENGTH_LONG).show();
                     }
